@@ -11,11 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { finalize } from 'rxjs';
 
 @Component({
     selector: 'auth-forgot-password',
@@ -49,7 +48,8 @@ export class AuthForgotPasswordComponent implements OnInit {
      */
     constructor(
         private _authService: AuthService,
-        private _formBuilder: UntypedFormBuilder
+        private _formBuilder: UntypedFormBuilder,
+        private _router: Router
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -81,6 +81,10 @@ export class AuthForgotPasswordComponent implements OnInit {
 
         // Disable the form
         this.forgotPasswordForm.disable();
+        localStorage.setItem(
+            'email',
+            this.forgotPasswordForm.get('email').value
+        );
 
         // Hide the alert
         this.showAlert = false;
@@ -88,26 +92,10 @@ export class AuthForgotPasswordComponent implements OnInit {
         // Forgot password
         this._authService
             .forgotPassword(this.forgotPasswordForm.get('email').value)
-            .pipe(
-                finalize(() => {
-                    // Re-enable the form
-                    this.forgotPasswordForm.enable();
-
-                    // Reset the form
-                    this.forgotPasswordNgForm.resetForm();
-
-                    // Show the alert
-                    this.showAlert = true;
-                })
-            )
             .subscribe(
                 (response) => {
-                    // Set the alert
-                    this.alert = {
-                        type: 'success',
-                        message:
-                            "Password reset sent! You'll receive an email if you are registered on our system.",
-                    };
+                    // Navigate to the confirmation required page
+                    this._router.navigate(['/confirmation-required']);
                 },
                 (response) => {
                     // Set the alert

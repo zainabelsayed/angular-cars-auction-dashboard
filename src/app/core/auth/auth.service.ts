@@ -35,7 +35,22 @@ export class AuthService {
      * @param email
      */
     forgotPassword(email: string): Observable<any> {
-        return this._httpClient.post('api/auth/forgot-password', email);
+        return this._httpClient.post(
+            'http://10.255.254.45:3000/api/dashboard/auth/forget-password',
+            { email, type: 'forgot-password' }
+        );
+    }
+
+    /**
+     * Verify OTP
+     *
+     * @param email
+     */
+    verifyOTP(email, otp: string): Observable<any> {
+        return this._httpClient.post(
+            'http://10.255.254.45:3000/api/dashboard/auth/verify-otp',
+            { email, otpCode: otp }
+        );
     }
 
     /**
@@ -122,14 +137,18 @@ export class AuthService {
      * Sign out
      */
     signOut(): Observable<any> {
-        // Remove the access token from the local storage
-        localStorage.removeItem('accessToken');
+        return this._httpClient
+            .post('http://10.255.254.45:3000/api/dashboard/auth/logout', {})
+            .pipe(
+                switchMap((response: any) => {
+                    // Remove the access token from the local storage
+                    localStorage.removeItem('accessToken');
 
-        // Set the authenticated flag to false
-        this._authenticated = false;
-
-        // Return the observable
-        return of(true);
+                    // Set the authenticated flag to false
+                    this._authenticated = false;
+                    return of(response);
+                })
+            );
     }
 
     /**
