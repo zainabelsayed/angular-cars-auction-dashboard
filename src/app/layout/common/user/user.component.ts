@@ -15,8 +15,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
-import { Subject, takeUntil } from 'rxjs';
+import { ApiUser, User } from 'app/core/user/user.types';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'user',
@@ -61,14 +61,16 @@ export class UserComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Subscribe to user changes
-        this._userService.user$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) => {
-                this.user = user;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        this._userService.get().subscribe((user: ApiUser) => {
+            this.user = {
+                avatar: user.data.user.avatarUrl,
+                id: user.data.user.id,
+                name: user.data.user.name,
+                email: user.data.user.email,
+                status: 'away',
+            };
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     /**
@@ -99,7 +101,6 @@ export class UserComponent implements OnInit, OnDestroy {
         this._userService
             .update({
                 ...this.user,
-                status,
             })
             .subscribe();
     }

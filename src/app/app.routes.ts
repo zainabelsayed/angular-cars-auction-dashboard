@@ -125,7 +125,7 @@ export const appRoutes: Route[] = [
                         path: 'users',
                         loadChildren: () =>
                             import(
-                                'app/modules/admin/apps/contacts/contacts.routes'
+                                'app/modules/admin/apps/users/contacts.routes'
                             ),
                     },
                     {

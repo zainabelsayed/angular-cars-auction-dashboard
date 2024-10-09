@@ -58,21 +58,26 @@ export class AuthService {
             return throwError('User is already logged in.');
         }
 
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
-            switchMap((response: any) => {
-                // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+        return this._httpClient
+            .post(
+                'http://10.255.254.45:3000/api/dashboard/auth/login',
+                credentials
+            )
+            .pipe(
+                switchMap((response: any) => {
+                    // Store the access token in the local storage
+                    this.accessToken = response.data.accessToken;
 
-                // Set the authenticated flag to true
-                this._authenticated = true;
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
 
-                // Store the user on the user service
-                this._userService.user = response.user;
+                    // Store the user on the user service
+                    this._userService.user = response.data.user;
 
-                // Return a new observable with the response
-                return of(response);
-            })
-        );
+                    // Return a new observable with the response
+                    return of(response);
+                })
+            );
     }
 
     /**
@@ -158,17 +163,17 @@ export class AuthService {
      */
     check(): Observable<boolean> {
         // Check if the user is logged in
-        if (this._authenticated) {
+        if (!!localStorage.getItem('accessToken')) {
             return of(true);
         }
 
         // Check the access token availability
-        if (!this.accessToken) {
+        if (!localStorage.getItem('accessToken')) {
             return of(false);
         }
 
         // Check the access token expire date
-        if (AuthUtils.isTokenExpired(this.accessToken)) {
+        if (AuthUtils.isTokenExpired(localStorage.getItem('accessToken'))) {
             return of(false);
         }
 

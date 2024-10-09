@@ -5,10 +5,10 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { ContactsComponent } from 'app/modules/admin/apps/contacts/contacts.component';
-import { ContactsService } from 'app/modules/admin/apps/contacts/contacts.service';
-import { ContactsDetailsComponent } from 'app/modules/admin/apps/contacts/details/details.component';
-import { ContactsListComponent } from 'app/modules/admin/apps/contacts/list/list.component';
+import { ContactsComponent } from 'app/modules/admin/apps/users/contacts.component';
+import { ContactsService } from 'app/modules/admin/apps/users/contacts.service';
+import { ContactsDetailsComponent } from 'app/modules/admin/apps/users/details/details.component';
+import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
 import { catchError, throwError } from 'rxjs';
 
 /**
@@ -65,7 +65,7 @@ const canDeactivateContactsDetails = (
     // If the next state doesn't contain '/contacts'
     // it means we are navigating away from the
     // contacts app
-    if (!nextState.url.includes('/contacts')) {
+    if (!nextState.url.includes('/users')) {
         // Let it navigate
         return true;
     }

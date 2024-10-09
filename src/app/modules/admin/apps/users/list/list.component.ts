@@ -26,11 +26,8 @@ import {
     RouterOutlet,
 } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
-import { ContactsService } from 'app/modules/admin/apps/contacts/contacts.service';
-import {
-    Contact,
-    Country,
-} from 'app/modules/admin/apps/contacts/contacts.types';
+import { ContactsService } from 'app/modules/admin/apps/users/contacts.service';
+import { Contact, Country } from 'app/modules/admin/apps/users/contacts.types';
 import {
     Observable,
     Subject,
