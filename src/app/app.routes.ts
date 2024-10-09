@@ -124,7 +124,9 @@ export const appRoutes: Route[] = [
                     {
                         path: 'users',
                         loadChildren: () =>
-                            import('app/modules/admin/apps/users/users.routes'),
+                            import(
+                                'app/modules/admin/apps/contacts/contacts.routes'
+                            ),
                     },
                     {
                         path: 'cars',

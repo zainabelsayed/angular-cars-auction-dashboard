@@ -4,7 +4,7 @@ import {
     Contact,
     Country,
     Tag,
-} from 'app/modules/admin/apps/users/users.types';
+} from 'app/modules/admin/apps/contacts/contacts.types';
 import {
     BehaviorSubject,
     Observable,

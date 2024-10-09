@@ -5,10 +5,10 @@ import {
     RouterStateSnapshot,
     Routes,
 } from '@angular/router';
-import { ContactsDetailsComponent } from 'app/modules/admin/apps/users/details/details.component';
-import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
-import { ContactsComponent } from 'app/modules/admin/apps/users/users.component';
-import { ContactsService } from 'app/modules/admin/apps/users/users.service';
+import { ContactsComponent } from 'app/modules/admin/apps/contacts/contacts.component';
+import { ContactsService } from 'app/modules/admin/apps/contacts/contacts.service';
+import { ContactsDetailsComponent } from 'app/modules/admin/apps/contacts/details/details.component';
+import { ContactsListComponent } from 'app/modules/admin/apps/contacts/list/list.component';
 import { catchError, throwError } from 'rxjs';
 
 /**

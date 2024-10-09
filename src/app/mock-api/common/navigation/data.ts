@@ -10,7 +10,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:home',
         children: [
             {
-                id: 'apps.users',
+                id: 'apps.contacts',
                 title: 'Users',
                 type: 'basic',
                 icon: 'heroicons_outline:user-group',
