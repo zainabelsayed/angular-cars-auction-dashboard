@@ -8,10 +8,10 @@ import { LayoutComponent } from 'app/layout/layout.component';
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
-    // Redirect empty path to '/dashboards/project'
+    // Redirect empty path to 'apps/users'
     { path: '', pathMatch: 'full', redirectTo: 'apps/users' },
 
-    // Redirect signed-in user to the '/dashboards/project'
+    // Redirect signed-in user to the 'apps/users'
     //
     // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
     // path. Below is another redirection for that path to redirect the user to the desired
@@ -46,13 +46,7 @@ export const appRoutes: Route[] = [
                         'app/modules/auth/forgot-password/forgot-password.routes'
                     ),
             },
-            {
-                path: 'reset-password',
-                loadChildren: () =>
-                    import(
-                        'app/modules/auth/reset-password/reset-password.routes'
-                    ),
-            },
+
             {
                 path: 'sign-in',
                 loadChildren: () =>
@@ -62,6 +56,26 @@ export const appRoutes: Route[] = [
                 path: 'sign-up',
                 loadChildren: () =>
                     import('app/modules/auth/sign-up/sign-up.routes'),
+            },
+        ],
+    },
+
+    // Auth routes for guests
+    {
+        path: '',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component: LayoutComponent,
+        data: {
+            layout: 'empty',
+        },
+        children: [
+            {
+                path: 'reset-password',
+                loadChildren: () =>
+                    import(
+                        'app/modules/auth/reset-password/reset-password.routes'
+                    ),
             },
         ],
     },

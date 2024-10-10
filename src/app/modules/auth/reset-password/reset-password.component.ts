@@ -12,7 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseValidators } from '@fuse/validators';
@@ -52,7 +52,9 @@ export class AuthResetPasswordComponent implements OnInit {
      */
     constructor(
         private _authService: AuthService,
-        private _formBuilder: UntypedFormBuilder
+        private _formBuilder: UntypedFormBuilder,
+        private _activatedRoute: ActivatedRoute,
+        private _router: Router
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -99,7 +101,10 @@ export class AuthResetPasswordComponent implements OnInit {
 
         // Send the request to the server
         this._authService
-            .resetPassword(this.resetPasswordForm.get('password').value)
+            .resetPassword(
+                this.resetPasswordForm.get('password').value,
+                this.resetPasswordForm.get('passwordConfirm').value
+            )
             .pipe(
                 finalize(() => {
                     // Re-enable the form
@@ -119,6 +124,17 @@ export class AuthResetPasswordComponent implements OnInit {
                         type: 'success',
                         message: 'Your password has been reset.',
                     };
+
+                    // remove forget password email
+                    localStorage.removeItem('email');
+
+                    const redirectURL =
+                        this._activatedRoute.snapshot.queryParamMap.get(
+                            'redirectURL'
+                        ) || '/signed-in-redirect';
+
+                    // Navigate to the redirect url
+                    this._router.navigateByUrl(redirectURL);
                 },
                 (response) => {
                     // Set the alert

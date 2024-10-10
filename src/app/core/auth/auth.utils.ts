@@ -169,9 +169,9 @@ export class AuthUtils {
         const decodedToken = this._decodeToken(token);
 
         // Return if the decodedToken doesn't have an 'exp' field
-        // if (!decodedToken.hasOwnProperty('exp')) {
-        //     return null;
-        // }
+        if (!decodedToken.hasOwnProperty('exp')) {
+            return null;
+        }
 
         // Convert the expiration date
         const date = new Date(0);

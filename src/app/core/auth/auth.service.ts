@@ -7,6 +7,7 @@ import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private _authenticated: boolean = false;
+    private _resetPassword: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
 
@@ -47,10 +48,26 @@ export class AuthService {
      * @param email
      */
     verifyOTP(email, otp: string): Observable<any> {
-        return this._httpClient.post(
-            'http://10.255.254.45:3000/api/dashboard/auth/verify-otp',
-            { email, otpCode: otp }
-        );
+        return this._httpClient
+            .post('http://10.255.254.45:3000/api/dashboard/auth/verify-otp', {
+                email,
+                otpCode: otp,
+            })
+            .pipe(
+                switchMap((response: any) => {
+                    // Store the access token in the local storage
+                    this.accessToken = response.data.accessToken;
+
+                    // Set the reset password flag to true
+                    this._resetPassword = true;
+
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
+
+                    // Return a new observable with the response
+                    return of(response);
+                })
+            );
     }
 
     /**
@@ -58,8 +75,11 @@ export class AuthService {
      *
      * @param password
      */
-    resetPassword(password: string): Observable<any> {
-        return this._httpClient.post('api/auth/reset-password', password);
+    resetPassword(password: string, confirmPassword: string): Observable<any> {
+        return this._httpClient.post(
+            'http://10.255.254.45:3000/api/dashboard/auth/rest-password',
+            { password, confirmPassword }
+        );
     }
 
     /**
