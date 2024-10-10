@@ -77,7 +77,7 @@ const canDeactivateContactsDetails = (
     }
 
     // Otherwise, close the drawer first, and then navigate
-    return component.closeDrawer().then(() => true);
+    // return component.closeDrawer().then(() => true);
 };
 
 export default [
@@ -92,7 +92,7 @@ export default [
                 path: '',
                 component: ContactsListComponent,
                 resolve: {
-                    contacts: () => inject(ContactsService).getContacts(),
+                    contacts: () => inject(ContactsService).getUsers(),
                     countries: () => inject(ContactsService).getCountries(),
                 },
                 children: [

@@ -31,16 +31,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { ContactsService } from 'app/modules/admin/apps/users/contacts.service';
 import {
-    Contact,
     Country,
     Tag,
+    UserItem,
 } from 'app/modules/admin/apps/users/contacts.types';
 import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
@@ -80,9 +79,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     tags: Tag[];
     tagsEditMode: boolean = false;
     filteredTags: Tag[];
-    contact: Contact;
+    contact: UserItem;
     contactForm: UntypedFormGroup;
-    contacts: Contact[];
+    contacts: UserItem[];
     countries: Country[];
     private _tagsPanelOverlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -112,7 +111,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         // Open the drawer
-        this._contactsListComponent.matDrawer.open();
+        // this._contactsListComponent.matDrawer.open();
 
         // Create the contact form
         this.contactForm = this._formBuilder.group({
@@ -132,7 +131,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         // Get the contacts
         this._contactsService.contacts$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((contacts: Contact[]) => {
+            .subscribe((contacts: UserItem[]) => {
                 this.contacts = contacts;
 
                 // Mark for check
@@ -142,9 +141,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         // Get the contact
         this._contactsService.contact$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((contact: Contact) => {
+            .subscribe((contact: UserItem) => {
                 // Open the drawer in case it is closed
-                this._contactsListComponent.matDrawer.open();
+                // this._contactsListComponent.matDrawer.open();
 
                 // Get the contact
                 this.contact = contact;
@@ -161,16 +160,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Setup the emails form array
                 const emailFormGroups = [];
 
-                if (contact.emails.length > 0) {
-                    // Iterate through them
-                    contact.emails.forEach((email) => {
-                        // Create an email form group
-                        emailFormGroups.push(
-                            this._formBuilder.group({
-                                email: [email.email],
-                                label: [email.label],
-                            })
-                        );
+                if (contact.email.length > 0) {
+                    this._formBuilder.group({
+                        email: [''],
+                        label: [''],
                     });
                 } else {
                     // Create an email form group
@@ -192,17 +185,13 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Setup the phone numbers form array
                 const phoneNumbersFormGroups = [];
 
-                if (contact.phoneNumbers.length > 0) {
+                if (contact.phone.length > 0) {
                     // Iterate through them
-                    contact.phoneNumbers.forEach((phoneNumber) => {
-                        // Create an email form group
-                        phoneNumbersFormGroups.push(
-                            this._formBuilder.group({
-                                country: [phoneNumber.country],
-                                phoneNumber: [phoneNumber.phoneNumber],
-                                label: [phoneNumber.label],
-                            })
-                        );
+
+                    this._formBuilder.group({
+                        country: [''],
+                        phoneNumber: [''],
+                        label: [''],
                     });
                 } else {
                     // Create a phone number form group
@@ -272,8 +261,8 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     /**
      * Close the drawer
      */
-    closeDrawer(): Promise<MatDrawerToggleResult> {
-        return this._contactsListComponent.matDrawer.close();
+    closeDrawer() {
+        // return this._contactsListComponent.matDrawer.close();
     }
 
     /**
@@ -352,7 +341,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
                 // Delete the contact
                 this._contactsService
-                    .deleteContact(id)
+                    .deleteContact(id.toString())
                     .subscribe((isDeleted) => {
                         // Return if the contact wasn't deleted...
                         if (!isDeleted) {
@@ -402,7 +391,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         }
 
         // Upload the avatar
-        this._contactsService.uploadAvatar(this.contact.id, file).subscribe();
+        this._contactsService
+            .uploadAvatar(this.contact.id.toString(), file)
+            .subscribe();
     }
 
     /**
@@ -419,7 +410,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         this._avatarFileInput.nativeElement.value = null;
 
         // Update the contact
-        this.contact.avatar = null;
+        this.contact.avatarUrl = null;
     }
 
     /**
@@ -547,17 +538,17 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         }
 
         // If there is a tag...
-        const tag = this.filteredTags[0];
-        const isTagApplied = this.contact.tags.find((id) => id === tag.id);
+        // const tag = this.filteredTags[0];
+        // const isTagApplied = this.contact.tags.find((id) => id === tag.id);
 
-        // If the found tag is already applied to the contact...
-        if (isTagApplied) {
-            // Remove the tag from the contact
-            this.removeTagFromContact(tag);
-        } else {
-            // Otherwise add the tag to the contact
-            this.addTagToContact(tag);
-        }
+        // // If the found tag is already applied to the contact...
+        // if (isTagApplied) {
+        //     // Remove the tag from the contact
+        //     this.removeTagFromContact(tag);
+        // } else {
+        //     // Otherwise add the tag to the contact
+        //     this.addTagToContact(tag);
+        // }
     }
 
     /**
@@ -571,10 +562,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         };
 
         // Create tag on the server
-        this._contactsService.createTag(tag).subscribe((response) => {
-            // Add the tag to the contact
-            this.addTagToContact(response);
-        });
+        // this._contactsService.createTag(tag).subscribe((response) => {
+        //     // Add the tag to the contact
+        //     this.addTagToContact(response);
+        // });
     }
 
     /**
@@ -615,48 +606,48 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
      *
      * @param tag
      */
-    addTagToContact(tag: Tag): void {
-        // Add the tag
-        this.contact.tags.unshift(tag.id);
+    // addTagToContact(tag: Tag): void {
+    //     // Add the tag
+    //     this.contact.tags.unshift(tag.id);
 
-        // Update the contact form
-        this.contactForm.get('tags').patchValue(this.contact.tags);
+    //     // Update the contact form
+    //     this.contactForm.get('tags').patchValue(this.contact.tags);
 
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
+    //     // Mark for check
+    //     this._changeDetectorRef.markForCheck();
+    // }
 
     /**
      * Remove tag from the contact
      *
      * @param tag
      */
-    removeTagFromContact(tag: Tag): void {
-        // Remove the tag
-        this.contact.tags.splice(
-            this.contact.tags.findIndex((item) => item === tag.id),
-            1
-        );
+    // removeTagFromContact(tag: Tag): void {
+    //     // Remove the tag
+    //     this.contact.tags.splice(
+    //         this.contact.tags.findIndex((item) => item === tag.id),
+    //         1
+    //     );
 
-        // Update the contact form
-        this.contactForm.get('tags').patchValue(this.contact.tags);
+    //     // Update the contact form
+    //     this.contactForm.get('tags').patchValue(this.contact.tags);
 
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
+    //     // Mark for check
+    //     this._changeDetectorRef.markForCheck();
+    // }
 
     /**
      * Toggle contact tag
      *
      * @param tag
      */
-    toggleContactTag(tag: Tag): void {
-        if (this.contact.tags.includes(tag.id)) {
-            this.removeTagFromContact(tag);
-        } else {
-            this.addTagToContact(tag);
-        }
-    }
+    // toggleContactTag(tag: Tag): void {
+    //     if (this.contact.tags.includes(tag.id)) {
+    //         this.removeTagFromContact(tag);
+    //     } else {
+    //         this.addTagToContact(tag);
+    //     }
+    // }
 
     /**
      * Should the create tag button be visible

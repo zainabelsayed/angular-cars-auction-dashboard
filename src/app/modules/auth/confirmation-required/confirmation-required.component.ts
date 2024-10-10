@@ -27,7 +27,6 @@ export class AuthConfirmationRequiredComponent {
         private _router: Router
     ) {}
     onOtpComplete(otp: string) {
-        console.log('OTP Entered:', otp);
         // Send OTP to the server for verification
         this.verifyOtp(otp);
     }

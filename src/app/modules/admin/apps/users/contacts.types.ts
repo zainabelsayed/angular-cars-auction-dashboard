@@ -20,6 +20,52 @@ export interface Contact {
     tags: string[];
 }
 
+export interface UsersPagination {
+    length: number;
+    size: number;
+    page: number;
+    lastPage: number;
+}
+
+interface UserProfile {
+    commerical_numbers?: string;
+}
+
+export interface UserItem {
+    id: number;
+    createdAt: string;
+    deletedAt: string | null;
+    updatedAt: string;
+    name: string;
+    email: string;
+    phone: string;
+    guard: string;
+    isBlocked: boolean;
+    isVerified: boolean | null;
+    termsAndConditions: boolean;
+    packageId: number | null;
+    emailVerifiedAt: string | null;
+    phoneVerifiedAt: string | null;
+    lastLoginAt: string | null;
+    avatarUrl: string | null;
+    isActive: boolean;
+    profile: UserProfile;
+}
+
+interface SearchListData {
+    data: UserItem[];
+    count: number;
+    totalPages: number;
+    currentPage: string;
+}
+
+export interface ApiUserResponse {
+    statusCode: number;
+    timestamp: string;
+    path: string;
+    data: SearchListData;
+}
+
 export interface Country {
     id: string;
     iso: string;

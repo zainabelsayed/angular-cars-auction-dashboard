@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
-    Contact,
+    ApiUserResponse,
     Country,
     Tag,
+    UserItem,
+    UsersPagination,
 } from 'app/modules/admin/apps/users/contacts.types';
 import {
     BehaviorSubject,
@@ -20,16 +22,18 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ContactsService {
     // Private
-    private _contact: BehaviorSubject<Contact | null> = new BehaviorSubject(
+    private _contact: BehaviorSubject<UserItem | null> = new BehaviorSubject(
         null
     );
-    private _contacts: BehaviorSubject<Contact[] | null> = new BehaviorSubject(
+    private _contacts: BehaviorSubject<UserItem[] | null> = new BehaviorSubject(
         null
     );
     private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
         null
     );
     private _tags: BehaviorSubject<Tag[] | null> = new BehaviorSubject(null);
+    private _pagination: BehaviorSubject<UsersPagination | null> =
+        new BehaviorSubject(null);
 
     /**
      * Constructor
@@ -43,14 +47,14 @@ export class ContactsService {
     /**
      * Getter for contact
      */
-    get contact$(): Observable<Contact> {
+    get contact$(): Observable<UserItem> {
         return this._contact.asObservable();
     }
 
     /**
      * Getter for contacts
      */
-    get contacts$(): Observable<Contact[]> {
+    get contacts$(): Observable<UserItem[]> {
         return this._contacts.asObservable();
     }
 
@@ -68,6 +72,10 @@ export class ContactsService {
         return this._tags.asObservable();
     }
 
+    get pagination$(): Observable<UsersPagination> {
+        return this._pagination.asObservable();
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -75,12 +83,31 @@ export class ContactsService {
     /**
      * Get contacts
      */
-    getContacts(): Observable<Contact[]> {
-        return this._httpClient.get<Contact[]>('api/apps/contacts/all').pipe(
-            tap((contacts) => {
-                this._contacts.next(contacts);
-            })
-        );
+    getUsers(
+        page: number = 1,
+        size: number = 10,
+        sort: string = 'id',
+        order: 'asc' | 'desc' | '' = 'asc',
+        search: string = ''
+    ): Observable<ApiUserResponse> {
+        return this._httpClient
+            .post<ApiUserResponse>(
+                `http://10.255.254.45:3000/api/dashboard/user/search-list?page=${page}&limit=${size}&sortBy=${sort}&sortOrder=${order}`,
+                {
+                    params: { keyword: search, status: '', guard: '' },
+                }
+            )
+            .pipe(
+                tap((response) => {
+                    this._pagination.next({
+                        length: response?.data?.count,
+                        size: response.data?.data?.length,
+                        page: parseInt(response?.data?.currentPage) - 1,
+                        lastPage: response?.data?.totalPages,
+                    });
+                    this._contacts.next(response?.data?.data);
+                })
+            );
     }
 
     /**
@@ -88,9 +115,9 @@ export class ContactsService {
      *
      * @param query
      */
-    searchContacts(query: string): Observable<Contact[]> {
+    searchContacts(query: string): Observable<UserItem[]> {
         return this._httpClient
-            .get<Contact[]>('api/apps/contacts/search', {
+            .get<UserItem[]>('api/apps/contacts/search', {
                 params: { query },
             })
             .pipe(
@@ -103,12 +130,13 @@ export class ContactsService {
     /**
      * Get contact by id
      */
-    getContactById(id: string): Observable<Contact> {
+    getContactById(id: string): Observable<UserItem> {
         return this._contacts.pipe(
             take(1),
             map((contacts) => {
                 // Find the contact
-                const contact = contacts.find((item) => item.id === id) || null;
+                const contact =
+                    contacts.find((item) => item.id.toString() === id) || null;
 
                 // Update the contact
                 this._contact.next(contact);
@@ -131,12 +159,12 @@ export class ContactsService {
     /**
      * Create contact
      */
-    createContact(): Observable<Contact> {
+    createContact(): Observable<UserItem> {
         return this.contacts$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
-                    .post<Contact>('api/apps/contacts/contact', {})
+                    .post<UserItem>('api/apps/contacts/contact', {})
                     .pipe(
                         map((newContact) => {
                             // Update the contacts with the new contact
@@ -156,12 +184,12 @@ export class ContactsService {
      * @param id
      * @param contact
      */
-    updateContact(id: string, contact: Contact): Observable<Contact> {
+    updateContact(id: string, contact: UserItem): Observable<UserItem> {
         return this.contacts$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
-                    .patch<Contact>('api/apps/contacts/contact', {
+                    .patch<UserItem>('api/apps/contacts/contact', {
                         id,
                         contact,
                     })
@@ -169,7 +197,7 @@ export class ContactsService {
                         map((updatedContact) => {
                             // Find the index of the updated contact
                             const index = contacts.findIndex(
-                                (item) => item.id === id
+                                (item) => item.id.toString() === id
                             );
 
                             // Update the contact
@@ -184,7 +212,9 @@ export class ContactsService {
                         switchMap((updatedContact) =>
                             this.contact$.pipe(
                                 take(1),
-                                filter((item) => item && item.id === id),
+                                filter(
+                                    (item) => item && item.id.toString() === id
+                                ),
                                 tap(() => {
                                     // Update the contact if it's selected
                                     this._contact.next(updatedContact);
@@ -214,7 +244,7 @@ export class ContactsService {
                         map((isDeleted: boolean) => {
                             // Find the index of the deleted contact
                             const index = contacts.findIndex(
-                                (item) => item.id === id
+                                (item) => item.id.toString() === id
                             );
 
                             // Delete the contact
@@ -349,14 +379,13 @@ export class ContactsService {
                                 map((contacts) => {
                                     // Iterate through the contacts
                                     contacts.forEach((contact) => {
-                                        const tagIndex = contact.tags.findIndex(
-                                            (tag) => tag === id
-                                        );
-
+                                        // const tagIndex = contact.tags.findIndex(
+                                        //     (tag) => tag === id
+                                        // );
                                         // If the contact has the tag, remove it
-                                        if (tagIndex > -1) {
-                                            contact.tags.splice(tagIndex, 1);
-                                        }
+                                        // if (tagIndex > -1) {
+                                        //     contact.tags.splice(tagIndex, 1);
+                                        // }
                                     });
 
                                     // Return the deleted status
@@ -375,12 +404,12 @@ export class ContactsService {
      * @param id
      * @param avatar
      */
-    uploadAvatar(id: string, avatar: File): Observable<Contact> {
+    uploadAvatar(id: string, avatar: File): Observable<UserItem> {
         return this.contacts$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
-                    .post<Contact>(
+                    .post<UserItem>(
                         'api/apps/contacts/avatar',
                         {
                             id,
@@ -397,7 +426,7 @@ export class ContactsService {
                         map((updatedContact) => {
                             // Find the index of the updated contact
                             const index = contacts.findIndex(
-                                (item) => item.id === id
+                                (item) => item.id.toString() === id
                             );
 
                             // Update the contact
@@ -412,7 +441,9 @@ export class ContactsService {
                         switchMap((updatedContact) =>
                             this.contact$.pipe(
                                 take(1),
-                                filter((item) => item && item.id === id),
+                                filter(
+                                    (item) => item && item.id.toString() === id
+                                ),
                                 tap(() => {
                                     // Update the contact if it's selected
                                     this._contact.next(updatedContact);
