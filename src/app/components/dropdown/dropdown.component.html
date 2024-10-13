@@ -1,0 +1,11 @@
+<div class="dropdown" [class.open]="isOpen">
+    <button class="dropdown-toggle" (click)="toggleDropdown()">
+        {{ selectedOption ? selectedOption : placeholder }}
+        <span class="arrow">&#9662;</span>
+    </button>
+    <ul class="dropdown-menu" *ngIf="isOpen">
+        <li *ngFor="let option of options" (click)="selectOption(option)">
+            {{ option }}
+        </li>
+    </ul>
+</div>

@@ -39,6 +39,7 @@ import {
 } from '@angular/material/tabs';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
 import { InventoryService } from 'app/modules/admin/apps/cars/inventory/inventory.service';
 import {
     InventoryBrand,
@@ -108,6 +109,7 @@ import { UsersTableComponent } from '../users-table/users-table.component';
         CurrencyPipe,
         MatTabsModule,
         UsersTableComponent,
+        DropdownComponent,
     ],
 })
 export class ContactsListComponent implements OnInit, OnDestroy {
@@ -232,6 +234,12 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.onTabChange;
+    }
+
+    dropdownOptions = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+
+    onOptionSelected(selected: string): void {
+        console.log('Selected option:', selected);
     }
 
     onTabChange(event: MatTabChangeEvent): void {

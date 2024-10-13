@@ -15,6 +15,12 @@
         <div class="text-4xl font-extrabold tracking-tight">Users</div>
         <!-- Actions -->
         <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
+            <app-dropdown
+                [options]="dropdownOptions"
+                placeholder="Choose a fruit"
+                (optionSelected)="onOptionSelected($event)"
+            >
+            </app-dropdown>
             <!-- Search -->
             <mat-form-field
                 class="fuse-mat-dense fuse-mat-rounded min-w-64"
@@ -32,6 +38,7 @@
                     [placeholder]="'Search products'"
                 />
             </mat-form-field>
+
             <!-- Add product button -->
             <button
                 class="ml-4"

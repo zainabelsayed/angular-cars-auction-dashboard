@@ -10,7 +10,7 @@
         <span
             class="absolute bottom-0 right-0 h-2 w-2 rounded-full"
             [ngClass]="{
-                'mb-px mr-px': !showAvatar || !user.avatar,
+                'mb-px mr-px': !showAvatar || !user?.avatar,
                 'bg-green-500': user?.status === 'online',
                 'bg-amber-500': user?.status === 'away',
                 'bg-red-500': user?.status === 'busy',
