@@ -25,9 +25,11 @@ export class ContactsService {
     private _contact: BehaviorSubject<UserItem | null> = new BehaviorSubject(
         null
     );
-    private _contacts: BehaviorSubject<UserItem[] | null> = new BehaviorSubject(
+    private _users: BehaviorSubject<UserItem[] | null> = new BehaviorSubject(
         null
     );
+    private _adminUsers: BehaviorSubject<UserItem[] | null> =
+        new BehaviorSubject(null);
     private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
         null
     );
@@ -54,8 +56,15 @@ export class ContactsService {
     /**
      * Getter for contacts
      */
-    get contacts$(): Observable<UserItem[]> {
-        return this._contacts.asObservable();
+    get users$(): Observable<UserItem[]> {
+        return this._users.asObservable();
+    }
+
+    /**
+     * Getter for admin users
+     */
+    get adminUsers$(): Observable<UserItem[]> {
+        return this._adminUsers.asObservable();
     }
 
     /**
@@ -88,24 +97,64 @@ export class ContactsService {
         size: number = 10,
         sort: string = 'id',
         order: 'asc' | 'desc' | '' = 'asc',
+        userType: 'web' | 'admin' = 'web',
+        search: string = ''
+    ): Observable<ApiUserResponse> {
+        const isAdmin = userType === 'admin';
+        return !isAdmin
+            ? this._httpClient
+                  .post<ApiUserResponse>(
+                      `http://10.255.254.45:3000/api/dashboard/user/search-list?page=${page}&limit=${size}&sortBy=user.${sort}&sortOrder=${order}`,
+                      {
+                          keyword: search,
+                          status: '',
+                          guard: '',
+                      }
+                  )
+                  .pipe(
+                      tap((response) => {
+                          this._pagination.next({
+                              length: response?.data?.count,
+                              size: 10,
+                              page: parseInt(response?.data?.currentPage) - 1,
+                              lastPage: response?.data?.totalPages,
+                          });
+                          this._users.next(response?.data?.data);
+                      })
+                  )
+            : this.getDashboardUsers(page, size, sort, order, search);
+    }
+
+    getDashboardUsers(
+        page: number = 1,
+        size: number = 10,
+        sort: string = 'id',
+        order: 'asc' | 'desc' | '' = 'asc',
         search: string = ''
     ): Observable<ApiUserResponse> {
         return this._httpClient
             .post<ApiUserResponse>(
-                `http://10.255.254.45:3000/api/dashboard/user/search-list?page=${page}&limit=${size}&sortBy=${sort}&sortOrder=${order}`,
+                `http://10.255.254.45:3000/api/dashboard/admin/search-list?page=${page}&limit=${size}&sortBy=user.${sort}&sortOrder=${order}`,
                 {
-                    params: { keyword: search, status: '', guard: '' },
+                    keyword: search,
+                    status: '',
+                    guard: '',
                 }
             )
             .pipe(
                 tap((response) => {
                     this._pagination.next({
                         length: response?.data?.count,
-                        size: response.data?.data?.length,
+                        size: 10,
                         page: parseInt(response?.data?.currentPage) - 1,
                         lastPage: response?.data?.totalPages,
                     });
-                    this._contacts.next(response?.data?.data);
+                    this._users.next(
+                        response?.data?.data.map((item) => ({
+                            ...item,
+                            isActive: item.isBlocked,
+                        }))
+                    );
                 })
             );
     }
@@ -122,7 +171,7 @@ export class ContactsService {
             })
             .pipe(
                 tap((contacts) => {
-                    this._contacts.next(contacts);
+                    this._users.next(contacts);
                 })
             );
     }
@@ -131,7 +180,7 @@ export class ContactsService {
      * Get contact by id
      */
     getContactById(id: string): Observable<UserItem> {
-        return this._contacts.pipe(
+        return this._users.pipe(
             take(1),
             map((contacts) => {
                 // Find the contact
@@ -160,7 +209,7 @@ export class ContactsService {
      * Create contact
      */
     createContact(): Observable<UserItem> {
-        return this.contacts$.pipe(
+        return this.users$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
@@ -168,7 +217,7 @@ export class ContactsService {
                     .pipe(
                         map((newContact) => {
                             // Update the contacts with the new contact
-                            this._contacts.next([newContact, ...contacts]);
+                            this._users.next([newContact, ...contacts]);
 
                             // Return the new contact
                             return newContact;
@@ -185,7 +234,7 @@ export class ContactsService {
      * @param contact
      */
     updateContact(id: string, contact: UserItem): Observable<UserItem> {
-        return this.contacts$.pipe(
+        return this.users$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
@@ -204,7 +253,7 @@ export class ContactsService {
                             contacts[index] = updatedContact;
 
                             // Update the contacts
-                            this._contacts.next(contacts);
+                            this._users.next(contacts);
 
                             // Return the updated contact
                             return updatedContact;
@@ -235,7 +284,7 @@ export class ContactsService {
      * @param id
      */
     deleteContact(id: string): Observable<boolean> {
-        return this.contacts$.pipe(
+        return this.users$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
@@ -251,7 +300,7 @@ export class ContactsService {
                             contacts.splice(index, 1);
 
                             // Update the contacts
-                            this._contacts.next(contacts);
+                            this._users.next(contacts);
 
                             // Return the deleted status
                             return isDeleted;
@@ -374,7 +423,7 @@ export class ContactsService {
                         }),
                         filter((isDeleted) => isDeleted),
                         switchMap((isDeleted) =>
-                            this.contacts$.pipe(
+                            this.users$.pipe(
                                 take(1),
                                 map((contacts) => {
                                     // Iterate through the contacts
@@ -405,7 +454,7 @@ export class ContactsService {
      * @param avatar
      */
     uploadAvatar(id: string, avatar: File): Observable<UserItem> {
-        return this.contacts$.pipe(
+        return this.users$.pipe(
             take(1),
             switchMap((contacts) =>
                 this._httpClient
@@ -433,7 +482,7 @@ export class ContactsService {
                             contacts[index] = updatedContact;
 
                             // Update the contacts
-                            this._contacts.next(contacts);
+                            this._users.next(contacts);
 
                             // Return the updated contact
                             return updatedContact;

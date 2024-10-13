@@ -5,7 +5,6 @@ import {
     NgTemplateOutlet,
 } from '@angular/common';
 import {
-    AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
@@ -23,19 +22,21 @@ import {
     Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-    MatCheckboxChange,
-    MatCheckboxModule,
-} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import {
+    MatTab,
+    MatTabChangeEvent,
+    MatTabsModule,
+} from '@angular/material/tabs';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { InventoryService } from 'app/modules/admin/apps/cars/inventory/inventory.service';
@@ -52,12 +53,12 @@ import {
     Subject,
     debounceTime,
     map,
-    merge,
     switchMap,
     takeUntil,
 } from 'rxjs';
 import { ContactsService } from '../contacts.service';
 import { UserItem } from '../contacts.types';
+import { UsersTableComponent } from '../users-table/users-table.component';
 
 @Component({
     selector: 'contacts-list',
@@ -66,18 +67,18 @@ import { UserItem } from '../contacts.types';
         /* language=SCSS */
         `
             .inventory-grid {
-                grid-template-columns: 48px auto 40px;
+                grid-template-columns: 120px auto 40px;
 
                 @screen sm {
-                    grid-template-columns: 48px auto 112px 72px;
+                    grid-template-columns: 120px auto 112px 72px;
                 }
 
                 @screen md {
-                    grid-template-columns: 48px 112px auto 112px 72px;
+                    grid-template-columns: 120px 112px auto 112px 72px;
                 }
 
                 @screen lg {
-                    grid-template-columns: 112px 160px auto 120px 120px 120px;
+                    grid-template-columns: 112px 170px auto 120px 160px 120px;
                 }
             }
         `,
@@ -105,11 +106,13 @@ import { UserItem } from '../contacts.types';
         MatRippleModule,
         AsyncPipe,
         CurrencyPipe,
+        MatTabsModule,
+        UsersTableComponent,
     ],
 })
-export class ContactsListComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(MatPaginator) private _paginator: MatPaginator;
+export class ContactsListComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort) private _sort: MatSort;
+    @ViewChild(MatTab) private _tab: MatTab;
 
     users$: Observable<UserItem[]>;
 
@@ -125,7 +128,10 @@ export class ContactsListComponent implements OnInit, AfterViewInit, OnDestroy {
     tags: InventoryTag[];
     tagsEditMode: boolean = false;
     vendors: InventoryVendor[];
+    tableHead: Record<string, string>[];
+    adminTableHead: Record<string, string>[];
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    activeTabIndex: number = 0;
 
     /**
      * Constructor
@@ -170,27 +176,21 @@ export class ContactsListComponent implements OnInit, AfterViewInit, OnDestroy {
             active: [false],
         });
 
-        // Get the brands
-        this._inventoryService.brands$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((brands: InventoryBrand[]) => {
-                // Update the brands
-                this.brands = brands;
+        this.tableHead = [
+            { name: 'Image', id: 'id' },
+            { name: 'Name', id: 'name' },
+            { name: 'Verified', id: 'isVerified' },
+            { name: 'Status', id: 'isActive' },
+            { name: 'Last login', id: 'lastLoginAt' },
+        ];
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
-        // Get the categories
-        this._inventoryService.categories$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((categories: InventoryCategory[]) => {
-                // Update the categories
-                this.categories = categories;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        this.adminTableHead = [
+            { name: 'Image', id: 'id' },
+            { name: 'Name', id: 'name' },
+            { name: 'Role', id: 'role' },
+            { name: 'Status', id: 'isBlocked' },
+            { name: 'Last login', id: 'lastLoginAt' },
+        ];
 
         // Get the pagination
         this._contactsService.pagination$
@@ -204,56 +204,22 @@ export class ContactsListComponent implements OnInit, AfterViewInit, OnDestroy {
             });
 
         // Get the products
-        this.users$ = this._contactsService.contacts$;
-
-        this._contactsService
-            .getUsers(
-                this.pagination.page + 1,
-                this.pagination.size,
-                'id',
-                'asc',
-                ''
-            )
-            .subscribe((users) => {
-                console.log(users);
-            });
-
-        // Get the tags
-        this._inventoryService.tags$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((tags: InventoryTag[]) => {
-                // Update the tags
-                this.tags = tags;
-                this.filteredTags = tags;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
-        // Get the vendors
-        this._inventoryService.vendors$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((vendors: InventoryVendor[]) => {
-                // Update the vendors
-                this.vendors = vendors;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+        this.users$ = this._contactsService.users$;
 
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
             .pipe(
                 takeUntil(this._unsubscribeAll),
-                debounceTime(300),
+                debounceTime(500),
                 switchMap((query) => {
                     this.closeDetails();
                     this.isLoading = true;
                     return this._contactsService.getUsers(
                         this.pagination.page + 1,
                         this.pagination.size,
-                        'id',
+                        this._sort?.active,
                         'asc',
+                        this.activeTabIndex === 1 ? 'admin' : 'web',
                         query
                     );
                 }),
@@ -264,51 +230,23 @@ export class ContactsListComponent implements OnInit, AfterViewInit, OnDestroy {
             .subscribe();
     }
 
-    /**
-     * After view init
-     */
     ngAfterViewInit(): void {
-        if (this._sort && this._paginator) {
-            // Set the initial sort
-            this._sort.sort({
-                id: 'id',
-                start: 'asc',
-                disableClear: true,
-            });
+        this.onTabChange;
+    }
 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-
-            // If the user changes the sort order...
-            this._sort.sortChange
-                .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe(() => {
-                    // Reset back to the first page
-                    this._paginator.pageIndex = 0;
-
-                    // Close the details
-                    this.closeDetails();
-                });
-
-            // Get products if sort or page changes
-            merge(this._sort.sortChange, this._paginator.page)
-                .pipe(
-                    switchMap(() => {
-                        this.closeDetails();
-                        this.isLoading = true;
-                        return this._contactsService.getUsers(
-                            this._paginator.pageIndex + 1,
-                            this._paginator.pageSize,
-                            this._sort.active,
-                            this._sort.direction
-                        );
-                    }),
-                    map(() => {
-                        this.isLoading = false;
-                    })
-                )
-                .subscribe();
-        }
+    onTabChange(event: MatTabChangeEvent): void {
+        this.activeTabIndex = event.index;
+        this._changeDetectorRef.markForCheck();
+        this._contactsService
+            .getUsers(
+                1,
+                this.pagination.size,
+                this._sort?.active,
+                'asc',
+                this.activeTabIndex === 1 ? 'admin' : 'web'
+            )
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe();
     }
 
     /**
@@ -357,205 +295,6 @@ export class ContactsListComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     closeDetails(): void {
         this.selectedUser = null;
-    }
-
-    /**
-     * Cycle through images of selected product
-     */
-    cycleImages(forward: boolean = true): void {
-        // Get the image count and current image index
-        const count = this.selectedProductForm.get('images').value.length;
-        const currentIndex =
-            this.selectedProductForm.get('currentImageIndex').value;
-
-        // Calculate the next and previous index
-        const nextIndex = currentIndex + 1 === count ? 0 : currentIndex + 1;
-        const prevIndex = currentIndex - 1 < 0 ? count - 1 : currentIndex - 1;
-
-        // If cycling forward...
-        if (forward) {
-            this.selectedProductForm
-                .get('currentImageIndex')
-                .setValue(nextIndex);
-        }
-        // If cycling backwards...
-        else {
-            this.selectedProductForm
-                .get('currentImageIndex')
-                .setValue(prevIndex);
-        }
-    }
-
-    /**
-     * Toggle the tags edit mode
-     */
-    toggleTagsEditMode(): void {
-        this.tagsEditMode = !this.tagsEditMode;
-    }
-
-    /**
-     * Filter tags
-     *
-     * @param event
-     */
-    filterTags(event): void {
-        // Get the value
-        const value = event.target.value.toLowerCase();
-
-        // Filter the tags
-        this.filteredTags = this.tags.filter((tag) =>
-            tag.title.toLowerCase().includes(value)
-        );
-    }
-
-    /**
-     * Filter tags input key down event
-     *
-     * @param event
-     */
-    filterTagsInputKeyDown(event): void {
-        // Return if the pressed key is not 'Enter'
-        if (event.key !== 'Enter') {
-            return;
-        }
-
-        // If there is no tag available...
-        if (this.filteredTags.length === 0) {
-            // Create the tag
-            this.createTag(event.target.value);
-
-            // Clear the input
-            event.target.value = '';
-
-            // Return
-            return;
-        }
-
-        // If there is a tag...
-        const tag = this.filteredTags[0];
-        const isTagApplied = this.selectedUser.tags.find((id) => id === tag.id);
-
-        // If the found tag is already applied to the product...
-        if (isTagApplied) {
-            // Remove the tag from the product
-            this.removeTagFromProduct(tag);
-        } else {
-            // Otherwise add the tag to the product
-            this.addTagToProduct(tag);
-        }
-    }
-
-    /**
-     * Create a new tag
-     *
-     * @param title
-     */
-    createTag(title: string): void {
-        const tag = {
-            title,
-        };
-
-        // Create tag on the server
-        this._inventoryService.createTag(tag).subscribe((response) => {
-            // Add the tag to the product
-            this.addTagToProduct(response);
-        });
-    }
-
-    /**
-     * Update the tag title
-     *
-     * @param tag
-     * @param event
-     */
-    updateTagTitle(tag: InventoryTag, event): void {
-        // Update the title on the tag
-        tag.title = event.target.value;
-
-        // Update the tag on the server
-        this._inventoryService
-            .updateTag(tag.id, tag)
-            .pipe(debounceTime(300))
-            .subscribe();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Delete the tag
-     *
-     * @param tag
-     */
-    deleteTag(tag: InventoryTag): void {
-        // Delete the tag from the server
-        this._inventoryService.deleteTag(tag.id).subscribe();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Add tag to the product
-     *
-     * @param tag
-     */
-    addTagToProduct(tag: InventoryTag): void {
-        // Add the tag
-        this.selectedUser.tags.unshift(tag.id);
-
-        // Update the selected product form
-        this.selectedProductForm.get('tags').patchValue(this.selectedUser.tags);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Remove tag from the product
-     *
-     * @param tag
-     */
-    removeTagFromProduct(tag: InventoryTag): void {
-        // Remove the tag
-        this.selectedUser.tags.splice(
-            this.selectedUser.tags.findIndex((item) => item === tag.id),
-            1
-        );
-
-        // Update the selected product form
-        this.selectedProductForm.get('tags').patchValue(this.selectedUser.tags);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Toggle product tag
-     *
-     * @param tag
-     * @param change
-     */
-    toggleProductTag(tag: InventoryTag, change: MatCheckboxChange): void {
-        if (change.checked) {
-            this.addTagToProduct(tag);
-        } else {
-            this.removeTagFromProduct(tag);
-        }
-    }
-
-    /**
-     * Should the create tag button be visible
-     *
-     * @param inputValue
-     */
-    shouldShowCreateTagButton(inputValue: string): boolean {
-        return !!!(
-            inputValue === '' ||
-            this.tags.findIndex(
-                (tag) => tag.title.toLowerCase() === inputValue.toLowerCase()
-            ) > -1
-        );
     }
 
     /**

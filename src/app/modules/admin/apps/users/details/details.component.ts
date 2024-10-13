@@ -129,7 +129,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         });
 
         // Get the contacts
-        this._contactsService.contacts$
+        this._contactsService.users$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((contacts: UserItem[]) => {
                 this.contacts = contacts;

@@ -1,0 +1,164 @@
+<div class="flex flex-auto overflow-scroll">
+    <!-- Users list -->
+    <div
+        class="flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
+    >
+        @if (users$ | async; as users) {
+            @if (users.length > 0) {
+                <div class="grid">
+                    <!-- Header -->
+                    <div
+                        class="inventory-grid text-secondary sticky top-0 z-10 grid w-full gap-4 bg-gray-50 px-6 py-4 text-md font-semibold shadow dark:bg-black dark:bg-opacity-5 md:px-8"
+                        matSort
+                        matSortDisableClear
+                    >
+                        @for (th of tableHead; track trackByFn($index, th)) {
+                            <div
+                                [ngClass]="
+                                    $index === 0
+                                        ? 'hidden md:block'
+                                        : [2, 5].includes($index)
+                                          ? 'hidden sm:block'
+                                          : [3, 4].includes($index)
+                                            ? 'hidden lg:block'
+                                            : 'block'
+                                "
+                                [mat-sort-header]="th.id"
+                            >
+                                {{ th.name }}
+                            </div>
+                        }
+                    </div>
+                    <!-- Rows -->
+                    @if (users$ | async; as users) {
+                        @for (user of users; track trackByFn($index, user)) {
+                            <div
+                                class="inventory-grid grid w-full items-center gap-4 border-b px-6 py-3 md:px-8"
+                            >
+                                <!-- Image -->
+                                <div class="flex items-center">
+                                    <div
+                                        class="relative mr-6 flex h-12 w-12 flex-0 items-center justify-center overflow-hidden rounded border"
+                                    >
+                                        @if (user.avatarUrl) {
+                                            <img
+                                                class="w-full object-cover"
+                                                [alt]="'user image'"
+                                                [src]="user.avatarUrl"
+                                            />
+                                        }
+                                        @if (!user.avatarUrl) {
+                                            <div
+                                                class="flex h-full w-full items-center justify-center text-center text-xs font-semibold uppercase leading-none"
+                                            >
+                                                NO THUMB
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Name -->
+                                <div>
+                                    {{ user.name }}
+                                </div>
+
+                                <!-- Active -->
+                                <div class="hidden lg:block">
+                                    @if (user.isVerified && !isAdminUsers) {
+                                        <mat-icon
+                                            class="text-green-400 icon-size-5"
+                                            [svgIcon]="'heroicons_solid:check'"
+                                        ></mat-icon>
+                                    }
+                                    @if (!user.isVerified && !isAdminUsers) {
+                                        <mat-icon
+                                            class="text-gray-400 icon-size-5"
+                                            [svgIcon]="'heroicons_solid:x-mark'"
+                                        ></mat-icon>
+                                    }
+                                    @if (isAdminUsers) {
+                                        {{ user.guard }}
+                                    }
+                                </div>
+
+                                <!-- Stock -->
+                                <div class="hidden items-center lg:flex">
+                                    <div class="min-w-4">
+                                        <mat-icon
+                                            [ngClass]="
+                                                user.isActive
+                                                    ? 'text-green-500'
+                                                    : 'text-red-500'
+                                            "
+                                            [svgIcon]="
+                                                user.isActive
+                                                    ? 'heroicons_outline:check-circle'
+                                                    : 'heroicons_outline:x-circle'
+                                            "
+                                        ></mat-icon>
+                                    </div>
+                                </div>
+
+                                <!-- Last Login -->
+                                <div class="hidden lg:block">
+                                    {{ user.lastLoginAt }}
+                                </div>
+
+                                <!-- Details button -->
+                                <div class="flex items-center">
+                                    <button
+                                        class="h-7 min-h-7 min-w-10 px-2 leading-6"
+                                    >
+                                        <mat-icon
+                                            class="icon-size-5"
+                                            [svgIcon]="
+                                                'heroicons_outline:no-symbol'
+                                            "
+                                        ></mat-icon>
+                                    </button>
+                                    <button
+                                        class="h-7 min-h-7 min-w-10 px-2 leading-6"
+                                    >
+                                        <mat-icon
+                                            class="text-red-500 icon-size-5"
+                                            [svgIcon]="
+                                                'heroicons_outline:trash'
+                                            "
+                                        ></mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid">
+                                @if (selectedUser?.id === user.id) {
+                                    <ng-container
+                                        *ngTemplateOutlet="
+                                            rowDetailsTemplate;
+                                            context: {
+                                                $implicit: user,
+                                            }
+                                        "
+                                    ></ng-container>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+
+                <mat-paginator
+                    class="z-10 border-b bg-gray-50 dark:bg-transparent sm:absolute sm:inset-x-0 sm:bottom-0 sm:border-b-0 sm:border-t"
+                    [ngClass]="{ 'pointer-events-none': isLoading }"
+                    [length]="pagination.length"
+                    [pageIndex]="pagination.page"
+                    [pageSize]="pagination.size"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                ></mat-paginator>
+            } @else {
+                <div
+                    class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16"
+                >
+                    There are no users!
+                </div>
+            }
+        }
+    </div>
+</div>

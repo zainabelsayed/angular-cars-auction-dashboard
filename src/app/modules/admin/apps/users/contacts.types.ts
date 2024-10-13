@@ -78,3 +78,11 @@ export interface Tag {
     id?: string;
     title?: string;
 }
+
+export interface UserListVariables {
+    page: number;
+    size: number;
+    sort: string;
+    order: string;
+    search: string;
+}

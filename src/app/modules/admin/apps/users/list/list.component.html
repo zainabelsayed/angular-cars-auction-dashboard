@@ -3,7 +3,7 @@
 >
     <!-- Header -->
     <div
-        class="relative flex flex-0 flex-col border-b px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8"
+        class="relative flex flex-0 flex-col px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8"
     >
         <!-- Loader -->
         @if (isLoading) {
@@ -39,189 +39,35 @@
                 [color]="'primary'"
                 (click)="createProduct()"
             >
-                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                <span class="ml-2 mr-1">Add</span>
+                <mat-icon
+                    [svgIcon]="'heroicons_outline:plus'"
+                    class="icon-size-5 md:icon-size-6"
+                ></mat-icon>
+                <span class="ml-2 mr-1 text-sm md:text-lg">Add</span>
             </button>
         </div>
     </div>
 
-    <!-- Main -->
-    <div class="flex flex-auto overflow-hidden">
-        <!-- Products list -->
-        <div
-            class="flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
-        >
-            @if (users$ | async; as users) {
-                @if (users.length > 0) {
-                    <div class="grid">
-                        <!-- Header -->
-                        <div
-                            class="inventory-grid text-secondary sticky top-0 z-10 grid w-full gap-4 bg-gray-50 px-6 py-4 text-md font-semibold shadow dark:bg-black dark:bg-opacity-5 md:px-8"
-                            matSort
-                            matSortDisableClear
-                        >
-                            <div
-                                class="hidden md:block"
-                                [mat-sort-header]="'sku'"
-                            >
-                                Image
-                            </div>
-                            <div class="px-8" [mat-sort-header]="'name'">
-                                Name
-                            </div>
-                            <div
-                                class="hidden sm:block"
-                                [mat-sort-header]="'price'"
-                            >
-                                Last login
-                            </div>
-                            <div
-                                class="hidden lg:block"
-                                [mat-sort-header]="'stock'"
-                            >
-                                Status
-                            </div>
-                            <div
-                                class="hidden lg:block"
-                                [mat-sort-header]="'active'"
-                            >
-                                Verify
-                            </div>
-                            <div class="hidden sm:block">Actions</div>
-                        </div>
-                        <!-- Rows -->
-                        @if (users$ | async; as users) {
-                            @for (
-                                user of users;
-                                track trackByFn($index, user)
-                            ) {
-                                <div
-                                    class="inventory-grid grid w-full items-center gap-4 border-b px-6 py-3 md:px-8"
-                                >
-                                    <!-- Image -->
-                                    <div class="flex items-center">
-                                        <div
-                                            class="relative mr-6 flex h-12 w-12 flex-0 items-center justify-center overflow-hidden rounded border"
-                                        >
-                                            @if (user.avatarUrl) {
-                                                <img
-                                                    class="w-full"
-                                                    [alt]="'user image'"
-                                                    [src]="user.avatarUrl"
-                                                />
-                                            }
-                                            @if (!user.avatarUrl) {
-                                                <div
-                                                    class="flex h-full w-full items-center justify-center text-center text-xs font-semibold uppercase leading-none"
-                                                >
-                                                    NO THUMB
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <!-- Name -->
-                                    <div class="px-8">
-                                        {{ user.name }}
-                                    </div>
-
-                                    <!-- Last Login -->
-                                    <div class="hidden sm:block">
-                                        {{ user.lastLoginAt }}
-                                    </div>
-
-                                    <!-- Stock -->
-                                    <div class="hidden items-center lg:flex">
-                                        <div class="min-w-4">
-                                            <mat-icon
-                                                [ngClass]="
-                                                    user.isActive
-                                                        ? 'text-green-500'
-                                                        : 'text-red-500'
-                                                "
-                                                [svgIcon]="
-                                                    user.isActive
-                                                        ? 'heroicons_outline:check-circle'
-                                                        : 'heroicons_outline:x-circle'
-                                                "
-                                            ></mat-icon>
-                                        </div>
-                                    </div>
-
-                                    <!-- Active -->
-                                    <div class="hidden lg:block">
-                                        @if (user.isVerified) {
-                                            <mat-icon
-                                                class="text-green-400 icon-size-5"
-                                                [svgIcon]="
-                                                    'heroicons_solid:check'
-                                                "
-                                            ></mat-icon>
-                                        }
-                                        @if (!user.isVerified) {
-                                            <mat-icon
-                                                class="text-gray-400 icon-size-5"
-                                                [svgIcon]="
-                                                    'heroicons_solid:x-mark'
-                                                "
-                                            ></mat-icon>
-                                        }
-                                    </div>
-
-                                    <!-- Details button -->
-                                    <div class="flex items-center">
-                                        <button
-                                            class="h-7 min-h-7 min-w-10 px-2 leading-6"
-                                        >
-                                            <mat-icon
-                                                class="icon-size-5"
-                                                [svgIcon]="
-                                                    'heroicons_outline:no-symbol'
-                                                "
-                                            ></mat-icon>
-                                        </button>
-                                        <button
-                                            class="h-7 min-h-7 min-w-10 px-2 leading-6"
-                                        >
-                                            <mat-icon
-                                                class="text-red-500 icon-size-5"
-                                                [svgIcon]="
-                                                    'heroicons_outline:trash'
-                                                "
-                                            ></mat-icon>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="grid">
-                                    @if (selectedUser?.id === user.id) {
-                                        <ng-container
-                                            *ngTemplateOutlet="
-                                                rowDetailsTemplate;
-                                                context: { $implicit: user }
-                                            "
-                                        ></ng-container>
-                                    }
-                                </div>
-                            }
-                        }
-                    </div>
-
-                    <mat-paginator
-                        class="z-10 border-b bg-gray-50 dark:bg-transparent sm:absolute sm:inset-x-0 sm:bottom-0 sm:border-b-0 sm:border-t"
-                        [ngClass]="{ 'pointer-events-none': isLoading }"
-                        [length]="pagination.length"
-                        [pageIndex]="pagination.page"
-                        [pageSize]="pagination.size"
-                        [pageSizeOptions]="[5, 10, 25, 100]"
-                    ></mat-paginator>
-                } @else {
-                    <div
-                        class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16"
-                    >
-                        There are no users!
-                    </div>
-                }
-            }
-        </div>
-    </div>
+    <mat-tab-group
+        class="overflow-y-scroll"
+        (selectedTabChange)="onTabChange($event)"
+    >
+        <mat-tab label="Web users">
+            <!-- Main -->
+            <app-users-table
+                [users$]="users$"
+                [tableHead]="tableHead"
+                [pagination]="pagination"
+                [activeTabIndex]="'web'"
+            />
+        </mat-tab>
+        <mat-tab label="Dashboard users">
+            <app-users-table
+                [users$]="users$"
+                [tableHead]="adminTableHead"
+                [pagination]="pagination"
+                [activeTabIndex]="'admin'"
+            />
+        </mat-tab>
+    </mat-tab-group>
 </div>
