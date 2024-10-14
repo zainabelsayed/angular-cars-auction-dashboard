@@ -42,7 +42,7 @@ import {
     UserItem,
 } from 'app/modules/admin/apps/users/contacts.types';
 import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
-import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'contacts-details',
@@ -227,17 +227,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
-        // Get the tags
-        this._contactsService.tags$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((tags: Tag[]) => {
-                this.tags = tags;
-                this.filteredTags = tags;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
     }
 
     /**
@@ -341,7 +330,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
                 // Delete the contact
                 this._contactsService
-                    .deleteContact(id.toString())
+                    .deleteUser(id.toString())
                     .subscribe((isDeleted) => {
                         // Return if the contact wasn't deleted...
                         if (!isDeleted) {
@@ -390,10 +379,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        // Upload the avatar
-        this._contactsService
-            .uploadAvatar(this.contact.id.toString(), file)
-            .subscribe();
+        // // Upload the avatar
+        // this._contactsService
+        //     .uploadAvatar(this.contact.id.toString(), file)
+        //     .subscribe();
     }
 
     /**
@@ -566,39 +555,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         //     // Add the tag to the contact
         //     this.addTagToContact(response);
         // });
-    }
-
-    /**
-     * Update the tag title
-     *
-     * @param tag
-     * @param event
-     */
-    updateTagTitle(tag: Tag, event): void {
-        // Update the title on the tag
-        tag.title = event.target.value;
-
-        // Update the tag on the server
-        this._contactsService
-            .updateTag(tag.id, tag)
-            .pipe(debounceTime(300))
-            .subscribe();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Delete the tag
-     *
-     * @param tag
-     */
-    deleteTag(tag: Tag): void {
-        // Delete the tag from the server
-        this._contactsService.deleteTag(tag.id).subscribe();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
     }
 
     /**

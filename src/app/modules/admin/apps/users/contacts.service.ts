@@ -1,17 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
+    ApiRoleList,
     ApiUserResponse,
     Country,
-    Tag,
     UserItem,
+    userParams,
     UsersPagination,
 } from 'app/modules/admin/apps/users/contacts.types';
 import {
     BehaviorSubject,
-    Observable,
     filter,
     map,
+    Observable,
     of,
     switchMap,
     take,
@@ -33,7 +34,8 @@ export class ContactsService {
     private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
         null
     );
-    private _tags: BehaviorSubject<Tag[] | null> = new BehaviorSubject(null);
+    private _roles: BehaviorSubject<Record<string, string>[]> =
+        new BehaviorSubject([]);
     private _pagination: BehaviorSubject<UsersPagination | null> =
         new BehaviorSubject(null);
 
@@ -77,12 +79,17 @@ export class ContactsService {
     /**
      * Getter for tags
      */
-    get tags$(): Observable<Tag[]> {
-        return this._tags.asObservable();
-    }
 
     get pagination$(): Observable<UsersPagination> {
         return this._pagination.asObservable();
+    }
+
+    /**
+     * Getter for roles
+     */
+
+    getRolesList(): Observable<Record<string, string>[]> {
+        return this._roles.asObservable();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -92,23 +99,28 @@ export class ContactsService {
     /**
      * Get contacts
      */
-    getUsers(
-        page: number = 1,
-        size: number = 10,
-        sort: string = 'id',
-        order: 'asc' | 'desc' | '' = 'asc',
-        userType: 'web' | 'admin' = 'web',
-        search: string = ''
-    ): Observable<ApiUserResponse> {
+
+    getUsers(params: userParams): Observable<ApiUserResponse> {
+        const {
+            page = 1,
+            size,
+            sort,
+            order,
+            search,
+            userType,
+            status = '',
+            guard = '',
+        } = params;
         const isAdmin = userType === 'admin';
+        const sortName = sort ? `user.${sort}` : '';
         return !isAdmin
             ? this._httpClient
                   .post<ApiUserResponse>(
-                      `http://10.255.254.45:3000/api/dashboard/user/search-list?page=${page}&limit=${size}&sortBy=user.${sort}&sortOrder=${order}`,
+                      `http://10.255.254.45:3000/api/dashboard/user/search-list?page=${page}&limit=${size}&sortBy=${sortName}&sortOrder=${order}`,
                       {
                           keyword: search,
-                          status: '',
-                          guard: '',
+                          status,
+                          guard,
                       }
                   )
                   .pipe(
@@ -122,23 +134,21 @@ export class ContactsService {
                           this._users.next(response?.data?.data);
                       })
                   )
-            : this.getDashboardUsers(page, size, sort, order, search);
+            : this.getDashboardUsers(params);
     }
 
-    getDashboardUsers(
-        page: number = 1,
-        size: number = 10,
-        sort: string = 'id',
-        order: 'asc' | 'desc' | '' = 'asc',
-        search: string = ''
-    ): Observable<ApiUserResponse> {
+    getDashboardUsers(params: userParams): Observable<ApiUserResponse> {
+        const { page, size, sort, order, search, status = '', guard } = params;
+        const sortName = sort ? `user.${sort}` : '';
+        const roleId = typeof guard === 'number' ? guard : null;
+
         return this._httpClient
             .post<ApiUserResponse>(
-                `http://10.255.254.45:3000/api/dashboard/admin/search-list?page=${page}&limit=${size}&sortBy=user.${sort}&sortOrder=${order}`,
+                `http://10.255.254.45:3000/api/dashboard/admin/search-list?page=${page}&limit=${size}&sortBy=${sortName}&sortOrder=${order}`,
                 {
                     keyword: search,
-                    status: '',
-                    guard: '',
+                    status,
+                    roleId,
                 }
             )
             .pipe(
@@ -159,19 +169,16 @@ export class ContactsService {
             );
     }
 
-    /**
-     * Search contacts with given query
-     *
-     * @param query
-     */
-    searchContacts(query: string): Observable<UserItem[]> {
+    // get roles
+
+    getRoles(): Observable<ApiRoleList> {
         return this._httpClient
-            .get<UserItem[]>('api/apps/contacts/search', {
-                params: { query },
-            })
+            .get<any>(
+                'http://10.255.254.45:3000/api/dashboard/role/list?page=1&limit=20&sortBy=id&sortOrder=asc'
+            )
             .pipe(
-                tap((contacts) => {
-                    this._users.next(contacts);
+                tap((roles) => {
+                    this._roles.next(roles?.data?.data);
                 })
             );
     }
@@ -283,30 +290,55 @@ export class ContactsService {
      *
      * @param id
      */
-    deleteContact(id: string): Observable<boolean> {
+    deleteUser(id: string): Observable<boolean> {
         return this.users$.pipe(
             take(1),
-            switchMap((contacts) =>
+            switchMap((users) =>
                 this._httpClient
-                    .delete('api/apps/contacts/contact', { params: { id } })
+                    .delete(
+                        `http://10.255.254.45:3000/api/dashboard/user/delete/${id}`
+                    )
                     .pipe(
                         map((isDeleted: boolean) => {
                             // Find the index of the deleted contact
-                            const index = contacts.findIndex(
+                            const index = users.findIndex(
                                 (item) => item.id.toString() === id
                             );
 
                             // Delete the contact
-                            contacts.splice(index, 1);
+                            users.splice(index, 1);
 
                             // Update the contacts
-                            this._users.next(contacts);
+                            this._users.next(users);
 
                             // Return the deleted status
                             return isDeleted;
                         })
                     )
             )
+        );
+    }
+
+    /**
+     * toggle active user
+     *  @param id
+     */
+
+    toggleActiveUser(id): Observable<ApiRoleList> {
+        return this._httpClient.get<any>(
+            `http://10.255.254.45:3000/api/dashboard/user/change-active/${id}`
+        );
+    }
+
+    /**
+     * toggle block user
+     *  @param id
+     */
+
+    toggleBlockUser(id, type): Observable<ApiRoleList> {
+        const userType = type === 'admin' ? 'admin' : 'user';
+        return this._httpClient.get<any>(
+            `http://10.255.254.45:3000/api/dashboard/${userType}/change-block/${id}`
         );
     }
 
@@ -321,189 +353,5 @@ export class ContactsService {
                     this._countries.next(countries);
                 })
             );
-    }
-
-    /**
-     * Get tags
-     */
-    getTags(): Observable<Tag[]> {
-        return this._httpClient.get<Tag[]>('api/apps/contacts/tags').pipe(
-            tap((tags) => {
-                this._tags.next(tags);
-            })
-        );
-    }
-
-    /**
-     * Create tag
-     *
-     * @param tag
-     */
-    createTag(tag: Tag): Observable<Tag> {
-        return this.tags$.pipe(
-            take(1),
-            switchMap((tags) =>
-                this._httpClient
-                    .post<Tag>('api/apps/contacts/tag', { tag })
-                    .pipe(
-                        map((newTag) => {
-                            // Update the tags with the new tag
-                            this._tags.next([...tags, newTag]);
-
-                            // Return new tag from observable
-                            return newTag;
-                        })
-                    )
-            )
-        );
-    }
-
-    /**
-     * Update the tag
-     *
-     * @param id
-     * @param tag
-     */
-    updateTag(id: string, tag: Tag): Observable<Tag> {
-        return this.tags$.pipe(
-            take(1),
-            switchMap((tags) =>
-                this._httpClient
-                    .patch<Tag>('api/apps/contacts/tag', {
-                        id,
-                        tag,
-                    })
-                    .pipe(
-                        map((updatedTag) => {
-                            // Find the index of the updated tag
-                            const index = tags.findIndex(
-                                (item) => item.id === id
-                            );
-
-                            // Update the tag
-                            tags[index] = updatedTag;
-
-                            // Update the tags
-                            this._tags.next(tags);
-
-                            // Return the updated tag
-                            return updatedTag;
-                        })
-                    )
-            )
-        );
-    }
-
-    /**
-     * Delete the tag
-     *
-     * @param id
-     */
-    deleteTag(id: string): Observable<boolean> {
-        return this.tags$.pipe(
-            take(1),
-            switchMap((tags) =>
-                this._httpClient
-                    .delete('api/apps/contacts/tag', { params: { id } })
-                    .pipe(
-                        map((isDeleted: boolean) => {
-                            // Find the index of the deleted tag
-                            const index = tags.findIndex(
-                                (item) => item.id === id
-                            );
-
-                            // Delete the tag
-                            tags.splice(index, 1);
-
-                            // Update the tags
-                            this._tags.next(tags);
-
-                            // Return the deleted status
-                            return isDeleted;
-                        }),
-                        filter((isDeleted) => isDeleted),
-                        switchMap((isDeleted) =>
-                            this.users$.pipe(
-                                take(1),
-                                map((contacts) => {
-                                    // Iterate through the contacts
-                                    contacts.forEach((contact) => {
-                                        // const tagIndex = contact.tags.findIndex(
-                                        //     (tag) => tag === id
-                                        // );
-                                        // If the contact has the tag, remove it
-                                        // if (tagIndex > -1) {
-                                        //     contact.tags.splice(tagIndex, 1);
-                                        // }
-                                    });
-
-                                    // Return the deleted status
-                                    return isDeleted;
-                                })
-                            )
-                        )
-                    )
-            )
-        );
-    }
-
-    /**
-     * Update the avatar of the given contact
-     *
-     * @param id
-     * @param avatar
-     */
-    uploadAvatar(id: string, avatar: File): Observable<UserItem> {
-        return this.users$.pipe(
-            take(1),
-            switchMap((contacts) =>
-                this._httpClient
-                    .post<UserItem>(
-                        'api/apps/contacts/avatar',
-                        {
-                            id,
-                            avatar,
-                        },
-                        {
-                            headers: {
-                                // eslint-disable-next-line @typescript-eslint/naming-convention
-                                'Content-Type': avatar.type,
-                            },
-                        }
-                    )
-                    .pipe(
-                        map((updatedContact) => {
-                            // Find the index of the updated contact
-                            const index = contacts.findIndex(
-                                (item) => item.id.toString() === id
-                            );
-
-                            // Update the contact
-                            contacts[index] = updatedContact;
-
-                            // Update the contacts
-                            this._users.next(contacts);
-
-                            // Return the updated contact
-                            return updatedContact;
-                        }),
-                        switchMap((updatedContact) =>
-                            this.contact$.pipe(
-                                take(1),
-                                filter(
-                                    (item) => item && item.id.toString() === id
-                                ),
-                                tap(() => {
-                                    // Update the contact if it's selected
-                                    this._contact.next(updatedContact);
-
-                                    // Return the updated contact
-                                    return updatedContact;
-                                })
-                            )
-                        )
-                    )
-            )
-        );
     }
 }

@@ -1,43 +1,35 @@
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-toggle {
-    background-color: white;
-    color: black;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 200px;
-}
-
-.dropdown-toggle .arrow {
-    margin-left: 10px;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
+/* Change the background color of the mat-form-field */
+mat-form-field {
+    height: 65px;
     width: 100%;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    list-style: none;
-    padding: 0;
-    margin: 0;
 }
 
-.dropdown-menu li {
-    padding: 10px 20px;
-    cursor: pointer;
+/* Change the color and font size of the label */
+mat-form-field.mat-form-field {
+    color: #3f51b5;
+    font-size: 16px;
 }
 
-.dropdown-menu li:hover {
-    background-color: #f1f1f1;
+/* Change the color of the mat-select placeholder text */
+.mat-select-placeholder {
+    color: #9e9e9e;
+    font-style: italic;
+}
+
+/* Change the selected option text color and background */
+.mat-select-value {
+    color: #2196f3;
+    font-weight: bold;
+}
+
+/* Customize the options in the dropdown */
+.mat-option {
+    font-size: 14px;
+    padding: 10px;
+}
+
+/* Change the background color of selected options */
+.mat-option.mat-active {
+    background-color: #e0f7fa !important;
+    color: #00796b;
 }

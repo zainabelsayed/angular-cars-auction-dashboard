@@ -74,13 +74,16 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
                 .pipe(
                     switchMap(() => {
                         this.isLoading = true;
-                        return this._contactsService.getUsers(
-                            this._paginator.pageIndex + 1,
-                            this._paginator.pageSize,
-                            this._sort.active,
-                            this._sort.direction,
-                            this.activeTabIndex === 'admin' ? 'admin' : 'web'
-                        );
+                        return this._contactsService.getUsers({
+                            page: this._paginator.pageIndex + 1,
+                            size: this._paginator.pageSize,
+                            sort: this._sort.active,
+                            order: this._sort.direction,
+                            userType:
+                                this.activeTabIndex === 'admin'
+                                    ? 'admin'
+                                    : 'web',
+                        });
                     }),
                     map(() => {
                         this.isLoading = false;
@@ -88,6 +91,33 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
                 )
                 .subscribe();
         }
+    }
+
+    toggleBlock(id: string): void {
+        this._contactsService
+            .toggleBlockUser(id, this.activeTabIndex)
+            .subscribe(() => {
+                this.updateUsersList();
+            });
+    }
+
+    toggleActive(id: string): void {
+        this._contactsService.toggleActiveUser(id).subscribe(() => {
+            this.updateUsersList();
+        });
+    }
+
+    updateUsersList() {
+        this._contactsService
+            .getUsers({
+                page: 1,
+                size: this.pagination.size,
+                sort: this._sort?.active,
+                order: 'asc',
+                userType: this.activeTabIndex === 'admin' ? 'admin' : 'web',
+            })
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe();
     }
 
     trackByFn(index: number, item: any): any {

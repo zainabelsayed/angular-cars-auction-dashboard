@@ -32,22 +32,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import {
-    MatTab,
-    MatTabChangeEvent,
-    MatTabsModule,
-} from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
 import { InventoryService } from 'app/modules/admin/apps/cars/inventory/inventory.service';
 import {
-    InventoryBrand,
-    InventoryCategory,
     InventoryPagination,
     InventoryProduct,
-    InventoryTag,
-    InventoryVendor,
 } from 'app/modules/admin/apps/cars/inventory/inventory.types';
 import {
     Observable,
@@ -58,8 +49,9 @@ import {
     takeUntil,
 } from 'rxjs';
 import { ContactsService } from '../contacts.service';
-import { UserItem } from '../contacts.types';
+import { InputOption, UserItem } from '../contacts.types';
 import { UsersTableComponent } from '../users-table/users-table.component';
+import { ExcelExportService } from '../utils';
 
 @Component({
     selector: 'contacts-list',
@@ -79,7 +71,7 @@ import { UsersTableComponent } from '../users-table/users-table.component';
                 }
 
                 @screen lg {
-                    grid-template-columns: 112px 170px auto 120px 160px 120px;
+                    grid-template-columns: 112px 170px auto 120px 160px 120px 120px;
                 }
             }
         `,
@@ -114,33 +106,41 @@ import { UsersTableComponent } from '../users-table/users-table.component';
 })
 export class ContactsListComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort) private _sort: MatSort;
-    @ViewChild(MatTab) private _tab: MatTab;
 
     users$: Observable<UserItem[]>;
+    adminRoles: InputOption[];
 
-    brands: InventoryBrand[];
-    categories: InventoryCategory[];
-    filteredTags: InventoryTag[];
-    flashMessage: 'success' | 'error' | null = null;
     isLoading: boolean = false;
     pagination: InventoryPagination;
     searchInputControl: UntypedFormControl = new UntypedFormControl();
     selectedUser: InventoryProduct | null = null;
     selectedProductForm: UntypedFormGroup;
-    tags: InventoryTag[];
-    tagsEditMode: boolean = false;
-    vendors: InventoryVendor[];
     tableHead: Record<string, string>[];
     adminTableHead: Record<string, string>[];
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     activeTabIndex: number = 0;
+    selectedStatusOption: string | undefined;
+    selectedRoleOption: string | undefined;
+
+    statusOptions = [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+        { value: 'blocked', label: 'Blocked' },
+        { value: 'unblocked', label: 'Unblocked' },
+    ];
+
+    webRolesOptions = [
+        { value: 'user', label: 'Individual' },
+        { value: 'org', label: 'Organization' },
+    ];
+
+    roleOptions: InputOption[] = this.webRolesOptions;
 
     /**
      * Constructor
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseConfirmationService: FuseConfirmationService,
         private _formBuilder: UntypedFormBuilder,
         private _inventoryService: InventoryService,
         private _contactsService: ContactsService
@@ -183,6 +183,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
             { name: 'Name', id: 'name' },
             { name: 'Verified', id: 'isVerified' },
             { name: 'Status', id: 'isActive' },
+            { name: 'Blocked', id: 'isBlocked' },
             { name: 'Last login', id: 'lastLoginAt' },
         ];
 
@@ -190,7 +191,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
             { name: 'Image', id: 'id' },
             { name: 'Name', id: 'name' },
             { name: 'Role', id: 'role' },
-            { name: 'Status', id: 'isBlocked' },
+            { name: 'Blocked', id: 'isBlocked' },
             { name: 'Last login', id: 'lastLoginAt' },
         ];
 
@@ -208,6 +209,13 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         // Get the products
         this.users$ = this._contactsService.users$;
 
+        this._contactsService.getRoles().subscribe((roles) => {
+            this.adminRoles = roles.data.data.map((role) => ({
+                value: role.id,
+                label: role.title,
+            }));
+        });
+
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
             .pipe(
@@ -216,14 +224,14 @@ export class ContactsListComponent implements OnInit, OnDestroy {
                 switchMap((query) => {
                     this.closeDetails();
                     this.isLoading = true;
-                    return this._contactsService.getUsers(
-                        this.pagination.page + 1,
-                        this.pagination.size,
-                        this._sort?.active,
-                        'asc',
-                        this.activeTabIndex === 1 ? 'admin' : 'web',
-                        query
-                    );
+                    return this._contactsService.getUsers({
+                        page: this.pagination.page + 1,
+                        size: this.pagination.size,
+                        sort: this._sort?.active,
+                        order: 'asc',
+                        userType: this.activeTabIndex === 1 ? 'admin' : 'web',
+                        search: query,
+                    });
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -236,23 +244,62 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         this.onTabChange;
     }
 
-    dropdownOptions = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+    resetFilters() {
+        this.selectedRoleOption = null;
+        this.selectedStatusOption = null;
+        this.updateUsersList();
+    }
 
-    onOptionSelected(selected: string): void {
-        console.log('Selected option:', selected);
+    exportToExcel() {
+        let tableData: any[] = [];
+        this.users$.subscribe((users) => {
+            tableData = users.map((user) => ({
+                Image: user.avatarUrl,
+                Name: user.name,
+                Verified: user.isVerified,
+                Status: user.isActive ? 'Active' : 'Inactive',
+                LastLogin: user.lastLoginAt,
+                Role: user?.guard,
+                Blocked: user.isBlocked ? 'Yes' : 'No',
+            }));
+        });
+        ExcelExportService.exportToExcel('users', tableData);
+    }
+
+    onStatusChange(value: string) {
+        this.selectedStatusOption = value;
+        this.updateUsersList();
+    }
+
+    onRoleChange(value: string) {
+        this.selectedRoleOption = value;
+        this.updateUsersList();
     }
 
     onTabChange(event: MatTabChangeEvent): void {
         this.activeTabIndex = event.index;
         this._changeDetectorRef.markForCheck();
+        this.updateUsersList();
+        this.selectedRoleOption = null;
+        this.selectedStatusOption = null;
+        if (this.activeTabIndex === 1) {
+            (this.roleOptions as InputOption[]) = this.adminRoles;
+        } else {
+            this.roleOptions = this.webRolesOptions;
+        }
+    }
+
+    updateUsersList() {
         this._contactsService
-            .getUsers(
-                1,
-                this.pagination.size,
-                this._sort?.active,
-                'asc',
-                this.activeTabIndex === 1 ? 'admin' : 'web'
-            )
+            .getUsers({
+                page: 1,
+                size: this.pagination.size,
+                sort: this._sort?.active,
+                order: 'asc',
+                userType: this.activeTabIndex === 1 ? 'admin' : 'web',
+                guard: this.selectedRoleOption,
+                status: this.selectedStatusOption,
+            })
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe();
     }
@@ -303,95 +350,6 @@ export class ContactsListComponent implements OnInit, OnDestroy {
      */
     closeDetails(): void {
         this.selectedUser = null;
-    }
-
-    /**
-     * Create product
-     */
-    createProduct(): void {
-        // Create the product
-        this._inventoryService.createProduct().subscribe((newProduct) => {
-            // Go to new product
-            this.selectedUser = newProduct;
-
-            // Fill the form
-            this.selectedProductForm.patchValue(newProduct);
-
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
-    }
-
-    /**
-     * Update the selected product using the form data
-     */
-    updateSelectedProduct(): void {
-        // Get the product object
-        const product = this.selectedProductForm.getRawValue();
-
-        // Remove the currentImageIndex field
-        delete product.currentImageIndex;
-
-        // Update the product on the server
-        this._inventoryService
-            .updateProduct(product.id, product)
-            .subscribe(() => {
-                // Show a success message
-                this.showFlashMessage('success');
-            });
-    }
-
-    /**
-     * Delete the selected product using the form data
-     */
-    deleteSelectedProduct(): void {
-        // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
-            title: 'Delete product',
-            message:
-                'Are you sure you want to remove this product? This action cannot be undone!',
-            actions: {
-                confirm: {
-                    label: 'Delete',
-                },
-            },
-        });
-
-        // Subscribe to the confirmation dialog closed action
-        confirmation.afterClosed().subscribe((result) => {
-            // If the confirm button pressed...
-            if (result === 'confirmed') {
-                // Get the product object
-                const product = this.selectedProductForm.getRawValue();
-
-                // Delete the product on the server
-                this._inventoryService
-                    .deleteProduct(product.id)
-                    .subscribe(() => {
-                        // Close the details
-                        this.closeDetails();
-                    });
-            }
-        });
-    }
-
-    /**
-     * Show flash message
-     */
-    showFlashMessage(type: 'success' | 'error'): void {
-        // Show the message
-        this.flashMessage = type;
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-
-        // Hide it after 3 seconds
-        setTimeout(() => {
-            this.flashMessage = null;
-
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        }, 3000);
     }
 
     /**

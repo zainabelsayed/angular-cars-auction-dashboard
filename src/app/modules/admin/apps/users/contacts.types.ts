@@ -86,3 +86,42 @@ export interface UserListVariables {
     order: string;
     search: string;
 }
+
+export interface userParams {
+    page: number;
+    size: number;
+    sort: string;
+    order: 'asc' | 'desc' | '';
+    userType: 'web' | 'admin';
+    search?: string;
+    status?: string;
+    guard?: string;
+}
+
+export interface Role {
+    id: number;
+    createdAt: string;
+    deletedAt: string | null;
+    updatedAt: string;
+    title: string;
+    description: string | null;
+}
+
+export interface RoleListData {
+    data: Role[];
+    count: number;
+    totalPages: number;
+    currentPage: string;
+}
+
+export interface ApiRoleList {
+    statusCode: number;
+    timestamp: string;
+    path: string;
+    data: RoleListData;
+}
+
+export interface InputOption {
+    label: string;
+    value: number | string;
+}

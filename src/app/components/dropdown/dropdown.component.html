@@ -1,11 +1,13 @@
-<div class="dropdown" [class.open]="isOpen">
-    <button class="dropdown-toggle" (click)="toggleDropdown()">
-        {{ selectedOption ? selectedOption : placeholder }}
-        <span class="arrow">&#9662;</span>
-    </button>
-    <ul class="dropdown-menu" *ngIf="isOpen">
-        <li *ngFor="let option of options" (click)="selectOption(option)">
-            {{ option }}
-        </li>
-    </ul>
+<div class="my-0 h-10">
+    <mat-form-field appearance="fill" color="rounded-xl">
+        <mat-select
+            [(value)]="selectedValue"
+            (selectionChange)="onSelectionChange($event.value)"
+            [placeholder]="placeholder"
+        >
+            <mat-option *ngFor="let option of options" [value]="option.value">
+                {{ option.label }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
 </div>

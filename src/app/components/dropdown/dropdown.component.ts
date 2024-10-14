@@ -1,32 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { InputOption } from 'app/modules/admin/apps/users/contacts.types';
 
 @Component({
     selector: 'app-dropdown',
     templateUrl: './dropdown.component.html',
     styleUrls: ['./dropdown.component.scss'],
     standalone: true,
-    imports: [CommonModule],
+    imports: [MatFormFieldModule, MatSelectModule, CommonModule],
 })
 export class DropdownComponent {
-    @Input() options: string[] = [];
+    @Input() options: InputOption[] = [];
     @Input() placeholder: string = 'Select an option';
-    @Output() optionSelected = new EventEmitter<string>();
+    @Input() selectedValue: string | undefined;
 
-    isOpen = false;
-    selectedOption: string | null = null;
+    @Output() selectionChange = new EventEmitter<string>();
 
-    toggleDropdown(): void {
-        this.isOpen = !this.isOpen;
-    }
-
-    selectOption(option: string): void {
-        this.selectedOption = option;
-        this.optionSelected.emit(option);
-        this.isOpen = false; // Close the dropdown after selection
-    }
-
-    closeDropdown(): void {
-        this.isOpen = false;
+    onSelectionChange(value: string) {
+        this.selectionChange.emit(value);
     }
 }

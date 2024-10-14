@@ -80,19 +80,29 @@ const canDeactivateContactsDetails = (
     // return component.closeDrawer().then(() => true);
 };
 
+const userParams = {
+    page: 1,
+    size: 10,
+    sort: 'id',
+    order: 'asc' as any,
+    search: '',
+    userType: 'web' as any,
+    status: '',
+    guard: '',
+};
+
 export default [
     {
         path: '',
         component: ContactsComponent,
-        resolve: {
-            tags: () => inject(ContactsService).getTags(),
-        },
+        resolve: {},
         children: [
             {
                 path: '',
                 component: ContactsListComponent,
                 resolve: {
-                    contacts: () => inject(ContactsService).getUsers(),
+                    contacts: () =>
+                        inject(ContactsService).getUsers(userParams),
                     countries: () => inject(ContactsService).getCountries(),
                 },
                 children: [

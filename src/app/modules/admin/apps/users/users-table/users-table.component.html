@@ -1,4 +1,4 @@
-<div class="flex flex-auto overflow-scroll">
+<div class="flex flex-auto">
     <!-- Users list -->
     <div
         class="flex flex-auto flex-col overflow-hidden sm:mb-18 sm:overflow-y-auto"
@@ -17,13 +17,14 @@
                                 [ngClass]="
                                     $index === 0
                                         ? 'hidden md:block'
-                                        : [2, 5].includes($index)
+                                        : [2, 6].includes($index)
                                           ? 'hidden sm:block'
-                                          : [3, 4].includes($index)
+                                          : [3, 4, 5].includes($index)
                                             ? 'hidden lg:block'
                                             : 'block'
                                 "
                                 [mat-sort-header]="th.id"
+                                class="flex items-center justify-start"
                             >
                                 {{ th.name }}
                             </div>
@@ -63,7 +64,7 @@
                                 </div>
 
                                 <!-- Active -->
-                                <div class="hidden lg:block">
+                                <div class="mx-2 hidden lg:block">
                                     @if (user.isVerified && !isAdminUsers) {
                                         <mat-icon
                                             class="text-green-400 icon-size-5"
@@ -72,7 +73,7 @@
                                     }
                                     @if (!user.isVerified && !isAdminUsers) {
                                         <mat-icon
-                                            class="text-gray-400 icon-size-5"
+                                            class="text-red-400 icon-size-5"
                                             [svgIcon]="'heroicons_solid:x-mark'"
                                         ></mat-icon>
                                     }
@@ -81,33 +82,71 @@
                                     }
                                 </div>
 
-                                <!-- Stock -->
-                                <div class="hidden items-center lg:flex">
-                                    <div class="min-w-4">
-                                        <mat-icon
-                                            [ngClass]="
-                                                user.isActive
-                                                    ? 'text-green-500'
-                                                    : 'text-red-500'
-                                            "
-                                            [svgIcon]="
-                                                user.isActive
-                                                    ? 'heroicons_outline:check-circle'
-                                                    : 'heroicons_outline:x-circle'
-                                            "
-                                        ></mat-icon>
+                                <!-- Status-->
+                                @if (!isAdminUsers) {
+                                    <div class="hidden items-center lg:flex">
+                                        <div class="min-w-4">
+                                            <div
+                                                [ngClass]="
+                                                    user.isActive
+                                                        ? 'bg-green-400'
+                                                        : 'bg-red-400'
+                                                "
+                                                class="rounded-md px-2 py-1 text-sm text-white"
+                                            >
+                                                {{
+                                                    user.isActive
+                                                        ? 'Active'
+                                                        : 'Inactive'
+                                                }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Block -->
+                                <div
+                                    class="hidden items-center justify-start lg:flex"
+                                >
+                                    <div
+                                        [ngClass]="
+                                            !user.isBlocked
+                                                ? 'bg-green-400'
+                                                : 'bg-red-400'
+                                        "
+                                        class="rounded-md px-2 py-1 text-sm text-white"
+                                    >
+                                        {{
+                                            user.isBlocked
+                                                ? 'Blocked'
+                                                : 'Not Blocked'
+                                        }}
                                     </div>
                                 </div>
 
                                 <!-- Last Login -->
                                 <div class="hidden lg:block">
-                                    {{ user.lastLoginAt }}
+                                    {{ user.lastLoginAt | date: 'short' }}
                                 </div>
 
                                 <!-- Details button -->
-                                <div class="flex items-center">
+                                <div class="flex w-full items-center">
+                                    @if (!isAdminUsers) {
+                                        <button
+                                            class="h-7 min-h-7 min-w-10 px-2"
+                                            (click)="toggleActive(user.id)"
+                                        >
+                                            <mat-icon
+                                                class="icon-size-5"
+                                                [svgIcon]="
+                                                    'heroicons_outline:power'
+                                                "
+                                            ></mat-icon>
+                                        </button>
+                                    }
                                     <button
-                                        class="h-7 min-h-7 min-w-10 px-2 leading-6"
+                                        class="h-7 min-h-7 min-w-10 px-2"
+                                        (click)="toggleBlock(user.id)"
                                     >
                                         <mat-icon
                                             class="icon-size-5"
@@ -116,9 +155,8 @@
                                             "
                                         ></mat-icon>
                                     </button>
-                                    <button
-                                        class="h-7 min-h-7 min-w-10 px-2 leading-6"
-                                    >
+
+                                    <button class="h-7 min-h-7 min-w-10 px-2">
                                         <mat-icon
                                             class="text-red-500 icon-size-5"
                                             [svgIcon]="
