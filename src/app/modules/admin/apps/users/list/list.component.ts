@@ -30,6 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
@@ -50,6 +51,7 @@ import {
 } from 'rxjs';
 import { ContactsService } from '../contacts.service';
 import { InputOption, UserItem } from '../contacts.types';
+import { ContactsDetailsComponent } from '../details/details.component';
 import { UsersTableComponent } from '../users-table/users-table.component';
 import { ExcelExportService } from '../utils';
 
@@ -83,10 +85,13 @@ import { ExcelExportService } from '../utils';
         MatTabsModule,
         UsersTableComponent,
         DropdownComponent,
+        MatSidenavModule,
+        ContactsDetailsComponent,
     ],
 })
 export class ContactsListComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort) private _sort: MatSort;
+    @ViewChild(MatDrawer) drawer: MatDrawer;
 
     users$: Observable<UserItem[]>;
     adminRoles: InputOption[];
@@ -102,6 +107,8 @@ export class ContactsListComponent implements OnInit, OnDestroy {
     activeTabIndex: number = 0;
     selectedStatusOption: string | undefined;
     selectedRoleOption: string | undefined;
+    drawerMode: 'side' | 'over';
+    openDrawer: () => void;
 
     statusOptions = [
         { value: 'active', label: 'Active' },
@@ -203,7 +210,6 @@ export class ContactsListComponent implements OnInit, OnDestroy {
                 takeUntil(this._unsubscribeAll),
                 debounceTime(500),
                 switchMap((query) => {
-                    this.closeDetails();
                     this.isLoading = true;
                     return this._contactsService.getUsers({
                         page: this.pagination.page + 1,
@@ -223,6 +229,9 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.onTabChange;
+        this.openDrawer = () => {
+            this.drawer.toggle();
+        };
     }
 
     resetFilters() {
@@ -285,6 +294,15 @@ export class ContactsListComponent implements OnInit, OnDestroy {
             .subscribe();
     }
 
+    onBackdropClicked(): void {
+        // Go back to the list
+        // this._router.navigate(['./'], { relativeTo: this._activatedRoute });
+        this.drawer.toggle();
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
     /**
      * On destroy
      */
@@ -297,41 +315,6 @@ export class ContactsListComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Toggle product details
-     *
-     * @param productId
-     */
-    toggleDetails(productId: string): void {
-        // If the product is already selected...
-        if (this.selectedUser && this.selectedUser.id === productId) {
-            // Close the details
-            this.closeDetails();
-            return;
-        }
-
-        // Get the product by id
-        this._inventoryService
-            .getProductById(productId)
-            .subscribe((product) => {
-                // Set the selected product
-                this.selectedUser = product;
-
-                // Fill the form
-                this.selectedProductForm.patchValue(product);
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-    }
-
-    /**
-     * Close the details
-     */
-    closeDetails(): void {
-        this.selectedUser = null;
-    }
 
     /**
      * Track by function for ngFor loops

@@ -29,6 +29,7 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
     @Input() tableHead: Record<string, string>[] = [];
     @Input() pagination: InventoryPagination;
     @Input() activeTabIndex: 'web' | 'admin' = 'web';
+    @Input() toggleDetails: () => void;
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;

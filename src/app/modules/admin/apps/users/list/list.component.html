@@ -1,107 +1,136 @@
 <div
     class="bg-card flex min-w-0 flex-auto flex-col dark:bg-transparent sm:absolute sm:inset-0 sm:overflow-hidden"
 >
-    <!-- Header -->
-    <div
-        class="relative flex flex-0 flex-col px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8"
+    <mat-drawer-container
+        class="bg-card h-full flex-auto dark:bg-transparent"
+        (backdropClick)="onBackdropClicked()"
     >
-        <!-- Loader -->
-        @if (isLoading) {
-            <div class="absolute inset-x-0 bottom-0">
-                <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        <mat-drawer
+            class="w-full dark:bg-gray-900 md:w-160"
+            [mode]="drawerMode"
+            [opened]="false"
+            [position]="'end'"
+            [disableClose]="true"
+            #matDrawer
+        >
+            <contacts-details />
+        </mat-drawer>
+        <!-- Header -->
+        <mat-drawer-content>
+            <div
+                class="relative flex flex-0 flex-col px-6 py-8 sm:flex-row sm:items-center sm:justify-between md:px-8"
+            >
+                <!-- Loader -->
+                @if (isLoading) {
+                    <div class="absolute inset-x-0 bottom-0">
+                        <mat-progress-bar
+                            [mode]="'indeterminate'"
+                        ></mat-progress-bar>
+                    </div>
+                }
+                <!-- Title -->
+                <div class="text-4xl font-extrabold tracking-tight">Users</div>
+                <!-- Actions -->
+                <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
+                    <!-- Search -->
+                    <mat-form-field
+                        class="fuse-mat-dense fuse-mat-rounded min-w-64"
+                        [subscriptSizing]="'dynamic'"
+                    >
+                        <mat-icon
+                            class="icon-size-5"
+                            matPrefix
+                            [svgIcon]="'heroicons_solid:magnifying-glass'"
+                        ></mat-icon>
+                        <input
+                            matInput
+                            [formControl]="searchInputControl"
+                            [autocomplete]="'off'"
+                            [placeholder]="'Search products'"
+                        />
+                    </mat-form-field>
+
+                    <!-- Add product button -->
+                    <button
+                        class="ml-4 px-4 py-2"
+                        mat-flat-button
+                        [color]="'primary'"
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_outline:plus'"
+                            class="icon-size-4 md:icon-size-6"
+                        ></mat-icon>
+                        <span class="text-sm md:text-lg">Add</span>
+                    </button>
+                </div>
             </div>
-        }
-        <!-- Title -->
-        <div class="text-4xl font-extrabold tracking-tight">Users</div>
-        <!-- Actions -->
-        <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
-            <!-- Search -->
-            <mat-form-field
-                class="fuse-mat-dense fuse-mat-rounded min-w-64"
-                [subscriptSizing]="'dynamic'"
+            <div
+                class="my-4 flex shrink-0 flex-wrap items-center justify-start gap-y-6 px-6 sm:mt-0 md:justify-between md:px-8"
             >
-                <mat-icon
-                    class="icon-size-5"
-                    matPrefix
-                    [svgIcon]="'heroicons_solid:magnifying-glass'"
-                ></mat-icon>
-                <input
-                    matInput
-                    [formControl]="searchInputControl"
-                    [autocomplete]="'off'"
-                    [placeholder]="'Search products'"
-                />
-            </mat-form-field>
+                <div class="flex items-center gap-4">
+                    <app-dropdown
+                        [options]="statusOptions"
+                        placeholder="Status"
+                        [(selectedValue)]="selectedStatusOption"
+                        (selectionChange)="onStatusChange($event)"
+                    ></app-dropdown>
+                    <app-dropdown
+                        [options]="roleOptions"
+                        placeholder="Role"
+                        [(selectedValue)]="selectedRoleOption"
+                        (selectionChange)="onRoleChange($event)"
+                    ></app-dropdown>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button
+                        class="md:ml-4"
+                        (click)="resetFilters()"
+                        mat-stroked-button
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_outline:arrow-path'"
+                            class="icon-size-5"
+                        ></mat-icon>
+                        <span class="ml-2 mr-1 text-sm">Reset</span>
+                    </button>
+                    <button
+                        (click)="exportToExcel()"
+                        class="md:ml-4"
+                        mat-stroked-button
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_outline:arrow-up-tray'"
+                            class="icon-size-5"
+                        ></mat-icon>
+                        <span class="ml-2 mr-1 text-sm">Export</span>
+                    </button>
+                </div>
+            </div>
 
-            <!-- Add product button -->
-            <button class="ml-4 px-4 py-2" mat-flat-button [color]="'primary'">
-                <mat-icon
-                    [svgIcon]="'heroicons_outline:plus'"
-                    class="icon-size-4 md:icon-size-6"
-                ></mat-icon>
-                <span class="text-sm md:text-lg">Add</span>
-            </button>
-        </div>
-    </div>
-    <div
-        class="my-4 flex shrink-0 flex-wrap items-center justify-start gap-y-6 px-6 sm:mt-0 md:justify-between md:px-8"
-    >
-        <div class="flex items-center gap-4">
-            <app-dropdown
-                [options]="statusOptions"
-                placeholder="Status"
-                [(selectedValue)]="selectedStatusOption"
-                (selectionChange)="onStatusChange($event)"
-            ></app-dropdown>
-            <app-dropdown
-                [options]="roleOptions"
-                placeholder="Role"
-                [(selectedValue)]="selectedRoleOption"
-                (selectionChange)="onRoleChange($event)"
-            ></app-dropdown>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="md:ml-4" (click)="resetFilters()" mat-stroked-button>
-                <mat-icon
-                    [svgIcon]="'heroicons_outline:arrow-path'"
-                    class="icon-size-5"
-                ></mat-icon>
-                <span class="ml-2 mr-1 text-sm">Reset</span>
-            </button>
-            <button
-                (click)="exportToExcel()"
-                class="md:ml-4"
-                mat-stroked-button
+            <mat-tab-group
+                class="overflow-y-scroll"
+                (selectedTabChange)="onTabChange($event)"
             >
-                <mat-icon
-                    [svgIcon]="'heroicons_outline:arrow-up-tray'"
-                    class="icon-size-5"
-                ></mat-icon>
-                <span class="ml-2 mr-1 text-sm">Export</span>
-            </button>
-        </div>
-    </div>
-
-    <mat-tab-group
-        class="overflow-y-scroll"
-        (selectedTabChange)="onTabChange($event)"
-    >
-        <mat-tab label="Web users">
-            <!-- Main -->
-            <app-users-table
-                [users$]="users$"
-                [tableHead]="tableHead"
-                [pagination]="pagination"
-                [activeTabIndex]="'web'"
-            />
-        </mat-tab>
-        <mat-tab label="Dashboard users">
-            <app-users-table
-                [users$]="users$"
-                [tableHead]="adminTableHead"
-                [pagination]="pagination"
-                [activeTabIndex]="'admin'"
-            />
-        </mat-tab>
-    </mat-tab-group>
+                <mat-tab label="Web users">
+                    <!-- Main -->
+                    <app-users-table
+                        [users$]="users$"
+                        [tableHead]="tableHead"
+                        [pagination]="pagination"
+                        [activeTabIndex]="'web'"
+                        [toggleDetails]="openDrawer"
+                    />
+                </mat-tab>
+                <mat-tab label="Dashboard users">
+                    <app-users-table
+                        [users$]="users$"
+                        [tableHead]="adminTableHead"
+                        [pagination]="pagination"
+                        [activeTabIndex]="'admin'"
+                        [toggleDetails]="openDrawer"
+                    />
+                </mat-tab>
+            </mat-tab-group>
+        </mat-drawer-content>
+    </mat-drawer-container>
 </div>
