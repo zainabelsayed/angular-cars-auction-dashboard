@@ -56,26 +56,7 @@ import { ExcelExportService } from '../utils';
 @Component({
     selector: 'contacts-list',
     templateUrl: './list.component.html',
-    styles: [
-        /* language=SCSS */
-        `
-            .inventory-grid {
-                grid-template-columns: 120px auto 40px;
-
-                @screen sm {
-                    grid-template-columns: 120px auto 112px 72px;
-                }
-
-                @screen md {
-                    grid-template-columns: 120px 112px auto 112px 72px;
-                }
-
-                @screen lg {
-                    grid-template-columns: 112px 170px auto 120px 160px 120px 120px;
-                }
-            }
-        `,
-    ],
+    styles: [],
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: fuseAnimations,

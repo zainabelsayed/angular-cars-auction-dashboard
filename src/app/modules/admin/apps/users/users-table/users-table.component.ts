@@ -37,6 +37,7 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
     isLoading: boolean = false;
 
     isAdminUsers = false;
+    gridClass = `grid-cols-7`;
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
@@ -47,6 +48,7 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
     ngOnInit(): void {
         this.isAdminUsers = this.activeTabIndex === 'admin';
         this._changeDetectorRef.markForCheck();
+        this.gridClass = `grid-cols-${this.tableHead.length + 1}`;
     }
 
     ngAfterViewInit(): void {
