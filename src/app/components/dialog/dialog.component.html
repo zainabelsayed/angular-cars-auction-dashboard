@@ -1,10 +1,21 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
+<h2 mat-dialog-title class="mb-3 text-xl font-medium">{{ data.title }}</h2>
 <mat-dialog-content>
     <p>{{ data.message }}</p>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close [disabled]="data.disableClose">
+<mat-dialog-actions align="end" class="gap-4">
+    <button
+        mat-button
+        mat-dialog-close
+        [disabled]="data.disableClose"
+        class="rounded-full border border-gray-300 px-4 py-2 hover:bg-gray-100 dark:border-gray-500 dark:hover:bg-black dark:hover:bg-opacity-5"
+    >
         Cancel
     </button>
-    <button mat-button [mat-dialog-close]="true">Confirm</button>
+    <button
+        mat-button
+        [mat-dialog-close]="true"
+        class="rounded-full bg-red-400 px-4 py-2 text-white hover:bg-red-500"
+    >
+        Confirm
+    </button>
 </mat-dialog-actions>

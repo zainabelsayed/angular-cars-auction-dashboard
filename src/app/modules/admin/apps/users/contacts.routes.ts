@@ -9,7 +9,6 @@ import { ContactsComponent } from 'app/modules/admin/apps/users/contacts.compone
 import { ContactsService } from 'app/modules/admin/apps/users/contacts.service';
 import { ContactsDetailsComponent } from 'app/modules/admin/apps/users/details/details.component';
 import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
-import { catchError, throwError } from 'rxjs';
 
 /**
  * Contact resolver
@@ -24,22 +23,22 @@ const contactResolver = (
     const contactsService = inject(ContactsService);
     const router = inject(Router);
 
-    return contactsService.getContactById(route.paramMap.get('id')).pipe(
-        // Error here means the requested contact is not available
-        catchError((error) => {
-            // Log the error
-            console.error(error);
+    // return contactsService.getContactById(route.paramMap.get('id')).pipe(
+    //     // Error here means the requested contact is not available
+    //     catchError((error) => {
+    //         // Log the error
+    //         console.error(error);
 
-            // Get the parent url
-            const parentUrl = state.url.split('/').slice(0, -1).join('/');
+    //         // Get the parent url
+    //         const parentUrl = state.url.split('/').slice(0, -1).join('/');
 
-            // Navigate to there
-            router.navigateByUrl(parentUrl);
+    //         // Navigate to there
+    //         router.navigateByUrl(parentUrl);
 
-            // Throw an error
-            return throwError(error);
-        })
-    );
+    //         // Throw an error
+    //         return throwError(error);
+    //     })
+    // );
 };
 
 /**

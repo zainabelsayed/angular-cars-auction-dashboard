@@ -156,7 +156,10 @@
                                         ></mat-icon>
                                     </button>
 
-                                    <button class="h-7 min-h-7 min-w-10 px-2">
+                                    <button
+                                        class="h-7 min-h-7 min-w-10 px-2"
+                                        (click)="openDeleteDialog(user)"
+                                    >
                                         <mat-icon
                                             class="text-red-500 icon-size-5"
                                             [svgIcon]="

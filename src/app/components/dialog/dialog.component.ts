@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
     MAT_DIALOG_DATA,
@@ -8,7 +9,7 @@ import {
 @Component({
     selector: 'app-dialog',
     standalone: true,
-    imports: [MatDialogModule],
+    imports: [MatDialogModule, CommonModule],
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
 })

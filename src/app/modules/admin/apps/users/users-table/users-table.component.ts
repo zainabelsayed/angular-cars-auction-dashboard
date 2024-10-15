@@ -11,6 +11,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { DialogService } from 'app/components/dialog/dialog.service';
 import { Observable, Subject, map, merge, switchMap, takeUntil } from 'rxjs';
 import { InventoryPagination } from '../../cars/inventory/inventory.types';
 import { ContactsService } from '../contacts.service';
@@ -39,7 +40,8 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _contactsService: ContactsService
+        private _contactsService: ContactsService,
+        private _dialogService: DialogService
     ) {}
 
     ngOnInit(): void {
@@ -104,6 +106,26 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
     toggleActive(id: string): void {
         this._contactsService.toggleActiveUser(id).subscribe(() => {
             this.updateUsersList();
+        });
+    }
+
+    openDeleteDialog(user: UserItem): void {
+        const dialogRef = this._dialogService.openConfirmDialog(
+            'Confirm Delete',
+            `Are you sure you want to delete ${user.name} ?`
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this._contactsService
+                    .deleteUser(user.id, this.activeTabIndex)
+                    .subscribe(() => {
+                        this.updateUsersList();
+                    });
+                console.log('Confirmed', result);
+            } else {
+                console.log('Cancelled');
+            }
         });
     }
 

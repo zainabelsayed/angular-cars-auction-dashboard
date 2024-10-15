@@ -285,12 +285,12 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         );
 
         // Update the contact on the server
-        this._contactsService
-            .updateContact(contact.id, contact)
-            .subscribe(() => {
-                // Toggle the edit mode off
-                this.toggleEditMode(false);
-            });
+        // this._contactsService
+        //     .updateContact(contact.id, contact)
+        //     .subscribe(() => {
+        //         // Toggle the edit mode off
+        //         this.toggleEditMode(false);
+        //     });
     }
 
     /**
@@ -330,7 +330,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
                 // Delete the contact
                 this._contactsService
-                    .deleteUser(id.toString())
+                    .deleteUser(id, 'admin')
                     .subscribe((isDeleted) => {
                         // Return if the contact wasn't deleted...
                         if (!isDeleted) {
