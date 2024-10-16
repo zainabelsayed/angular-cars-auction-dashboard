@@ -14,7 +14,6 @@ import {
 import {
     FormsModule,
     ReactiveFormsModule,
-    UntypedFormArray,
     UntypedFormBuilder,
     UntypedFormGroup,
     Validators,
@@ -38,8 +37,9 @@ import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 import { filter, Subject, takeUntil } from 'rxjs';
+import { DropdownComponent } from '../../../../../components/dropdown/dropdown.component';
 import { ContactsService } from '../contacts.service';
-import { Country, UserItem } from '../contacts.types';
+import { Country, Nationality, UserItem } from '../contacts.types';
 
 @Component({
     selector: 'contacts-details',
@@ -66,6 +66,7 @@ import { Country, UserItem } from '../contacts.types';
         FuseFindByKeyPipe,
         DatePipe,
         TitleCasePipe,
+        DropdownComponent,
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
@@ -79,6 +80,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     contactForm: UntypedFormGroup;
     countries: Country[];
     userId: string;
+    nationality: Nationality;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -107,14 +109,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
             id: [''],
             avatar: [null],
             name: ['', [Validators.required]],
-            emails: this._formBuilder.array([]),
-            phoneNumbers: this._formBuilder.array([]),
-            title: [''],
-            company: [''],
-            birthday: [null],
-            address: [null],
-            notes: [null],
-            tags: [[]],
+            email: ['', [Validators.required]],
+            phone: ['', [Validators.required]],
+            secondPhone: [''],
+            guard: ['', [Validators.required]],
         });
 
         //get user id
@@ -143,51 +141,8 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Get the contact
                 this.user = user;
 
-                // Clear the emails and phoneNumbers form arrays
-                (this.contactForm.get('emails') as UntypedFormArray).clear();
-                (
-                    this.contactForm.get('phoneNumbers') as UntypedFormArray
-                ).clear();
-
                 // Patch values to the form
                 this.contactForm.patchValue(user);
-
-                // Setup the emails form array
-                const emailFormGroups = [];
-
-                // Create an email form group
-                emailFormGroups.push(
-                    this._formBuilder.group({
-                        email: [''],
-                        label: [''],
-                    })
-                );
-
-                // Add the email form groups to the emails form array
-                emailFormGroups.forEach((emailFormGroup) => {
-                    (this.contactForm.get('emails') as UntypedFormArray).push(
-                        emailFormGroup
-                    );
-                });
-
-                // Setup the phone numbers form array
-                const phoneNumbersFormGroups = [];
-
-                // Create a phone number form group
-                phoneNumbersFormGroups.push(
-                    this._formBuilder.group({
-                        country: ['us'],
-                        phoneNumber: [''],
-                        label: [''],
-                    })
-                );
-
-                // Add the phone numbers form groups to the phone numbers form array
-                phoneNumbersFormGroups.forEach((phoneNumbersFormGroup) => {
-                    (
-                        this.contactForm.get('phoneNumbers') as UntypedFormArray
-                    ).push(phoneNumbersFormGroup);
-                });
 
                 // Toggle the edit mode off
                 this.toggleEditMode(false);
@@ -205,6 +160,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        this._contactsService.nationality$.subscribe((nationality: any) => {
+            this.nationality = nationality;
+        });
     }
 
     /**

@@ -138,7 +138,7 @@ export interface ApiUserData {
     };
 }
 
-interface Nationality {
+export interface Nationality {
     id: number;
     createdAt: string;
     deletedAt: string | null;

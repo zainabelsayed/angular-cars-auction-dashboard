@@ -27,6 +27,8 @@ export class ContactsService {
         new BehaviorSubject([]);
     private _pagination: BehaviorSubject<UsersPagination | null> =
         new BehaviorSubject(null);
+    private _nationality: BehaviorSubject<Record<string, string>[]> =
+        new BehaviorSubject([]);
 
     /**
      * Constructor
@@ -71,6 +73,10 @@ export class ContactsService {
 
     get pagination$(): Observable<UsersPagination> {
         return this._pagination.asObservable();
+    }
+
+    get nationality$(): Observable<Record<string, string>[]> {
+        return this._nationality.asObservable();
     }
 
     /**
@@ -130,6 +136,7 @@ export class ContactsService {
 
     getUserById(id, type): Observable<ApiUserData> {
         const userType = type === 'admin' ? 'admin' : 'user';
+        const isAdmin = type === 'admin';
         return this._httpClient
             .get<any>(
                 `http://10.255.254.45:3000/api/dashboard/${userType}/show/${id}`
@@ -137,8 +144,19 @@ export class ContactsService {
             .pipe(
                 tap((user) => {
                     this._user.next(
-                        type === 'admin' ? user.data.admin : user.data.user
+                        isAdmin
+                            ? {
+                                  ...user.data.admin,
+                                  secondPhone:
+                                      user.data.admin.profile.second_phone,
+                              }
+                            : {
+                                  ...user.data.user,
+                                  secondPhone:
+                                      user.data.user.profile?.second_phone,
+                              }
                     );
+                    this._nationality.next(user.data?.nationalities?.[0]);
                 })
             );
     }
