@@ -11,6 +11,8 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'app/components/dialog/dialog.service';
 import { Observable, Subject, map, merge, switchMap, takeUntil } from 'rxjs';
 import { InventoryPagination } from '../../cars/inventory/inventory.types';
@@ -20,7 +22,13 @@ import { UserItem } from '../contacts.types';
 @Component({
     selector: 'app-users-table',
     standalone: true,
-    imports: [CommonModule, MatPaginatorModule, MatSortModule, MatIconModule],
+    imports: [
+        CommonModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatIconModule,
+        MatTooltipModule,
+    ],
     templateUrl: './users-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,7 +51,9 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _contactsService: ContactsService,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _activatedRoute: ActivatedRoute,
+        private _router: Router
     ) {}
 
     ngOnInit(): void {
@@ -98,7 +108,8 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
         }
     }
 
-    toggleBlock(id: string): void {
+    toggleBlock(id: string, e): void {
+        e.stopPropagation();
         this._contactsService
             .toggleBlockUser(id, this.activeTabIndex)
             .subscribe(() => {
@@ -106,13 +117,15 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
             });
     }
 
-    toggleActive(id: string): void {
+    toggleActive(id: string, e): void {
+        e.stopPropagation();
         this._contactsService.toggleActiveUser(id).subscribe(() => {
             this.updateUsersList();
         });
     }
 
-    openDeleteDialog(user: UserItem): void {
+    openDeleteDialog(user: UserItem, e): void {
+        e.stopPropagation();
         const dialogRef = this._dialogService.openConfirmDialog(
             'Confirm Delete',
             `Are you sure you want to delete ${user.name} ?`
@@ -129,6 +142,13 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
             } else {
                 console.log('Cancelled');
             }
+        });
+    }
+
+    openDetails(id): void {
+        this.toggleDetails();
+        this._router.navigate([`./${id}`], {
+            relativeTo: this._activatedRoute,
         });
     }
 

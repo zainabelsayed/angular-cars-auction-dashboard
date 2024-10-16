@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
     ApiRoleList,
+    ApiUserData,
     ApiUserResponse,
     Country,
     UserItem,
@@ -13,9 +14,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ContactsService {
     // Private
-    private _contact: BehaviorSubject<UserItem | null> = new BehaviorSubject(
-        null
-    );
+    private _user: BehaviorSubject<UserItem | null> = new BehaviorSubject(null);
     private _users: BehaviorSubject<UserItem[] | null> = new BehaviorSubject(
         null
     );
@@ -41,8 +40,8 @@ export class ContactsService {
     /**
      * Getter for contact
      */
-    get contact$(): Observable<UserItem> {
-        return this._contact.asObservable();
+    get user$(): Observable<UserItem> {
+        return this._user.asObservable();
     }
 
     /**
@@ -123,6 +122,23 @@ export class ContactsService {
                         lastPage: response?.data?.totalPages,
                     });
                     this._users.next(response?.data?.data);
+                })
+            );
+    }
+
+    //get user by id
+
+    getUserById(id, type): Observable<ApiUserData> {
+        const userType = type === 'admin' ? 'admin' : 'user';
+        return this._httpClient
+            .get<any>(
+                `http://10.255.254.45:3000/api/dashboard/${userType}/show/${id}`
+            )
+            .pipe(
+                tap((user) => {
+                    this._user.next(
+                        type === 'admin' ? user.data.admin : user.data.user
+                    );
                 })
             );
     }

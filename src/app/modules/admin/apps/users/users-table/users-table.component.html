@@ -25,9 +25,9 @@
                     @if (users$ | async; as users) {
                         @for (user of users; track trackByFn($index, user)) {
                             <div
-                                [ngClass]="['grid', gridClass]"
+                                [ngClass]="['grid', gridClass || 'grid-cols-6']"
                                 class="w-full min-w-[750px] cursor-pointer gap-4 border-b px-6 py-3 md:px-8"
-                                (click)="toggleDetails()"
+                                (click)="openDetails(user.id)"
                             >
                                 <!-- Image -->
                                 <div class="flex items-center justify-start">
@@ -52,12 +52,14 @@
                                 </div>
 
                                 <!-- Name -->
-                                <div>
+                                <div class="flex items-center justify-start">
                                     {{ user.name }}
                                 </div>
 
                                 <!-- Active -->
-                                <div class="mx-2 items-center justify-start">
+                                <div
+                                    class="mx-2 flex items-center justify-start"
+                                >
                                     @if (user.isVerified && !isAdminUsers) {
                                         <mat-icon
                                             class="text-green-400 icon-size-5"
@@ -118,7 +120,7 @@
                                 </div>
 
                                 <!-- Last Login -->
-                                <div class="items-center justify-start">
+                                <div class="flex items-center justify-start">
                                     {{ user.lastLoginAt | date: 'short' }}
                                 </div>
 
@@ -129,7 +131,10 @@
                                     @if (!isAdminUsers) {
                                         <button
                                             class="h-7 min-h-7 min-w-10 px-2"
-                                            (click)="toggleActive(user.id)"
+                                            (click)="
+                                                toggleActive(user.id, $event)
+                                            "
+                                            [matTooltip]="'Toggle Active'"
                                         >
                                             <mat-icon
                                                 class="icon-size-5"
@@ -141,7 +146,8 @@
                                     }
                                     <button
                                         class="h-7 min-h-7 min-w-10 px-2"
-                                        (click)="toggleBlock(user.id)"
+                                        (click)="toggleBlock(user.id, $event)"
+                                        [matTooltip]="'Toggle Block'"
                                     >
                                         <mat-icon
                                             class="icon-size-5"
@@ -153,7 +159,8 @@
 
                                     <button
                                         class="h-7 min-h-7 min-w-10 px-2"
-                                        (click)="openDeleteDialog(user)"
+                                        (click)="openDeleteDialog(user, $event)"
+                                        [matTooltip]="'Delete'"
                                     >
                                         <mat-icon
                                             class="text-red-500 icon-size-5"

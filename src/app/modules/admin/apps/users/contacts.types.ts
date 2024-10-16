@@ -125,3 +125,52 @@ export interface InputOption {
     label: string;
     value: number | string;
 }
+
+export interface ApiUserData {
+    statusCode: number;
+    timestamp: string;
+    path: string;
+    data: {
+        user?: UserItem;
+        admin?: UserItem;
+        locations: any[]; // Replace `any` with appropriate type if you have a defined structure
+        nationalities: Nationality[];
+    };
+}
+
+interface Nationality {
+    id: number;
+    createdAt: string;
+    deletedAt: string | null;
+    updatedAt: string;
+    status: string;
+    is_default: boolean;
+    nationality: NationalityDetail;
+    attachments: Attachment[];
+}
+
+interface NationalityDetail {
+    id: number;
+    createdAt: string;
+    deletedAt: string | null;
+    updatedAt: string;
+    access_code: string;
+    ios2: string;
+    ios3: string;
+    title: string;
+    flag: string;
+}
+
+interface Attachment {
+    id: number;
+    createdAt: string;
+    deletedAt: string | null;
+    updatedAt: string;
+    mediableId: number;
+    mediableType: string;
+    content: string;
+    order: number;
+    belongsTo: string;
+    status: string;
+    expirationDate: string | null;
+}

@@ -13,7 +13,10 @@
             [disableClose]="true"
             #matDrawer
         >
-            <contacts-details />
+            <contacts-details
+                [toggleDrawer]="toggleDrawer"
+                [type]="activeTabIndex === 1 ? 'admin' : 'web'"
+            />
         </mat-drawer>
         <!-- Header -->
         <mat-drawer-content>
@@ -118,7 +121,7 @@
                         [tableHead]="tableHead"
                         [pagination]="pagination"
                         [activeTabIndex]="'web'"
-                        [toggleDetails]="openDrawer"
+                        [toggleDetails]="toggleDrawer"
                     />
                 </mat-tab>
                 <mat-tab label="Dashboard users">
@@ -127,7 +130,7 @@
                         [tableHead]="adminTableHead"
                         [pagination]="pagination"
                         [activeTabIndex]="'admin'"
-                        [toggleDetails]="openDrawer"
+                        [toggleDetails]="toggleDrawer"
                     />
                 </mat-tab>
             </mat-tab-group>

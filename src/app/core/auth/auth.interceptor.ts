@@ -41,6 +41,9 @@ export const authInterceptor = (
                 'Authorization',
                 'Bearer ' + authService.accessToken
             ),
+            setHeaders: {
+                'accept-language': 'en',
+            },
         });
     }
 

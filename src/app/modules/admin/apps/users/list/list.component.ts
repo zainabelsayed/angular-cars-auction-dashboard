@@ -16,15 +16,12 @@ import {
 import {
     FormsModule,
     ReactiveFormsModule,
-    UntypedFormBuilder,
     UntypedFormControl,
     UntypedFormGroup,
-    Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -34,9 +31,9 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
-import { InventoryService } from 'app/modules/admin/apps/cars/inventory/inventory.service';
 import {
     InventoryPagination,
     InventoryProduct,
@@ -65,7 +62,6 @@ import { ExcelExportService } from '../utils';
     standalone: true,
     imports: [
         MatProgressBarModule,
-        MatFormFieldModule,
         MatIconModule,
         MatInputModule,
         FormsModule,
@@ -108,7 +104,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
     selectedStatusOption: string | undefined;
     selectedRoleOption: string | undefined;
     drawerMode: 'side' | 'over';
-    openDrawer: () => void;
+    toggleDrawer: () => void;
 
     statusOptions = [
         { value: 'active', label: 'Active' },
@@ -129,9 +125,9 @@ export class ContactsListComponent implements OnInit, OnDestroy {
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _formBuilder: UntypedFormBuilder,
-        private _inventoryService: InventoryService,
-        private _contactsService: ContactsService
+        private _contactsService: ContactsService,
+        private _activatedRoute: ActivatedRoute,
+        private _router: Router
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -142,30 +138,6 @@ export class ContactsListComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Create the selected product form
-        this.selectedProductForm = this._formBuilder.group({
-            id: [''],
-            category: [''],
-            name: ['', [Validators.required]],
-            description: [''],
-            tags: [[]],
-            sku: [''],
-            barcode: [''],
-            brand: [''],
-            vendor: [''],
-            stock: [''],
-            reserved: [''],
-            cost: [''],
-            basePrice: [''],
-            taxPercent: [''],
-            price: [''],
-            weight: [''],
-            thumbnail: [''],
-            images: [[]],
-            currentImageIndex: [0], // Image index that is currently being viewed
-            active: [false],
-        });
-
         this.tableHead = [
             { name: 'Image', id: 'id' },
             { name: 'Name', id: 'name' },
@@ -229,7 +201,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.onTabChange;
-        this.openDrawer = () => {
+        this.toggleDrawer = () => {
             this.drawer.toggle();
         };
     }
@@ -296,7 +268,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
     onBackdropClicked(): void {
         // Go back to the list
-        // this._router.navigate(['./'], { relativeTo: this._activatedRoute });
+        this._router.navigate(['./'], { relativeTo: this._activatedRoute });
         this.drawer.toggle();
 
         // Mark for check
