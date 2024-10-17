@@ -1,0 +1,40 @@
+<form [formGroup]="form">
+    <div formArrayName="files">
+        <div
+            *ngFor="let file of files.controls; let i = index"
+            [formGroupName]="i"
+        >
+            <input
+                type="file"
+                formControlName="file"
+                (change)="onFileSelected($event, i)"
+            />
+
+            <!-- Display upload progress -->
+            <div *ngIf="uploadPercentages[i]">
+                Upload Progress: {{ uploadPercentages[i] | number }}%
+            </div>
+
+            <button
+                mat-icon-button
+                type="button"
+                (click)="removeFileControl(i)"
+            >
+                <mat-icon
+                    class="text-black icon-size-4"
+                    [svgIcon]="'heroicons_outline:x-mark'"
+                />
+            </button>
+        </div>
+    </div>
+
+    <!-- Add another file control -->
+    <button
+        mat-flat-button
+        class="mt-3 rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
+        type="button"
+        (click)="addFileControl()"
+    >
+        Add File
+    </button>
+</form>

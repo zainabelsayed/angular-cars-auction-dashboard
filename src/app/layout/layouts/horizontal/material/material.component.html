@@ -36,9 +36,7 @@
             class="bg-card w-full max-w-360 overflow-hidden border-b sm:m-8 sm:mb-0 sm:rounded-t-xl sm:py-3 sm:shadow-2xl md:mx-8 md:mt-12 md:pb-3 md:pt-4"
         >
             <!-- Top bar -->
-            <div
-                class="relative flex h-16 flex-0 flex-auto items-center px-4 md:px-6"
-            >
+            <div class="relative flex h-16 flex-auto items-center px-4 md:px-6">
                 <!-- Logo -->
                 @if (!isScreenSmall) {
                     <div class="mx-2 flex items-center">
@@ -82,9 +80,7 @@
             </div>
             <!-- Bottom bar -->
             @if (!isScreenSmall) {
-                <div
-                    class="relative flex h-16 flex-0 flex-auto items-center px-4"
-                >
+                <div class="relative flex h-16 flex-auto items-center px-4">
                     <fuse-horizontal-navigation
                         [name]="'mainNavigation'"
                         [navigation]="navigation.horizontal"

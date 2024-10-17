@@ -1,5 +1,5 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -36,10 +36,12 @@ import {
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
+import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { DropdownComponent } from '../../../../../components/dropdown/dropdown.component';
 import { ContactsService } from '../contacts.service';
 import { Country, Nationality, UserItem } from '../contacts.types';
+import { isNotImage } from '../utils';
 
 @Component({
     selector: 'contacts-details',
@@ -65,8 +67,9 @@ import { Country, Nationality, UserItem } from '../contacts.types';
         TextFieldModule,
         FuseFindByKeyPipe,
         DatePipe,
-        TitleCasePipe,
         DropdownComponent,
+        CommonModule,
+        FileUploadComponent,
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
@@ -81,6 +84,8 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     countries: Country[];
     userId: string;
     nationality: Nationality;
+    isFile = isNotImage;
+    uploadedFiles: string[] = [];
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -122,16 +127,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 this._activatedRoute?.firstChild?.paramMap?.subscribe(
                     (params) => {
                         this.userId = params.get('id');
+                        this.getUserData();
                     }
                 );
-                this._contactsService
-                    .getUserById(this.userId, this.type)
-                    .subscribe((user) => {
-                        this.user =
-                            this.type === 'admin'
-                                ? user?.data?.admin
-                                : user?.data?.user;
-                    });
             });
 
         // Get the contact
@@ -166,6 +164,26 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
+    getUserData() {
+        if (this.userId) {
+            this._contactsService
+                .getUserById(this.userId, this.type)
+                .subscribe((user) => {
+                    this.user =
+                        this.type === 'admin'
+                            ? user?.data?.admin
+                            : user?.data?.user;
+                });
+
+            this._changeDetectorRef.markForCheck();
+        }
+    }
+
+    ngAfterViewInit(): void {
+        this.userId = this._activatedRoute?.firstChild?.snapshot?.params?.id;
+        this.getUserData();
+    }
+
     /**
      * On destroy
      */
@@ -175,13 +193,14 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    onUploadComplete(fileURLs: string[]) {
+        this.uploadedFiles = fileURLs;
+        console.log('Uploaded Files:', this.uploadedFiles);
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Close the drawer
-     */
 
     /**
      * Toggle edit mode

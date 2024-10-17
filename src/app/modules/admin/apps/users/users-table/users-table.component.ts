@@ -146,10 +146,15 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
     }
 
     openDetails(id): void {
-        this.toggleDetails();
-        this._router.navigate([`./${id}`], {
-            relativeTo: this._activatedRoute,
-        });
+        this._router
+            .navigate([`./${id}`], {
+                relativeTo: this._activatedRoute,
+            })
+            .then((res) => {
+                if (res) {
+                    this.toggleDetails();
+                }
+            });
     }
 
     updateUsersList() {

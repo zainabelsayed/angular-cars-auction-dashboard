@@ -204,6 +204,11 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         this.toggleDrawer = () => {
             this.drawer.toggle();
         };
+        const shouldDrawerOpen =
+            !!this._activatedRoute.firstChild?.snapshot?.params['id'];
+        if (shouldDrawerOpen && !this.drawer.opened) {
+            this.drawer.toggle();
+        }
     }
 
     resetFilters() {
@@ -273,6 +278,15 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
+    }
+
+    ngDoCheck(): void {
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+
+        // if (isDrawerOpen) {
+        //     this?.drawer?.toggle();
+        // }
     }
 
     /**

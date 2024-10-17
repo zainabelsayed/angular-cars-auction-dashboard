@@ -147,8 +147,6 @@ export class ContactsService {
                         isAdmin
                             ? {
                                   ...user.data.admin,
-                                  secondPhone:
-                                      user.data.admin.profile.second_phone,
                               }
                             : {
                                   ...user.data.user,
@@ -156,7 +154,11 @@ export class ContactsService {
                                       user.data.user.profile?.second_phone,
                               }
                     );
-                    this._nationality.next(user.data?.nationalities?.[0]);
+                    const latestNationality =
+                        user.data?.nationalities?.length - 1;
+                    this._nationality.next(
+                        user.data?.nationalities?.[latestNationality]
+                    );
                 })
             );
     }

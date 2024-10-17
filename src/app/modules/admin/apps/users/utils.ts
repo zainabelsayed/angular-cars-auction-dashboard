@@ -23,3 +23,13 @@ export class ExcelExportService {
         saveAs(blob, filename);
     }
 }
+
+export function isNotImage(url: string): boolean {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+    const extension = url.split('?')[0].split('.').pop()?.toLowerCase();
+
+    if (extension) {
+        return !imageExtensions.includes(extension);
+    }
+    return true; // Assume it's not an image if no extension is found
+}
