@@ -1,25 +1,3 @@
-export interface Contact {
-    id: string;
-    avatar?: string | null;
-    background?: string | null;
-    name: string;
-    emails?: {
-        email: string;
-        label: string;
-    }[];
-    phoneNumbers?: {
-        country: string;
-        phoneNumber: string;
-        label: string;
-    }[];
-    title?: string;
-    company?: string;
-    birthday?: string | null;
-    address?: string | null;
-    notes?: string | null;
-    tags: string[];
-}
-
 export interface UsersPagination {
     length: number;
     size: number;
@@ -28,6 +6,7 @@ export interface UsersPagination {
 }
 
 interface UserProfile {
+    second_phone: any;
     commerical_numbers?: string;
 }
 
@@ -50,6 +29,7 @@ export interface UserItem {
     avatarUrl: string | null;
     isActive: boolean;
     profile: UserProfile;
+    secondPhone?: string;
 }
 
 interface SearchListData {
@@ -64,14 +44,6 @@ export interface ApiUserResponse {
     timestamp: string;
     path: string;
     data: SearchListData;
-}
-
-export interface Country {
-    id: string;
-    iso: string;
-    name: string;
-    code: string;
-    flagImagePos: string;
 }
 
 export interface Tag {
@@ -124,6 +96,7 @@ export interface ApiRoleList {
 export interface InputOption {
     label: string;
     value: number | string;
+    icon?: string;
 }
 
 export interface ApiUserData {
@@ -149,7 +122,7 @@ export interface Nationality {
     attachments: Attachment[];
 }
 
-interface NationalityDetail {
+export interface NationalityDetail {
     id: number;
     createdAt: string;
     deletedAt: string | null;
@@ -173,4 +146,58 @@ interface Attachment {
     belongsTo: string;
     status: string;
     expirationDate: string | null;
+}
+
+// Interface for the Country object
+export interface Country {
+    id: number;
+    createdAt: string; // ISO date string
+    deletedAt: string | null;
+    updatedAt: string; // ISO date string
+    access_code: string;
+    ios2: string;
+    ios3: string;
+}
+
+// Interface for the Media object
+interface Media {
+    id: number;
+    content: string; // URL to the media content
+}
+
+// Interface for Titles object
+interface Title {
+    title: string;
+    locale: string;
+}
+
+// Interface for the individual country item
+export interface CountryItem {
+    country: Country;
+    media: Media;
+    titles: Title[];
+}
+
+// Interface for the entire API response
+export interface ApiCountries {
+    statusCode: number;
+    timestamp: string; // ISO date string
+    path: string;
+    data: CountryItem[];
+}
+
+export interface NationalityParams {
+    nationalityId: number;
+    attachments: { documentUrl: string; mediaTypes: 'other' }[];
+}
+
+export interface UserParams {
+    avatarUrl?: string; // URL to the user's avatar
+    name: string; // User's full name
+    email: string; // User's email address
+    phone: string; // User's primary phone number
+    password?: string; // User's password (ensure proper handling of sensitive data)
+    nationalityId?: number; // Nationality ID (as a number)
+    second_phone?: string; // User's secondary phone number
+    guard: string; // User's guard
 }

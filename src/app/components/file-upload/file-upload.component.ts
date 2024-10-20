@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Input,
+    OnInit,
     Output,
 } from '@angular/core';
 import {
@@ -20,12 +22,13 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { isNotImage } from 'app/modules/admin/apps/users/utils';
 import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
-    styleUrls: [],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -35,23 +38,35 @@ import { finalize } from 'rxjs/operators';
         AngularFireStorageModule,
         MatIconModule,
         MatButtonModule,
+        MatIconModule,
+        MatProgressBarModule,
     ],
 })
-export class FileUploadComponent {
+export class FileUploadComponent implements OnInit {
     @Input() maxFiles: number = 5;
+    @Input() title: string = 'Add Docs';
+    @Input() uploadedDocs?: string[] = [];
     @Output() uploadComplete = new EventEmitter<string[]>();
 
     form: FormGroup;
     uploadPercentages: number[] = [];
     downloadURLs: string[] = [];
+    isFile = isNotImage;
 
     constructor(
         private fb: FormBuilder,
-        private storage: AngularFireStorage
+        private storage: AngularFireStorage,
+        private _detectChanges: ChangeDetectorRef
     ) {
         this.form = this.fb.group({
             files: this.fb.array([]),
         });
+    }
+    ngOnInit(): void {
+        if (this.uploadedDocs?.length > 0) {
+            this.addFileControl();
+            this.downloadURLs = [...this.uploadedDocs];
+        }
     }
 
     get files(): FormArray {
@@ -80,15 +95,21 @@ export class FileUploadComponent {
             const task = this.storage.upload(filePath, file);
 
             task.percentageChanges().subscribe((percent) => {
-                this.uploadPercentages[index] = percent ?? 0;
+                if (percent < 100) {
+                    this.uploadPercentages[index] = percent + 10;
+                } else {
+                    this.uploadPercentages[index] = percent ?? 0;
+                }
+                this._detectChanges.detectChanges();
             });
 
             task.snapshotChanges()
                 .pipe(
                     finalize(() => {
                         fileRef.getDownloadURL().subscribe((url) => {
-                            this.downloadURLs[index] = url;
+                            this.downloadURLs.push(url);
                             this.emitUploadComplete();
+                            this._detectChanges.detectChanges();
                         });
                     })
                 )
@@ -97,8 +118,6 @@ export class FileUploadComponent {
     }
 
     private emitUploadComplete() {
-        if (this.downloadURLs.length === this.files.length) {
-            this.uploadComplete.emit(this.downloadURLs);
-        }
+        this.uploadComplete.emit(this.downloadURLs);
     }
 }

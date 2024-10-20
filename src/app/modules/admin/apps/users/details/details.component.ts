@@ -40,7 +40,13 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
 import { filter, Subject, takeUntil } from 'rxjs';
 import { DropdownComponent } from '../../../../../components/dropdown/dropdown.component';
 import { ContactsService } from '../contacts.service';
-import { Country, Nationality, UserItem } from '../contacts.types';
+import {
+    InputOption,
+    Nationality,
+    NationalityParams,
+    UserItem,
+    UserParams,
+} from '../contacts.types';
 import { isNotImage } from '../utils';
 
 @Component({
@@ -81,11 +87,13 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     tagsEditMode: boolean = false;
     user: UserItem;
     contactForm: UntypedFormGroup;
-    countries: Country[];
     userId: string;
     nationality: Nationality;
     isFile = isNotImage;
     uploadedFiles: string[] = [];
+    addNationality: boolean = false;
+    nationalities: InputOption[] = [];
+    selectedNationality: string | number | undefined;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -118,6 +126,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
             phone: ['', [Validators.required]],
             secondPhone: [''],
             guard: ['', [Validators.required]],
+            nationality: [''],
         });
 
         //get user id
@@ -132,11 +141,11 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 );
             });
 
-        // Get the contact
+        // Get the user
         this._contactsService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: UserItem) => {
-                // Get the contact
+                // Get the user
                 this.user = user;
 
                 // Patch values to the form
@@ -149,18 +158,24 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the country telephone codes
-        this._contactsService.countries$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((codes: Country[]) => {
-                this.countries = codes;
+        this._contactsService.nationality$.subscribe(
+            (nationality: Nationality) => {
+                this.nationality = nationality;
+                this.selectedNationality = nationality?.nationality?.id;
+                this.uploadedFiles = nationality?.attachments?.map(
+                    (attachment) => attachment?.content
+                );
+            }
+        );
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
+        this._contactsService.countries$.subscribe((countries) => {
+            this.nationalities = countries.map((country) => {
+                return {
+                    label: country.titles[0].title,
+                    value: country.country.id,
+                    icon: country.media?.content,
+                };
             });
-
-        this._contactsService.nationality$.subscribe((nationality: any) => {
-            this.nationality = nationality;
         });
     }
 
@@ -195,7 +210,29 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
     onUploadComplete(fileURLs: string[]) {
         this.uploadedFiles = fileURLs;
-        console.log('Uploaded Files:', this.uploadedFiles);
+        this._changeDetectorRef.detectChanges();
+        console.info(this.uploadedFiles);
+    }
+
+    toggleNationality() {
+        this.addNationality = !this.addNationality;
+    }
+
+    onNationalityChange(value) {
+        this.selectedNationality = value;
+    }
+
+    saveNationality() {
+        const params: NationalityParams = {
+            nationalityId: this.selectedNationality as number,
+            attachments: this.uploadedFiles?.map((content) => ({
+                documentUrl: content,
+                mediaTypes: 'other',
+            })),
+        };
+        this._contactsService
+            .addUserNationality(this.userId, params)
+            .subscribe((res) => console.log(res));
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -224,13 +261,17 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     updateContact(): void {
         // Get the contact object
         const contact = this.contactForm.getRawValue();
-
-        // Go through the contact object and clear empty values
-        contact.emails = contact.emails.filter((email) => email.email);
-
-        contact.phoneNumbers = contact.phoneNumbers.filter(
-            (phoneNumber) => phoneNumber.phoneNumber
-        );
+        const params: UserParams = {
+            name: contact.name,
+            email: contact.email,
+            phone: contact.phone,
+            second_phone: contact.secondPhone,
+            guard: contact.guard,
+            nationalityId: contact.nationality.id,
+        };
+        this._contactsService
+            .updateUser(this.userId, params, this.type)
+            .subscribe((res) => console.log(res));
     }
 
     /**

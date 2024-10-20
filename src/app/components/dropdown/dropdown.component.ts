@@ -21,4 +21,10 @@ export class DropdownComponent {
     onSelectionChange(value: string) {
         this.selectionChange.emit(value);
     }
+    // Get the currently selected option object
+    getSelectedOption() {
+        return this.options.find(
+            (option) => option.value === this.selectedValue
+        );
+    }
 }

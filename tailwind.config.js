@@ -12,7 +12,7 @@ const generatePalette = require(
  * Tailwind-like color palettes automatically
  */
 const customPalettes = {
-    brand: generatePalette('#2196F3'),
+    brand: generatePalette('#0C43A9'),
 };
 
 /**

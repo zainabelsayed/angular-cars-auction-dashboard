@@ -1,11 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
+    ApiCountries,
     ApiRoleList,
     ApiUserData,
     ApiUserResponse,
-    Country,
+    CountryItem,
+    Nationality,
+    NationalityParams,
     UserItem,
+    UserParams,
     userParams,
     UsersPagination,
 } from 'app/modules/admin/apps/users/contacts.types';
@@ -20,15 +24,15 @@ export class ContactsService {
     );
     private _adminUsers: BehaviorSubject<UserItem[] | null> =
         new BehaviorSubject(null);
-    private _countries: BehaviorSubject<Country[] | null> = new BehaviorSubject(
-        null
-    );
+    private _countries: BehaviorSubject<CountryItem[] | null> =
+        new BehaviorSubject(null);
     private _roles: BehaviorSubject<Record<string, string>[]> =
         new BehaviorSubject([]);
     private _pagination: BehaviorSubject<UsersPagination | null> =
         new BehaviorSubject(null);
-    private _nationality: BehaviorSubject<Record<string, string>[]> =
-        new BehaviorSubject([]);
+    private _nationality: BehaviorSubject<Nationality> = new BehaviorSubject(
+        null
+    );
 
     /**
      * Constructor
@@ -63,7 +67,7 @@ export class ContactsService {
     /**
      * Getter for countries
      */
-    get countries$(): Observable<Country[]> {
+    get countries$(): Observable<CountryItem[]> {
         return this._countries.asObservable();
     }
 
@@ -75,7 +79,7 @@ export class ContactsService {
         return this._pagination.asObservable();
     }
 
-    get nationality$(): Observable<Record<string, string>[]> {
+    get nationality$(): Observable<Nationality> {
         return this._nationality.asObservable();
     }
 
@@ -138,11 +142,11 @@ export class ContactsService {
         const userType = type === 'admin' ? 'admin' : 'user';
         const isAdmin = type === 'admin';
         return this._httpClient
-            .get<any>(
+            .get<ApiUserData>(
                 `http://10.255.254.45:3000/api/dashboard/${userType}/show/${id}`
             )
             .pipe(
-                tap((user) => {
+                tap((user: ApiUserData) => {
                     this._user.next(
                         isAdmin
                             ? {
@@ -216,13 +220,42 @@ export class ContactsService {
     /**
      * Get countries
      */
-    getCountries(): Observable<Country[]> {
+    getCountries(): Observable<ApiCountries> {
         return this._httpClient
-            .get<Country[]>('api/apps/contacts/countries')
+            .get<ApiCountries>(
+                'http://10.255.254.45:3000/api/dashboard/core/list/countries'
+            )
             .pipe(
                 tap((countries) => {
-                    this._countries.next(countries);
+                    this._countries.next(countries.data);
                 })
             );
+    }
+
+    /**
+     * add user nationality
+     *  @param id
+     *  @param params
+     */
+
+    addUserNationality(id, params: NationalityParams): Observable<any> {
+        return this._httpClient.post<any>(
+            `http://10.255.254.45:3000/api/dashboard/user/store/nationality/documents/${id}`,
+            params
+        );
+    }
+
+    /**
+     * update user
+     *  @param id
+     *  @param params
+     */
+
+    updateUser(id, params: UserParams, type): Observable<any> {
+        const userType = type === 'admin' ? 'admin' : 'user';
+        return this._httpClient.patch<any>(
+            `http://10.255.254.45:3000/api/dashboard/${userType}/update/${id}`,
+            params
+        );
     }
 }

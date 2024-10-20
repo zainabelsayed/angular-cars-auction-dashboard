@@ -1,24 +1,57 @@
-<form [formGroup]="form">
-    <div formArrayName="files">
+<form class="mt-4" [formGroup]="form">
+    <div class="mt-4" formArrayName="files">
         <div
             *ngFor="let file of files.controls; let i = index"
             [formGroupName]="i"
+            class="flex items-start gap-3"
         >
-            <input
-                type="file"
-                formControlName="file"
-                (change)="onFileSelected($event, i)"
-            />
-
-            <!-- Display upload progress -->
-            <div *ngIf="uploadPercentages[i]">
-                Upload Progress: {{ uploadPercentages[i] | number }}%
+            <div
+                class="flex flex-wrap items-center gap-2"
+                *ngFor="let doc of downloadURLs"
+            >
+                @if (isFile(doc)) {
+                    <div
+                        class="flex h-24 w-24 items-center justify-center rounded-md border"
+                    >
+                        <mat-icon [svgIcon]="'heroicons_outline:document'" />
+                    </div>
+                } @else {
+                    <img
+                        class="h-24 w-24 rounded-md border object-cover object-left"
+                        [src]="doc"
+                    />
+                }
+            </div>
+            <div>
+                <input
+                    id="fileUpload"
+                    type="file"
+                    formControlName="file"
+                    (change)="onFileSelected($event, i)"
+                    accept="image/*,application/pdf"
+                    hidden
+                />
+                <label for="fileUpload">
+                    <div
+                        class="flex h-16 w-16 cursor-pointer items-center justify-center rounded-md border hover:border-gray-300 dark:hover:border-gray-600"
+                    >
+                        <mat-icon [svgIcon]="'heroicons_outline:plus'" />
+                    </div>
+                </label>
+                <!-- Display upload progress -->
+                <mat-progress-bar
+                    class="rounded text-gray-300"
+                    mode="determinate"
+                    [value]="uploadPercentages[i]"
+                    *ngIf="uploadPercentages[i] > 0"
+                />
             </div>
 
             <button
                 mat-icon-button
                 type="button"
                 (click)="removeFileControl(i)"
+                class="m-0 p-0"
             >
                 <mat-icon
                     class="text-black icon-size-4"
@@ -28,13 +61,14 @@
         </div>
     </div>
 
-    <!-- Add another file control -->
-    <button
-        mat-flat-button
-        class="mt-3 rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
-        type="button"
-        (click)="addFileControl()"
-    >
-        Add File
-    </button>
+    @if (!files.controls.length && !uploadedDocs?.length) {
+        <button
+            mat-flat-button
+            class="mt-3 rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
+            type="button"
+            (click)="addFileControl()"
+        >
+            {{ title }}
+        </button>
+    }
 </form>
