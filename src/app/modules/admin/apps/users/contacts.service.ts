@@ -188,10 +188,21 @@ export class ContactsService {
      */
     deleteUser(id: number, type): Observable<any> {
         const userType = type === 'admin' ? 'admin' : 'user';
-
-        return this._httpClient.delete(
-            `http://10.255.254.45:3000/api/dashboard/${userType}/delete/${id}`
-        );
+        const userParams: userListParams = {
+            page: 1,
+            size: 10,
+            sort: 'id',
+            order: 'asc' as any,
+            search: '',
+            userType: userType === 'admin' ? 'admin' : 'web',
+            status: '',
+            guard: '',
+        };
+        return this._httpClient
+            .delete(
+                `http://10.255.254.45:3000/api/dashboard/${userType}/delete/${id}`
+            )
+            .pipe(switchMap(() => this.getUsers(userParams)));
     }
 
     /**
@@ -263,11 +274,21 @@ export class ContactsService {
             status: '',
             guard: '',
         };
-        return this._httpClient
-            .patch<any>(
-                `http://10.255.254.45:3000/api/dashboard/${userType}/update/${id}`,
-                params
-            )
-            .pipe(switchMap(() => this.getUsers(userParams)));
+        const isEdit = !!id && id !== 'new';
+        return isEdit
+            ? this._httpClient
+                  .patch<any>(
+                      `http://10.255.254.45:3000/api/dashboard/${userType}/update/${id}`,
+                      params
+                  )
+                  .pipe(switchMap(() => this.getUserById(id, type)))
+                  .pipe(switchMap(() => this.getUsers(userParams)))
+            : this._httpClient
+                  .post<any>(
+                      `http://10.255.254.45:3000/api/dashboard/${userType}/store`,
+                      params
+                  )
+                  .pipe(switchMap(() => this.getUserById(id, type)))
+                  .pipe(switchMap(() => this.getUsers(userParams)));
     }
 }

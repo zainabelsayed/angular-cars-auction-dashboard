@@ -199,6 +199,13 @@ export class ContactsListComponent implements OnInit, OnDestroy {
             .subscribe();
     }
 
+    addUser() {
+        this._router.navigate(['new'], {
+            relativeTo: this._activatedRoute,
+        });
+        this.drawer.toggle();
+    }
+
     ngAfterViewInit(): void {
         this.onTabChange;
         this.toggleDrawer = () => {
@@ -278,15 +285,6 @@ export class ContactsListComponent implements OnInit, OnDestroy {
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
-    }
-
-    ngDoCheck(): void {
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-
-        // if (isDrawerOpen) {
-        //     this?.drawer?.toggle();
-        // }
     }
 
     /**

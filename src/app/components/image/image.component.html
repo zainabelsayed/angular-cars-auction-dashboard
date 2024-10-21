@@ -1,0 +1,20 @@
+<div
+    class="relative flex h-full w-full items-center justify-center object-cover"
+>
+    <!-- Mat spinner shown while the image is loading -->
+    <mat-spinner
+        *ngIf="isLoading"
+        strokeWidth="3"
+        [diameter]="50"
+    ></mat-spinner>
+
+    <!-- Image -->
+    <img
+        [src]="src"
+        [alt]="alt"
+        [ngClass]="[class, isLoading ? 'hidden' : '']"
+        (load)="onLoad()"
+        (error)="onError()"
+        class="transition-opacity duration-300 ease-in-out"
+    />
+</div>

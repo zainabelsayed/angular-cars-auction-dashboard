@@ -1,4 +1,4 @@
-@if (!!user) {
+@if (!!userId) {
     <div class="flex w-full flex-col">
         <!-- View mode -->
         @if (!editMode) {
@@ -36,9 +36,12 @@
                             class="ring-bg-card flex h-32 w-32 items-center justify-center overflow-hidden rounded-full ring-4"
                         >
                             @if (user?.avatarUrl) {
-                                <img
-                                    class="h-full w-full object-cover object-left"
+                                <app-image
+                                    [class]="
+                                        'h-full w-full object-cover object-left'
+                                    "
                                     [src]="user?.avatarUrl"
+                                    alt="user avatar"
                                 />
                             }
                             @if (!user?.avatarUrl) {
@@ -92,7 +95,8 @@
                             }
                         </div>
                         <div class="font-mono text-xs">
-                            Last seen at: {{ user.lastLoginAt | date: 'short' }}
+                            Last seen at:
+                            {{ user?.lastLoginAt | date: 'short' }}
                         </div>
                     </div>
 
@@ -104,12 +108,7 @@
                                     [svgIcon]="'heroicons_outline:briefcase'"
                                 ></mat-icon>
                                 <div class="ml-6 leading-6">
-                                    {{
-                                        (user?.guard === 'user'
-                                            ? 'Individual'
-                                            : 'Organization'
-                                        ) | titlecase
-                                    }}
+                                    {{ user?.guard | titlecase }}
                                 </div>
                             </div>
                         }
@@ -156,8 +155,10 @@
                                 </div>
 
                                 <div class="mt-6 flex items-center gap-2">
-                                    <img
-                                        class="h-8 w-8 rounded-md border border-black object-cover object-left"
+                                    <app-image
+                                        [class]="
+                                            'h-8 w-8 rounded-md border border-black object-cover object-left'
+                                        "
                                         [src]="nationality?.nationality.flag"
                                     />
                                     <div class="font-mono">
@@ -178,7 +179,7 @@
                                             let doc of nationality?.attachments
                                         "
                                     >
-                                        @if (isFile(doc.content)) {
+                                        @if (isFile(doc?.content)) {
                                             <div
                                                 class="flex h-24 w-24 items-center justify-center rounded-md border"
                                             >
@@ -189,9 +190,11 @@
                                                 />
                                             </div>
                                         } @else {
-                                            <img
-                                                class="h-24 w-24 rounded-md border object-cover object-left"
-                                                [src]="doc.content"
+                                            <app-image
+                                                [class]="
+                                                    'h-24 w-24 rounded-md border object-cover object-left'
+                                                "
+                                                [src]="doc?.content"
                                             />
                                         }
                                     </div>
@@ -199,22 +202,10 @@
                             </div>
                         }
 
-                        <!-- Address -->
-                        @if (user?.address) {
-                            <div class="flex sm:items-center">
-                                <mat-icon
-                                    [svgIcon]="'heroicons_outline:map-pin'"
-                                ></mat-icon>
-                                <div class="ml-6 leading-6">
-                                    {{ user?.address }}
-                                </div>
-                            </div>
-                        }
-
                         <div class="flex items-center gap-3">
                             <div class="text-md font-medium">Created at</div>
                             <div class="font-mono text-sm">
-                                {{ user.createdAt | date: 'short' }}
+                                {{ user?.createdAt | date: 'short' }}
                             </div>
                         </div>
                     </div>
@@ -230,8 +221,8 @@
             >
                 <!-- Background -->
                 @if (user?.background) {
-                    <img
-                        class="absolute inset-0 h-full w-full object-cover"
+                    <app-image
+                        [class]="'absolute inset-0 h-full w-full object-cover'"
                         [src]="user?.background"
                     />
                 }
@@ -314,8 +305,10 @@
                                 </div>
                                 <!-- Image/Letter -->
                                 @if (contactForm.get('avatarUrl')?.value) {
-                                    <img
-                                        class="h-full w-full object-cover object-left"
+                                    <app-image
+                                        [class]="
+                                            'h-full w-full object-cover object-left'
+                                        "
                                         [src]="
                                             contactForm.get('avatarUrl')?.value
                                         "
@@ -377,6 +370,27 @@
                                 class="w-full"
                                 [subscriptSizing]="'dynamic'"
                             >
+                                <mat-label>Password</mat-label>
+                                <mat-icon
+                                    matPrefix
+                                    class="hidden icon-size-5 sm:flex"
+                                    [svgIcon]="'heroicons_solid:lock-closed'"
+                                ></mat-icon>
+                                <input
+                                    matInput
+                                    [formControlName]="'password'"
+                                    [placeholder]="'Password'"
+                                    [spellcheck]="false"
+                                    type="password"
+                                />
+                            </mat-form-field>
+                        </div>
+
+                        <div class="mt-8">
+                            <mat-form-field
+                                class="w-full"
+                                [subscriptSizing]="'dynamic'"
+                            >
                                 <mat-label>Phone Number</mat-label>
                                 <mat-icon
                                     matPrefix
@@ -391,7 +405,7 @@
                                 />
                             </mat-form-field>
                         </div>
-                        @if (!(type === 'admin')) {
+                        @if (type !== 'admin') {
                             <div class="mt-8">
                                 <mat-form-field
                                     class="w-full"
@@ -415,77 +429,72 @@
                             </div>
                         }
                         @if (type === 'admin') {
-                            <div class="mt-8">
-                                <mat-form-field
-                                    class="w-full"
-                                    [subscriptSizing]="'dynamic'"
-                                >
-                                    <mat-label>Title</mat-label>
-                                    <mat-icon
-                                        matPrefix
-                                        class="hidden icon-size-5 sm:flex"
-                                        [svgIcon]="'heroicons_solid:briefcase'"
-                                    ></mat-icon>
-                                    <input
-                                        matInput
-                                        [formControlName]="'guard'"
-                                        [placeholder]="'title'"
-                                        [spellcheck]="false"
-                                    />
-                                </mat-form-field>
+                            <div class="mt-8 flex flex-col gap-y-2">
+                                <mat-label class="font-medium">Role</mat-label>
+
+                                <app-dropdown
+                                    [options]="rolesList"
+                                    [(selectedValue)]="role"
+                                    [placeholder]="'Select Role'"
+                                    (selectionChange)="onRoleChange($event)"
+                                ></app-dropdown>
                             </div>
                         }
-                        <div class="mt-4">
-                            @if (!addNationality && !selectedNationality) {
-                                <button
-                                    mat-button
-                                    class="mt-3 rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
-                                    (click)="toggleNationality()"
-                                >
-                                    <mat-icon
-                                        [svgIcon]="'heroicons_outline:plus'"
-                                        class="text-white"
-                                    />
-                                    Add nationality
-                                </button>
-                            } @else {
-                                <div class="flex flex-col gap-y-3">
-                                    <div class="flex flex-col gap-y-1">
-                                        <mat-label class="font-medium"
-                                            >Nationality</mat-label
-                                        >
-                                        <app-dropdown
-                                            [options]="nationalities"
-                                            [(selectedValue)]="
-                                                selectedNationality
-                                            "
-                                            [placeholder]="'Select Nationality'"
-                                            (selectionChange)="
-                                                onNationalityChange($event)
-                                            "
-                                        ></app-dropdown>
-                                    </div>
+                        @if (type !== 'admin' && !isNewUser) {
+                            <div class="mt-4">
+                                @if (!addNationality && !selectedNationality) {
+                                    <button
+                                        mat-button
+                                        class="mt-3 rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
+                                        (click)="toggleNationality()"
+                                    >
+                                        <mat-icon
+                                            [svgIcon]="'heroicons_outline:plus'"
+                                            class="text-white"
+                                        />
+                                        Add nationality
+                                    </button>
+                                } @else {
+                                    <div class="flex flex-col gap-y-3">
+                                        <div class="flex flex-col gap-y-1">
+                                            <mat-label class="font-medium"
+                                                >Nationality</mat-label
+                                            >
+                                            <app-dropdown
+                                                [options]="nationalities"
+                                                [(selectedValue)]="
+                                                    selectedNationality
+                                                "
+                                                [placeholder]="
+                                                    'Select Nationality'
+                                                "
+                                                (selectionChange)="
+                                                    onNationalityChange($event)
+                                                "
+                                            ></app-dropdown>
+                                        </div>
 
-                                    <app-file-upload
-                                        *ngIf="selectedNationality"
-                                        [maxFiles]="5"
-                                        [uploadedDocs]="uploadedFiles"
-                                        (uploadComplete)="
-                                            onUploadComplete($event)
-                                        "
-                                    ></app-file-upload>
-                                    <div class="flex w-full justify-end">
-                                        <button
-                                            mat-button
-                                            (click)="saveNationality()"
-                                            class="mt-3 w-fit rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
-                                        >
-                                            Save Nationality
-                                        </button>
+                                        <app-file-upload
+                                            *ngIf="selectedNationality"
+                                            [maxFiles]="5"
+                                            [uploadedDocs]="uploadedFiles"
+                                            (uploadComplete)="
+                                                onUploadComplete($event)
+                                            "
+                                        ></app-file-upload>
+                                        <div class="flex w-full justify-end">
+                                            <button
+                                                mat-button
+                                                (click)="saveNationality()"
+                                                class="mt-3 w-fit rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
+                                            >
+                                                Save Nationality
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            }
-                        </div>
+                                }
+                            </div>
+                        }
 
                         <!-- Actions -->
                         <div

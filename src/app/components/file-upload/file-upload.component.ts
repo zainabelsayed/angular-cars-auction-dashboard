@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { isNotImage } from 'app/modules/admin/apps/users/utils';
 import { FileUploadService } from '../file-upload.service';
+import { ImageComponent } from '../image/image.component';
 
 @Component({
     selector: 'app-file-upload',
@@ -37,6 +38,7 @@ import { FileUploadService } from '../file-upload.service';
         MatButtonModule,
         MatIconModule,
         MatProgressBarModule,
+        ImageComponent,
     ],
 })
 export class FileUploadComponent implements OnInit {

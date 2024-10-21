@@ -30,6 +30,7 @@ export interface UserItem {
     isActive: boolean;
     profile: UserProfile;
     secondPhone?: string;
+    role?: { id: number };
 }
 
 interface SearchListData {
@@ -199,7 +200,8 @@ export interface UserParams {
     password?: string; // User's password (ensure proper handling of sensitive data)
     nationalityId?: number; // Nationality ID (as a number)
     second_phone?: string; // User's secondary phone number
-    guard: string; // User's guard
+    guard: string;
+    roleId: number; // User's guard
 }
 
 export type userType = 'admin' | 'user';

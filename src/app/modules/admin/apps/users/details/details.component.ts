@@ -41,6 +41,7 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
 import { SnackbarService } from 'app/components/snackbar.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { DropdownComponent } from '../../../../../components/dropdown/dropdown.component';
+import { ImageComponent } from '../../../../../components/image/image.component';
 import { ContactsService } from '../contacts.service';
 import {
     InputOption,
@@ -78,6 +79,7 @@ import { isNotImage } from '../utils';
         DropdownComponent,
         CommonModule,
         FileUploadComponent,
+        ImageComponent,
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
@@ -86,7 +88,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
 
     editMode: boolean = false;
-    tagsEditMode: boolean = false;
     user: UserItem;
     contactForm: UntypedFormGroup;
     userId: string;
@@ -96,6 +97,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     addNationality: boolean = false;
     nationalities: InputOption[] = [];
     selectedNationality: string | number | undefined;
+    role: number;
+    rolesList: InputOption[] = [];
+    isNewUser: boolean = false;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -129,10 +133,11 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
             email: ['', [Validators.required]],
             phone: ['', [Validators.required]],
             secondPhone: [''],
-            guard: ['', [Validators.required]],
+            guard: [''],
+            role: [undefined],
             nationality: [''],
+            password: [undefined],
         });
-
         //get user id
         this._router.events
             .pipe(filter((event) => event instanceof NavigationEnd))
@@ -140,7 +145,13 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 this._activatedRoute?.firstChild?.paramMap?.subscribe(
                     (params) => {
                         this.userId = params.get('id');
+                        if (this.userId === 'new') {
+                            this.editMode = true;
+                        }
+                        this.isNewUser = this.userId === 'new';
                         this.getUserData();
+                        this.getNationality();
+                        this._changeDetectorRef.markForCheck();
                     }
                 );
             });
@@ -151,7 +162,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
             .subscribe((user: UserItem) => {
                 // Get the user
                 this.user = user;
-
                 // Patch values to the form
                 this.contactForm.patchValue(user);
 
@@ -162,16 +172,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 this._changeDetectorRef.markForCheck();
             });
 
-        this._contactsService.nationality$.subscribe(
-            (nationality: Nationality) => {
-                this.nationality = nationality;
-                this.selectedNationality = nationality?.nationality?.id;
-                this.uploadedFiles = nationality?.attachments?.map(
-                    (attachment) => attachment?.content
-                );
-            }
-        );
-
         this._contactsService.countries$.subscribe((countries) => {
             this.nationalities = countries.map((country) => {
                 return {
@@ -181,10 +181,34 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 };
             });
         });
+
+        this._contactsService.getRoles().subscribe((roles) => {
+            this.rolesList = roles.data.data.map((role) => ({
+                value: role.id,
+                label: role.title,
+            }));
+        });
+    }
+
+    getNationality() {
+        if (!this.isNewUser && this.userId) {
+            this._contactsService.nationality$.subscribe(
+                (nationality: Nationality) => {
+                    this.nationality = nationality;
+                    this.selectedNationality = nationality?.nationality?.id;
+                    this.uploadedFiles = nationality?.attachments?.map(
+                        (attachment) => attachment?.content
+                    );
+                }
+            );
+        } else {
+            this.nationality = null;
+            this.selectedNationality = null;
+        }
     }
 
     getUserData() {
-        if (this.userId) {
+        if (!this.isNewUser && this.userId) {
             this._contactsService
                 .getUserById(this.userId, this.type)
                 .subscribe((user) => {
@@ -192,8 +216,14 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                         this.type === 'admin'
                             ? user?.data?.admin
                             : user?.data?.user;
+                    this.role = user?.data?.admin?.role?.id;
+                    this.contactForm.get('role').setValue(this.role);
                 });
 
+            this._changeDetectorRef.markForCheck();
+        } else {
+            this.user = null;
+            this.contactForm.reset();
             this._changeDetectorRef.markForCheck();
         }
     }
@@ -223,6 +253,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
     onNationalityChange(value) {
         this.selectedNationality = value;
+    }
+    onRoleChange(value) {
+        this.role = value;
+        this.contactForm.get('role').setValue(this.role);
     }
 
     saveNationality() {
@@ -291,8 +325,10 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
             email: contact.email,
             phone: contact.phone,
             second_phone: contact.secondPhone || undefined,
-            guard: contact.guard,
-            nationalityId: contact.nationality.id,
+            guard: contact.guard || this.type,
+            nationalityId: contact?.nationality?.id,
+            roleId: contact.role,
+            password: contact.password === null ? undefined : contact.password,
         };
         this._contactsService
             .updateUser(this.userId, params, this.type)
@@ -305,11 +341,12 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                     });
                 } else {
                     this.snackbarService.show({
-                        message: 'Something went wrong!',
+                        message: res.message,
                         action: 'Close',
                         panelClass: 'error-snackbar',
                     });
                 }
+                this.editMode = false;
             });
     }
 
@@ -333,23 +370,18 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         confirmation.afterClosed().subscribe((result) => {
             // If the confirm button pressed...
             if (result === 'confirmed') {
-                // Get the current contact's id
+                // Get the current user's id
                 const id = this.user.id;
 
                 // Delete the contact
                 this._contactsService
                     .deleteUser(id, this.type)
-                    .subscribe((isDeleted) => {
-                        // Return if the contact wasn't deleted...
-                        if (!isDeleted) {
-                            return;
-                        }
-
-                        // Otherwise, navigate to the parent
-                        else {
+                    .subscribe((res) => {
+                        if ([200, 201].includes(res.statusCode)) {
                             this._router.navigate(['./'], {
                                 relativeTo: this._activatedRoute,
                             });
+                            this.toggleDrawer();
                         }
 
                         // Toggle the edit mode off
@@ -386,10 +418,8 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         });
     }
     removeAvatar() {
-        this.contactForm.setValue({
-            ...this.contactForm.value,
-            avatarUrl: null,
-        });
+        this.contactForm.get('avatarUrl')?.setValue(null);
+        this._changeDetectorRef.detectChanges();
     }
 
     /**
