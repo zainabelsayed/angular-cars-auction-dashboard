@@ -59,7 +59,7 @@ export interface UserListVariables {
     search: string;
 }
 
-export interface userParams {
+export interface userListParams {
     page: number;
     size: number;
     sort: string;
@@ -201,3 +201,5 @@ export interface UserParams {
     second_phone?: string; // User's secondary phone number
     guard: string; // User's guard
 }
+
+export type userType = 'admin' | 'user';

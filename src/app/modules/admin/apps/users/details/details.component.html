@@ -313,13 +313,15 @@
                                     </div>
                                 </div>
                                 <!-- Image/Letter -->
-                                @if (user?.avatarUrl) {
+                                @if (contactForm.get('avatarUrl')?.value) {
                                     <img
                                         class="h-full w-full object-cover object-left"
-                                        [src]="user?.avatarUrl"
+                                        [src]="
+                                            contactForm.get('avatarUrl')?.value
+                                        "
                                     />
                                 }
-                                @if (!user?.avatarUrl) {
+                                @if (!contactForm.get('avatarUrl')?.value) {
                                     <div
                                         class="flex h-full w-full items-center justify-center overflow-hidden rounded bg-gray-200 text-8xl font-bold uppercase leading-none text-gray-600 dark:bg-gray-700 dark:text-gray-200"
                                     >

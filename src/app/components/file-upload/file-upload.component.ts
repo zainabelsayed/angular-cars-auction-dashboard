@@ -8,10 +8,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    AngularFireStorage,
-    AngularFireStorageModule,
-} from '@angular/fire/compat/storage';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import {
     FormArray,
     FormBuilder,
@@ -24,7 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { isNotImage } from 'app/modules/admin/apps/users/utils';
-import { finalize } from 'rxjs/operators';
+import { FileUploadService } from '../file-upload.service';
 
 @Component({
     selector: 'app-file-upload',
@@ -55,8 +52,8 @@ export class FileUploadComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private storage: AngularFireStorage,
-        private _detectChanges: ChangeDetectorRef
+        private uploadFileService: FileUploadService,
+        private _changeDetectorRef: ChangeDetectorRef
     ) {
         this.form = this.fb.group({
             files: this.fb.array([]),
@@ -90,30 +87,21 @@ export class FileUploadComponent implements OnInit {
     onFileSelected(event: any, index: number) {
         const file = event.target.files[0];
         if (file) {
-            const filePath = `uploads/${Date.now()}_${file.name}`;
-            const fileRef = this.storage.ref(filePath);
-            const task = this.storage.upload(filePath, file);
-
-            task.percentageChanges().subscribe((percent) => {
-                if (percent < 100) {
-                    this.uploadPercentages[index] = percent + 10;
-                } else {
-                    this.uploadPercentages[index] = percent ?? 0;
-                }
-                this._detectChanges.detectChanges();
-            });
-
-            task.snapshotChanges()
-                .pipe(
-                    finalize(() => {
-                        fileRef.getDownloadURL().subscribe((url) => {
-                            this.downloadURLs.push(url);
-                            this.emitUploadComplete();
-                            this._detectChanges.detectChanges();
-                        });
-                    })
-                )
-                .subscribe();
+            this.uploadFileService
+                .uploadFile(file, 'files')
+                .subscribe((percent) => {
+                    if (typeof percent === 'string') {
+                        this.downloadURLs.push(percent);
+                        this.emitUploadComplete();
+                        this._changeDetectorRef.detectChanges();
+                    }
+                    if (typeof percent === 'number' && percent !== 100) {
+                        this.uploadPercentages[index] += 10;
+                    }
+                    if (typeof percent === 'number') {
+                        this.uploadPercentages[index] = percent;
+                    }
+                });
         }
     }
 

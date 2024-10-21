@@ -9,11 +9,11 @@ import {
     Nationality,
     NationalityParams,
     UserItem,
+    userListParams,
     UserParams,
-    userParams,
     UsersPagination,
 } from 'app/modules/admin/apps/users/contacts.types';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ContactsService {
@@ -99,7 +99,7 @@ export class ContactsService {
      * Get contacts
      */
 
-    getUsers(params: userParams): Observable<ApiUserResponse> {
+    getUsers(params: userListParams): Observable<ApiUserResponse> {
         const {
             page = 1,
             size,
@@ -253,9 +253,21 @@ export class ContactsService {
 
     updateUser(id, params: UserParams, type): Observable<any> {
         const userType = type === 'admin' ? 'admin' : 'user';
-        return this._httpClient.patch<any>(
-            `http://10.255.254.45:3000/api/dashboard/${userType}/update/${id}`,
-            params
-        );
+        const userParams: userListParams = {
+            page: 1,
+            size: 10,
+            sort: 'id',
+            order: 'asc' as any,
+            search: '',
+            userType: userType === 'admin' ? 'admin' : 'web',
+            status: '',
+            guard: '',
+        };
+        return this._httpClient
+            .patch<any>(
+                `http://10.255.254.45:3000/api/dashboard/${userType}/update/${id}`,
+                params
+            )
+            .pipe(switchMap(() => this.getUsers(userParams)));
     }
 }

@@ -2,3 +2,41 @@
 /*  @ Import/write your custom styles here.
 /*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
 /* ----------------------------------------------------------------------------------------------------- */
+/* styles.css or component.scss */
+.success-snackbar {
+    background-color: #4caf50 !important; /* Success green background */
+    color: white !important;
+}
+
+.error-snackbar {
+    background-color: #f44336; /* Error red background */
+    color: white;
+}
+
+.custom-snackbar {
+    background-color: #2196f3; /* Custom blue background */
+    color: yellow;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+}
+.mat-mdc-snack-bar-container {
+    &.success-snackbar {
+        --mdc-snackbar-container-color: #4caf50;
+        --mat-mdc-snack-bar-button-color: #fff;
+        --mdc-snackbar-supporting-text-color: #fff;
+    }
+    &.error-snackbar {
+        --mdc-snackbar-container-color: #f44336; /* Background color for error */
+        --mat-mdc-snack-bar-button-color: #fff; /* Button text color */
+        --mdc-snackbar-supporting-text-color: #fff; /* Snackbar text color */
+    }
+
+    &.info-snackbar {
+        --mdc-snackbar-container-color: #2196f3; /* Background color for info */
+        --mat-mdc-snack-bar-button-color: #fff; /* Button text color */
+        --mdc-snackbar-supporting-text-color: #fff; /* Snackbar text color */
+    }
+}

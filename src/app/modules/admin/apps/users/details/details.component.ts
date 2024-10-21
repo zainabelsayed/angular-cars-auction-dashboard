@@ -36,7 +36,9 @@ import {
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
+import { FileUploadService } from 'app/components/file-upload.service';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
+import { SnackbarService } from 'app/components/snackbar.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { DropdownComponent } from '../../../../../components/dropdown/dropdown.component';
 import { ContactsService } from '../contacts.service';
@@ -106,7 +108,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         private _contactsService: ContactsService,
         private _formBuilder: UntypedFormBuilder,
         private _fuseConfirmationService: FuseConfirmationService,
-        private _router: Router
+        private _router: Router,
+        private snackbarService: SnackbarService,
+        private uploadFileService: FileUploadService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -120,7 +124,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         // Create the contact form
         this.contactForm = this._formBuilder.group({
             id: [''],
-            avatar: [null],
+            avatarUrl: [null],
             name: ['', [Validators.required]],
             email: ['', [Validators.required]],
             phone: ['', [Validators.required]],
@@ -211,7 +215,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     onUploadComplete(fileURLs: string[]) {
         this.uploadedFiles = fileURLs;
         this._changeDetectorRef.detectChanges();
-        console.info(this.uploadedFiles);
     }
 
     toggleNationality() {
@@ -223,16 +226,37 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     }
 
     saveNationality() {
+        const existedDocs = this.nationality?.attachments?.map(
+            (nationality) => nationality.content
+        );
+        const attachments = this.uploadedFiles?.filter(
+            (file) => !existedDocs?.includes(file)
+        );
         const params: NationalityParams = {
             nationalityId: this.selectedNationality as number,
-            attachments: this.uploadedFiles?.map((content) => ({
+            attachments: attachments?.map((content) => ({
                 documentUrl: content,
                 mediaTypes: 'other',
             })),
         };
         this._contactsService
             .addUserNationality(this.userId, params)
-            .subscribe((res) => console.log(res));
+            .subscribe((res) => {
+                if (res.statusCode === 201) {
+                    this.snackbarService.show({
+                        message: 'Updated successfully!',
+                        action: 'OK',
+                        panelClass: 'success-snackbar',
+                    });
+                } else {
+                    this.snackbarService.show({
+                        message: 'Something went wrong!',
+                        action: 'Close',
+                        panelClass: 'error-snackbar',
+                    });
+                }
+            });
+        this._changeDetectorRef.markForCheck();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -262,16 +286,31 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         // Get the contact object
         const contact = this.contactForm.getRawValue();
         const params: UserParams = {
+            avatarUrl: contact.avatarUrl || undefined,
             name: contact.name,
             email: contact.email,
             phone: contact.phone,
-            second_phone: contact.secondPhone,
+            second_phone: contact.secondPhone || undefined,
             guard: contact.guard,
             nationalityId: contact.nationality.id,
         };
         this._contactsService
             .updateUser(this.userId, params, this.type)
-            .subscribe((res) => console.log(res));
+            .subscribe((res) => {
+                if ([200, 201].includes(res.statusCode)) {
+                    this.snackbarService.show({
+                        message: 'Updated successfully!',
+                        action: 'OK',
+                        panelClass: 'success-snackbar',
+                    });
+                } else {
+                    this.snackbarService.show({
+                        message: 'Something went wrong!',
+                        action: 'Close',
+                        panelClass: 'error-snackbar',
+                    });
+                }
+            });
     }
 
     /**
@@ -341,9 +380,16 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         if (!allowedTypes.includes(file.type)) {
             return;
         }
-
-        // Upload the avatar
-        // this._contactsService.uploadAvatar(this.contact.id, file).subscribe();
+        this.uploadFileService.uploadFile(file, 'avatar').subscribe((url) => {
+            this.contactForm.get('avatarUrl')?.setValue(url);
+            this._changeDetectorRef.detectChanges();
+        });
+    }
+    removeAvatar() {
+        this.contactForm.setValue({
+            ...this.contactForm.value,
+            avatarUrl: null,
+        });
     }
 
     /**
