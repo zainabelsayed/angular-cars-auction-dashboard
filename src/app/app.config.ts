@@ -1,5 +1,10 @@
-import { provideHttpClient } from '@angular/common/http';
-import { APP_INITIALIZER, ApplicationConfig, inject } from '@angular/core';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
+import {
+    APP_INITIALIZER,
+    ApplicationConfig,
+    importProvidersFrom,
+    inject,
+} from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -14,6 +19,8 @@ import {
 } from '@angular/router';
 import { provideFuse } from '@fuse';
 import { TranslocoService, provideTransloco } from '@ngneat/transloco';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { appRoutes } from 'app/app.routes';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
@@ -21,6 +28,10 @@ import { mockApiServices } from 'app/mock-api';
 import { environment } from 'environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -136,5 +147,14 @@ export const appConfig: ApplicationConfig = {
                 ],
             },
         }),
+        importProvidersFrom(
+            TranslateModule.forRoot({
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: HttpLoaderFactory,
+                    deps: [HttpClient],
+                },
+            })
+        ),
     ],
 };

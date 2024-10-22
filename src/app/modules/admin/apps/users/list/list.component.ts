@@ -33,6 +33,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
+import { TranslateModule } from '@ngx-translate/core';
 import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
 import {
     InventoryPagination,
@@ -83,6 +84,7 @@ import { ExcelExportService } from '../utils';
         DropdownComponent,
         MatSidenavModule,
         ContactsDetailsComponent,
+        TranslateModule,
     ],
 })
 export class ContactsListComponent implements OnInit, OnDestroy {
