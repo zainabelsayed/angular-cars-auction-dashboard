@@ -7,7 +7,6 @@ import {
 import { inject } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AuthUtils } from 'app/core/auth/auth.utils';
-import { environment } from 'environments/environment';
 import { Observable, catchError, throwError } from 'rxjs';
 
 /**
@@ -21,10 +20,9 @@ export const authInterceptor = (
     next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
     const authService = inject(AuthService);
-    const baseUrl = environment.apiUrl;
 
     // Clone the request object
-    let newReq = req.clone({ url: baseUrl + req.url });
+    let newReq = req.clone();
 
     // Request
     //

@@ -68,12 +68,14 @@
                                     "maximumError": "90kb"
                                 }
                             ],
-                            "outputHashing": "all"
+                            "outputHashing": "all",
+                            "serviceWorker": false
                         },
                         "development": {
                             "optimization": false,
                             "extractLicenses": false,
-                            "sourceMap": true
+                            "sourceMap": true,
+                            "serviceWorker": false
                         }
                     },
                     "defaultConfiguration": "production"
@@ -113,6 +115,9 @@
         }
     },
     "cli": {
-      "analytics": false
+        "analytics": false,
+        "cache": {
+            "enabled": false
+        }
     }
 }

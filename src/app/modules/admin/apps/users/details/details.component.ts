@@ -1,14 +1,11 @@
-import { TextFieldModule } from '@angular/cdk/text-field';
 import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ElementRef,
     Input,
     OnDestroy,
     OnInit,
-    ViewChild,
     ViewEncapsulation,
 } from '@angular/core';
 import {
@@ -19,13 +16,8 @@ import {
     Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule, MatRippleModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
     ActivatedRoute,
@@ -34,22 +26,12 @@ import {
     RouterLink,
 } from '@angular/router';
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 
-import { FileUploadService } from 'app/components/file-upload.service';
-import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
-import { SnackbarService } from 'app/components/snackbar.service';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { DropdownComponent } from '../../../../../components/dropdown/dropdown.component';
 import { ImageComponent } from '../../../../../components/image/image.component';
 import { ContactsService } from '../contacts.service';
-import {
-    InputOption,
-    Nationality,
-    NationalityParams,
-    UserItem,
-    UserParams,
-} from '../contacts.types';
+import { InputOption, Nationality, UserItem } from '../contacts.types';
+import { UserFormComponent } from '../user-form/user-form.component';
 import { isNotImage } from '../utils';
 
 @Component({
@@ -66,26 +48,17 @@ import { isNotImage } from '../utils';
         FormsModule,
         ReactiveFormsModule,
         MatRippleModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatCheckboxModule,
         NgClass,
-        MatSelectModule,
-        MatOptionModule,
-        MatDatepickerModule,
-        TextFieldModule,
         FuseFindByKeyPipe,
         DatePipe,
-        DropdownComponent,
         CommonModule,
-        FileUploadComponent,
         ImageComponent,
+        UserFormComponent,
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
     @Input() type: 'admin' | 'web';
     @Input() toggleDrawer: () => void;
-    @ViewChild('avatarFileInput') private _avatarFileInput: ElementRef;
 
     editMode: boolean = false;
     user: UserItem;
@@ -94,8 +67,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     nationality: Nationality;
     isFile = isNotImage;
     uploadedFiles: string[] = [];
-    addNationality: boolean = false;
-    nationalities: InputOption[] = [];
     selectedNationality: string | number | undefined;
     role: number;
     rolesList: InputOption[] = [];
@@ -110,11 +81,8 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
         private _contactsService: ContactsService,
-        private _formBuilder: UntypedFormBuilder,
-        private _fuseConfirmationService: FuseConfirmationService,
         private _router: Router,
-        private snackbarService: SnackbarService,
-        private uploadFileService: FileUploadService
+        private _formBuilder: UntypedFormBuilder
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -172,16 +140,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 this._changeDetectorRef.markForCheck();
             });
 
-        this._contactsService.countries$.subscribe((countries) => {
-            this.nationalities = countries.map((country) => {
-                return {
-                    label: country.titles[0].title,
-                    value: country.country.id,
-                    icon: country.media?.content,
-                };
-            });
-        });
-
         this._contactsService.getRoles().subscribe((roles) => {
             this.rolesList = roles.data.data.map((role) => ({
                 value: role.id,
@@ -199,6 +157,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                     this.uploadedFiles = nationality?.attachments?.map(
                         (attachment) => attachment?.content
                     );
+                    this._changeDetectorRef.detectChanges();
                 }
             );
         } else {
@@ -231,6 +190,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     ngAfterViewInit(): void {
         this.userId = this._activatedRoute?.firstChild?.snapshot?.params?.id;
         this.getUserData();
+        this.getNationality();
     }
 
     /**
@@ -247,50 +207,9 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         this._changeDetectorRef.detectChanges();
     }
 
-    toggleNationality() {
-        this.addNationality = !this.addNationality;
-    }
-
-    onNationalityChange(value) {
-        this.selectedNationality = value;
-    }
     onRoleChange(value) {
         this.role = value;
         this.contactForm.get('role').setValue(this.role);
-    }
-
-    saveNationality() {
-        const existedDocs = this.nationality?.attachments?.map(
-            (nationality) => nationality.content
-        );
-        const attachments = this.uploadedFiles?.filter(
-            (file) => !existedDocs?.includes(file)
-        );
-        const params: NationalityParams = {
-            nationalityId: this.selectedNationality as number,
-            attachments: attachments?.map((content) => ({
-                documentUrl: content,
-                mediaTypes: 'other',
-            })),
-        };
-        this._contactsService
-            .addUserNationality(this.userId, params)
-            .subscribe((res) => {
-                if (res.statusCode === 201) {
-                    this.snackbarService.show({
-                        message: 'Updated successfully!',
-                        action: 'OK',
-                        panelClass: 'success-snackbar',
-                    });
-                } else {
-                    this.snackbarService.show({
-                        message: 'Something went wrong!',
-                        action: 'Close',
-                        panelClass: 'error-snackbar',
-                    });
-                }
-            });
-        this._changeDetectorRef.markForCheck();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -311,115 +230,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
-    }
-
-    /**
-     * Update the contact
-     */
-    updateContact(): void {
-        // Get the contact object
-        const contact = this.contactForm.getRawValue();
-        const params: UserParams = {
-            avatarUrl: contact.avatarUrl || undefined,
-            name: contact.name,
-            email: contact.email,
-            phone: contact.phone,
-            second_phone: contact.secondPhone || undefined,
-            guard: contact.guard || this.type,
-            nationalityId: contact?.nationality?.id,
-            roleId: contact.role,
-            password: contact.password === null ? undefined : contact.password,
-        };
-        this._contactsService
-            .updateUser(this.userId, params, this.type)
-            .subscribe((res) => {
-                if ([200, 201].includes(res.statusCode)) {
-                    this.snackbarService.show({
-                        message: 'Updated successfully!',
-                        action: 'OK',
-                        panelClass: 'success-snackbar',
-                    });
-                } else {
-                    this.snackbarService.show({
-                        message: res.message,
-                        action: 'Close',
-                        panelClass: 'error-snackbar',
-                    });
-                }
-                this.editMode = false;
-            });
-    }
-
-    /**
-     * Delete the contact
-     */
-    deleteContact(): void {
-        // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
-            title: 'Delete contact',
-            message:
-                'Are you sure you want to delete this contact? This action cannot be undone!',
-            actions: {
-                confirm: {
-                    label: 'Delete',
-                },
-            },
-        });
-
-        // Subscribe to the confirmation dialog closed action
-        confirmation.afterClosed().subscribe((result) => {
-            // If the confirm button pressed...
-            if (result === 'confirmed') {
-                // Get the current user's id
-                const id = this.user.id;
-
-                // Delete the contact
-                this._contactsService
-                    .deleteUser(id, this.type)
-                    .subscribe((res) => {
-                        if ([200, 201].includes(res.statusCode)) {
-                            this._router.navigate(['./'], {
-                                relativeTo: this._activatedRoute,
-                            });
-                            this.toggleDrawer();
-                        }
-
-                        // Toggle the edit mode off
-                        this.toggleEditMode(false);
-                    });
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            }
-        });
-    }
-
-    /**
-     * Upload avatar
-     *
-     * @param fileList
-     */
-    uploadAvatar(fileList: FileList): void {
-        // Return if canceled
-        if (!fileList.length) {
-            return;
-        }
-
-        const allowedTypes = ['image/jpeg', 'image/png'];
-        const file = fileList[0];
-
-        // Return if the file is not allowed
-        if (!allowedTypes.includes(file.type)) {
-            return;
-        }
-        this.uploadFileService.uploadFile(file, 'avatar').subscribe((url) => {
-            this.contactForm.get('avatarUrl')?.setValue(url);
-            this._changeDetectorRef.detectChanges();
-        });
-    }
-    removeAvatar() {
-        this.contactForm.get('avatarUrl')?.setValue(null);
-        this._changeDetectorRef.detectChanges();
     }
 
     /**
