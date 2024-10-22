@@ -2,14 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { environment } from 'environments/environment';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private _authenticated: boolean = false;
-    private _resetPassword: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
+    private baseUrl = environment.apiUrl;
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -37,8 +38,11 @@ export class AuthService {
      */
     forgotPassword(email: string): Observable<any> {
         return this._httpClient.post(
-            'http://10.255.254.45:3000/api/dashboard/auth/forget-password',
-            { email, type: 'forgot-password' }
+            `${this.baseUrl}/dashboard/auth/forget-password`,
+            {
+                email,
+                type: 'forgot-password',
+            }
         );
     }
 
@@ -49,7 +53,7 @@ export class AuthService {
      */
     verifyOTP(email, otp: string): Observable<any> {
         return this._httpClient
-            .post('http://10.255.254.45:3000/api/dashboard/auth/verify-otp', {
+            .post(`${this.baseUrl}/dashboard/auth/verify-otp`, {
                 email,
                 otpCode: otp,
             })
@@ -57,9 +61,6 @@ export class AuthService {
                 switchMap((response: any) => {
                     // Store the access token in the local storage
                     this.accessToken = response.data.accessToken;
-
-                    // Set the reset password flag to true
-                    this._resetPassword = true;
 
                     // Set the authenticated flag to true
                     this._authenticated = true;
@@ -77,8 +78,11 @@ export class AuthService {
      */
     resetPassword(password: string, confirmPassword: string): Observable<any> {
         return this._httpClient.post(
-            'http://10.255.254.45:3000/api/dashboard/auth/rest-password',
-            { password, confirmPassword }
+            `${this.baseUrl}/dashboard/auth/rest-password`,
+            {
+                password,
+                confirmPassword,
+            }
         );
     }
 
@@ -94,10 +98,7 @@ export class AuthService {
         }
 
         return this._httpClient
-            .post(
-                'http://10.255.254.45:3000/api/dashboard/auth/login',
-                credentials
-            )
+            .post(`${this.baseUrl}/dashboard/auth/login`, credentials)
             .pipe(
                 switchMap((response: any) => {
                     // Store the access token in the local storage
@@ -121,7 +122,7 @@ export class AuthService {
     signInUsingToken(): Observable<any> {
         // Sign in using the token
         return this._httpClient
-            .post('api/auth/sign-in-with-token', {
+            .post(`${this.baseUrl}/auth/sign-in-with-token`, {
                 accessToken: this.accessToken,
             })
             .pipe(
@@ -158,7 +159,7 @@ export class AuthService {
      */
     signOut(): Observable<any> {
         return this._httpClient
-            .post('http://10.255.254.45:3000/api/dashboard/auth/logout', {})
+            .post(`${this.baseUrl}/dashboard/auth/logout`, {})
             .pipe(
                 switchMap((response: any) => {
                     // Remove the access token from the local storage
@@ -182,7 +183,7 @@ export class AuthService {
         password: string;
         company: string;
     }): Observable<any> {
-        return this._httpClient.post('api/auth/sign-up', user);
+        return this._httpClient.post(`${this.baseUrl}/auth/sign-up`, user);
     }
 
     /**
@@ -194,7 +195,10 @@ export class AuthService {
         email: string;
         password: string;
     }): Observable<any> {
-        return this._httpClient.post('api/auth/unlock-session', credentials);
+        return this._httpClient.post(
+            `${this.baseUrl}/auth/unlock-session`,
+            credentials
+        );
     }
 
     /**

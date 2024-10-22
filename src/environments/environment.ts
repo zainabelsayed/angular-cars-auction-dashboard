@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://10.255.254.45:3000',
+    apiUrl: 'http://10.255.254.45:3000/api',
     firebaseConfig: {
         apiKey: 'AIzaSyDuSqOKp2CrysgclKS7687D_V9TL8Klguw',
         authDomain: 'bidding-a0571.firebaseapp.com',

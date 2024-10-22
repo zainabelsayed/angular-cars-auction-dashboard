@@ -13,6 +13,7 @@ import {
     UserParams,
     UsersPagination,
 } from 'app/modules/admin/apps/users/contacts.types';
+import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -33,6 +34,8 @@ export class ContactsService {
     private _nationality: BehaviorSubject<Nationality> = new BehaviorSubject(
         null
     );
+
+    private baseUrl = environment.apiUrl;
 
     /**
      * Constructor
@@ -115,7 +118,7 @@ export class ContactsService {
         const roleId = typeof guard === 'number' ? guard : null;
         return this._httpClient
             .post<ApiUserResponse>(
-                `http://10.255.254.45:3000/api/dashboard/${type}/search-list?page=${page}&limit=${size}&sortBy=${sortName}&sortOrder=${order}`,
+                `${this.baseUrl}/dashboard/${type}/search-list?page=${page}&limit=${size}&sortBy=${sortName}&sortOrder=${order}`,
                 {
                     keyword: search,
                     status,
@@ -143,7 +146,7 @@ export class ContactsService {
         const isAdmin = type === 'admin';
         return this._httpClient
             .get<ApiUserData>(
-                `http://10.255.254.45:3000/api/dashboard/${userType}/show/${id}`
+                `${this.baseUrl}/dashboard/${userType}/show/${id}`
             )
             .pipe(
                 tap((user: ApiUserData) => {
@@ -172,7 +175,7 @@ export class ContactsService {
     getRoles(): Observable<ApiRoleList> {
         return this._httpClient
             .get<any>(
-                'http://10.255.254.45:3000/api/dashboard/role/list?page=1&limit=20&sortBy=id&sortOrder=asc'
+                `${this.baseUrl}/dashboard/role/list?page=1&limit=20&sortBy=id&sortOrder=asc`
             )
             .pipe(
                 tap((roles) => {
@@ -199,9 +202,7 @@ export class ContactsService {
             guard: '',
         };
         return this._httpClient
-            .delete(
-                `http://10.255.254.45:3000/api/dashboard/${userType}/delete/${id}`
-            )
+            .delete(`${this.baseUrl}/dashboard/${userType}/delete/${id}`)
             .pipe(switchMap(() => this.getUsers(userParams)));
     }
 
@@ -212,7 +213,7 @@ export class ContactsService {
 
     toggleActiveUser(id): Observable<any> {
         return this._httpClient.get<any>(
-            `http://10.255.254.45:3000/api/dashboard/user/change-active/${id}`
+            `${this.baseUrl}/dashboard/user/change-active/${id}`
         );
     }
 
@@ -224,7 +225,7 @@ export class ContactsService {
     toggleBlockUser(id, type): Observable<any> {
         const userType = type === 'admin' ? 'admin' : 'user';
         return this._httpClient.get<any>(
-            `http://10.255.254.45:3000/api/dashboard/${userType}/change-block/${id}`
+            `${this.baseUrl}/dashboard/${userType}/change-block/${id}`
         );
     }
 
@@ -233,9 +234,7 @@ export class ContactsService {
      */
     getCountries(): Observable<ApiCountries> {
         return this._httpClient
-            .get<ApiCountries>(
-                'http://10.255.254.45:3000/api/dashboard/core/list/countries'
-            )
+            .get<ApiCountries>(`${this.baseUrl}/dashboard/core/list/countries`)
             .pipe(
                 tap((countries) => {
                     this._countries.next(countries.data);
@@ -251,7 +250,7 @@ export class ContactsService {
 
     addUserNationality(id, params: NationalityParams): Observable<any> {
         return this._httpClient.post<any>(
-            `http://10.255.254.45:3000/api/dashboard/user/store/nationality/documents/${id}`,
+            `${this.baseUrl}/dashboard/user/store/nationality/documents/${id}`,
             params
         );
     }
@@ -278,14 +277,14 @@ export class ContactsService {
         return isEdit
             ? this._httpClient
                   .patch<any>(
-                      `http://10.255.254.45:3000/api/dashboard/${userType}/update/${id}`,
+                      `${this.baseUrl}/dashboard/${userType}/update/${id}`,
                       params
                   )
                   .pipe(switchMap(() => this.getUserById(id, type)))
                   .pipe(switchMap(() => this.getUsers(userParams)))
             : this._httpClient
                   .post<any>(
-                      `http://10.255.254.45:3000/api/dashboard/${userType}/store`,
+                      `${this.baseUrl}/dashboard/${userType}/store`,
                       params
                   )
                   .pipe(switchMap(() => this.getUserById(id, type)))

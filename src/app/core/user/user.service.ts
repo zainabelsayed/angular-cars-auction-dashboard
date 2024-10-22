@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiUser, User } from 'app/core/user/user.types';
+import { environment } from 'environments/environment';
 import { map, Observable, ReplaySubject, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
     private _httpClient = inject(HttpClient);
     private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+
+    private baseUrl = environment.apiUrl;
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -35,9 +38,7 @@ export class UserService {
      */
     get(): Observable<ApiUser> {
         return this._httpClient
-            .get<ApiUser>(
-                'http://10.255.254.45:3000/api/dashboard/auth/profile'
-            )
+            .get<ApiUser>(`${this.baseUrl}/dashboard/auth/profile`)
             .pipe(
                 tap((user: ApiUser) => {
                     return this._user.next({
