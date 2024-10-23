@@ -181,7 +181,9 @@ export class UserFormComponent implements OnInit {
                         panelClass: 'error-snackbar',
                     });
                 }
-                this.toggleEditMode(false);
+                this.isNewUser
+                    ? this.toggleDrawer()
+                    : this.toggleEditMode(false);
             });
     }
 

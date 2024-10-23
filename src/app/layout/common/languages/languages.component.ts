@@ -47,7 +47,7 @@ export class LanguagesComponent implements OnInit, OnDestroy {
         this.availableLangs = languageOptions;
 
         // Get the active lang
-        this.activeLang = localStorage.getItem('lng') || 'en';
+        this.activeLang = localStorage.getItem('lng') || 'ar';
 
         // Set the country iso codes for languages for flags
         this.flagCodes = {
@@ -56,6 +56,7 @@ export class LanguagesComponent implements OnInit, OnDestroy {
             ku: 'ku',
             or: 'or',
         };
+        this.changeDirection(this.activeLang);
     }
 
     /**
@@ -77,6 +78,15 @@ export class LanguagesComponent implements OnInit, OnDestroy {
         this._translationService.changeLang(lang);
         this.activeLang = lang;
         this._changeDetectorRef.markForCheck();
+        this.changeDirection(lang);
+    }
+
+    changeDirection(lang: string) {
+        document.documentElement.setAttribute(
+            'dir',
+            this._translationService.isRtl ? 'rtl' : 'ltr'
+        );
+        document.documentElement.setAttribute('lang', lang);
     }
 
     /**

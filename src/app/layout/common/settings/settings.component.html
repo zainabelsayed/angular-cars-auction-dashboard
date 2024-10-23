@@ -1,11 +1,5 @@
 <div
-    class="settings-cog fixed right-0 z-90 flex h-10 w-10 cursor-pointer items-center justify-center rounded-l-lg bg-red-600 bg-opacity-90 shadow-lg print:hidden"
-    [class.lg:right-0]="
-        config.layout === 'centered' || config.layout === 'material'
-    "
-    [class.lg:right-16]="
-        config.layout !== 'centered' && config.layout !== 'material'
-    "
+    class="settings-cog fixed z-999 flex h-10 w-10 cursor-pointer items-center justify-center rounded-l-lg bg-red-600 bg-opacity-90 shadow-lg ltr:right-0 ltr:lg:right-16 rtl:left-0 rtl:rotate-180 rtl:lg:left-16 print:hidden"
     style="top: 275px"
     (click)="settingsDrawer.toggle()"
 >

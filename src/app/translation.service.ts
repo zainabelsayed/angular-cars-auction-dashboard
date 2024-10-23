@@ -1,13 +1,14 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { rtlLanguages } from './layout/common/languages/data';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TranslationService {
-    defaultLang = 'en';
-
+    defaultLang = 'ar';
+    isRtl: boolean = true;
     constructor(
         private translateService: TranslateService,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -16,6 +17,9 @@ export class TranslationService {
             const savedLang = localStorage.getItem('lng');
             if (savedLang) {
                 this.defaultLang = savedLang;
+                this.isRtl = rtlLanguages.includes(this.defaultLang)
+                    ? true
+                    : false;
             }
             this.translateService.setDefaultLang(this.defaultLang);
             this.translateService.use(this.defaultLang);
@@ -26,6 +30,7 @@ export class TranslationService {
         this.translateService.use(lang);
         if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('lng', lang);
+            this.isRtl = rtlLanguages.includes(lang) ? true : false;
         }
     }
 }

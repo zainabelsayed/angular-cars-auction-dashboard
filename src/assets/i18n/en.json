@@ -1,5 +1,23 @@
 {
   "users": {
-    "title": "Users"
+    "title": "Users",
+    "tabs": {
+      "webUsers": "",
+      "dashboardUsers": ""
+    },
+    "filters": {
+      "status": "",
+      "role": ""
+    },
+    "search": {
+      "placeholder": ""
+    }
+  },
+  "common": {
+    "buttons": {
+      "add": "Add",
+      "reset": "",
+      "export": ""
+    }
   }
 }

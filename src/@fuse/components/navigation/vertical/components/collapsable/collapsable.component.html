@@ -9,29 +9,31 @@
         [matTooltip]="item.tooltip || ''"
         (click)="toggleCollapsable()"
     >
-        <!-- Icon -->
-        @if (item.icon) {
-            <mat-icon
-                class="fuse-vertical-navigation-item-icon"
-                [ngClass]="item.classes?.icon"
-                [svgIcon]="item.icon"
-            ></mat-icon>
-        }
+        <div class="flex items-center">
+            <!-- Icon -->
+            @if (item.icon) {
+                <mat-icon
+                    class="fuse-vertical-navigation-item-icon"
+                    [ngClass]="item.classes?.icon"
+                    [svgIcon]="item.icon"
+                ></mat-icon>
+            }
 
-        <!-- Title & Subtitle -->
-        <div class="fuse-vertical-navigation-item-title-wrapper">
-            <div class="fuse-vertical-navigation-item-title">
-                <span [ngClass]="item.classes?.title">
-                    {{ item.title }}
-                </span>
-            </div>
-            @if (item.subtitle) {
-                <div class="fuse-vertical-navigation-item-subtitle">
-                    <span [ngClass]="item.classes?.subtitle">
-                        {{ item.subtitle }}
+            <!-- Title & Subtitle -->
+            <div class="fuse-vertical-navigation-item-title-wrapper">
+                <div class="fuse-vertical-navigation-item-title">
+                    <span [ngClass]="item.classes?.title">
+                        {{ item.title }}
                     </span>
                 </div>
-            }
+                @if (item.subtitle) {
+                    <div class="fuse-vertical-navigation-item-subtitle">
+                        <span [ngClass]="item.classes?.subtitle">
+                            {{ item.subtitle }}
+                        </span>
+                    </div>
+                }
+            </div>
         </div>
 
         <!-- Badge -->
@@ -49,7 +51,12 @@
         <!-- Arrow -->
         <mat-icon
             class="fuse-vertical-navigation-item-arrow icon-size-4"
-            [svgIcon]="'heroicons_solid:chevron-right'"
+            [svgIcon]="
+                isRtl
+                    ? 'heroicons_solid:chevron-left'
+                    : 'heroicons_solid:chevron-right'
+            "
+            [ngClass]="isExpanded ? 'ltr:rotate-90 rtl:-rotate-90' : ''"
         ></mat-icon>
     </div>
 </div>

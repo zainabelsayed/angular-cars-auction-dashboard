@@ -12,7 +12,7 @@ const generatePalette = require(
  * Tailwind-like color palettes automatically
  */
 const customPalettes = {
-    brand: generatePalette('#0C43A9'),
+    brand: generatePalette('#013188'),
 };
 
 /**
@@ -106,6 +106,7 @@ const config = {
             fontFamily: {
                 sans: `"Inter var", ${defaultTheme.fontFamily.sans.join(',')}`,
                 mono: `"IBM Plex Mono", ${defaultTheme.fontFamily.mono.join(',')}`,
+                tajwal: `"Tajawal", ${defaultTheme.fontFamily.sans.join(',')}`,
             },
             opacity: {
                 12: '0.12',

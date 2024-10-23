@@ -22,6 +22,7 @@ import { FuseVerticalNavigationDividerItemComponent } from '@fuse/components/nav
 import { FuseVerticalNavigationGroupItemComponent } from '@fuse/components/navigation/vertical/components/group/group.component';
 import { FuseVerticalNavigationSpacerItemComponent } from '@fuse/components/navigation/vertical/components/spacer/spacer.component';
 import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/vertical/vertical.component';
+import { TranslationService } from 'app/translation.service';
 import { Subject, filter, takeUntil } from 'rxjs';
 
 @Component({
@@ -51,6 +52,7 @@ export class FuseVerticalNavigationCollapsableItemComponent
     private _changeDetectorRef = inject(ChangeDetectorRef);
     private _router = inject(Router);
     private _fuseNavigationService = inject(FuseNavigationService);
+    private _translationService = inject(TranslationService);
 
     @Input() autoCollapse: boolean;
     @Input() item: FuseNavigationItem;
@@ -58,6 +60,7 @@ export class FuseVerticalNavigationCollapsableItemComponent
 
     isCollapsed: boolean = true;
     isExpanded: boolean = false;
+    isRtl: boolean = this._translationService.isRtl;
     private _fuseVerticalNavigationComponent: FuseVerticalNavigationComponent;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -72,7 +75,6 @@ export class FuseVerticalNavigationCollapsableItemComponent
         /* eslint-disable @typescript-eslint/naming-convention */
         return {
             'fuse-vertical-navigation-item-collapsed': this.isCollapsed,
-            'fuse-vertical-navigation-item-expanded': this.isExpanded,
         };
         /* eslint-enable @typescript-eslint/naming-convention */
     }
@@ -176,6 +178,17 @@ export class FuseVerticalNavigationCollapsableItemComponent
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        const observer = new MutationObserver(() => {
+            this.isRtl = this._translationService.isRtl;
+            this._changeDetectorRef.markForCheck();
+        });
+
+        // Observe changes to the `dir` attribute on the parent or document element
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['dir'],
+        });
     }
 
     /**

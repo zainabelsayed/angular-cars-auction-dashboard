@@ -1,5 +1,23 @@
 {
   "users": {
-    "title": "User"
+    "title": "صارفین",
+    "tabs": {
+      "webUsers": "",
+      "dashboardUsers": ""
+    },
+    "filters": {
+      "status": "",
+      "role": ""
+    },
+    "search": {
+      "placeholder": ""
+    }
+  },
+  "common": {
+    "buttons": {
+      "add": "شامل کریں",
+      "reset": "",
+      "export": ""
+    }
   }
 }

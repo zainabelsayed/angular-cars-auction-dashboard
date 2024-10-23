@@ -36,7 +36,9 @@
                     {{ 'users.title' | translate }}
                 </div>
                 <!-- Actions -->
-                <div class="mt-6 flex shrink-0 items-center sm:ml-4 sm:mt-0">
+                <div
+                    class="mt-6 flex shrink-0 items-center gap-4 sm:ml-4 sm:mt-0"
+                >
                     <!-- Search -->
                     <mat-form-field
                         class="fuse-mat-dense fuse-mat-rounded min-w-64"
@@ -51,22 +53,26 @@
                             matInput
                             [formControl]="searchInputControl"
                             [autocomplete]="'off'"
-                            [placeholder]="'Search products'"
+                            placeholder="
+                               {{ 'users.search.placeholder' | translate }}
+                            "
                         />
                     </mat-form-field>
 
                     <!-- Add user button -->
                     <button
-                        class="ml-4 px-4 py-2"
+                        class="px-4 py-2"
                         mat-flat-button
                         [color]="'primary'"
                         (click)="addUser()"
                     >
                         <mat-icon
                             [svgIcon]="'heroicons_outline:plus'"
-                            class="icon-size-4 md:icon-size-6"
+                            class="icon-size-4 md:icon-size-5"
                         ></mat-icon>
-                        <span class="text-sm md:text-lg">Add</span>
+                        <span class="text-sm md:text-lg">
+                            {{ 'common.buttons.add' | translate }}</span
+                        >
                     </button>
                 </div>
             </div>
@@ -76,13 +82,13 @@
                 <div class="flex items-center gap-4">
                     <app-dropdown
                         [options]="statusOptions"
-                        placeholder="Status"
+                        placeholder="{{ 'users.filters.status' | translate }} "
                         [(selectedValue)]="selectedStatusOption"
                         (selectionChange)="onStatusChange($event)"
                     ></app-dropdown>
                     <app-dropdown
                         [options]="roleOptions"
-                        placeholder="Role"
+                        placeholder="{{ 'users.filters.role' | translate }}"
                         [(selectedValue)]="selectedRoleOption"
                         (selectionChange)="onRoleChange($event)"
                     ></app-dropdown>
@@ -97,7 +103,9 @@
                             [svgIcon]="'heroicons_outline:arrow-path'"
                             class="icon-size-5"
                         ></mat-icon>
-                        <span class="ml-2 mr-1 text-sm">Reset</span>
+                        <span class="ml-2 mr-1 text-sm">{{
+                            'common.buttons.reset' | translate
+                        }}</span>
                     </button>
                     <button
                         (click)="exportToExcel()"
@@ -108,7 +116,9 @@
                             [svgIcon]="'heroicons_outline:arrow-up-tray'"
                             class="icon-size-5"
                         ></mat-icon>
-                        <span class="ml-2 mr-1 text-sm">Export</span>
+                        <span class="ml-2 mr-1 text-sm">{{
+                            'common.buttons.export' | translate
+                        }}</span>
                     </button>
                 </div>
             </div>
@@ -117,7 +127,7 @@
                 class="overflow-y-scroll"
                 (selectedTabChange)="onTabChange($event)"
             >
-                <mat-tab label="Web users">
+                <mat-tab label="{{ 'users.tabs.webUsers' | translate }} ">
                     <!-- Main -->
                     <app-users-table
                         [users$]="users$"
@@ -127,7 +137,7 @@
                         [toggleDetails]="toggleDrawer"
                     />
                 </mat-tab>
-                <mat-tab label="Dashboard users">
+                <mat-tab label="{{ 'users.tabs.dashboardUsers' | translate }} ">
                     <app-users-table
                         [users$]="users$"
                         [tableHead]="adminTableHead"

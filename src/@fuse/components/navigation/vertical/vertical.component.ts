@@ -46,6 +46,7 @@ import { FuseVerticalNavigationGroupItemComponent } from '@fuse/components/navig
 import { FuseVerticalNavigationSpacerItemComponent } from '@fuse/components/navigation/vertical/components/spacer/spacer.component';
 import { FuseScrollbarDirective } from '@fuse/directives/scrollbar/scrollbar.directive';
 import { FuseUtilsService } from '@fuse/services/utils/utils.service';
+import { TranslationService } from 'app/translation.service';
 import {
     delay,
     filter,
@@ -93,6 +94,7 @@ export class FuseVerticalNavigationComponent
     private _scrollStrategyOptions = inject(ScrollStrategyOptions);
     private _fuseNavigationService = inject(FuseNavigationService);
     private _fuseUtilsService = inject(FuseUtilsService);
+    private _translationService = inject(TranslationService);
 
     @Input() appearance: FuseVerticalNavigationAppearance = 'default';
     @Input() autoCollapse: boolean = true;
@@ -101,7 +103,10 @@ export class FuseVerticalNavigationComponent
     @Input() name: string = this._fuseUtilsService.randomId();
     @Input() navigation: FuseNavigationItem[];
     @Input() opened: boolean = true;
-    @Input() position: FuseVerticalNavigationPosition = 'left';
+    @Input() position: FuseVerticalNavigationPosition = this._translationService
+        .isRtl
+        ? 'right'
+        : 'left';
     @Input() transparentOverlay: boolean = false;
     @Output()
     readonly appearanceChanged: EventEmitter<FuseVerticalNavigationAppearance> =
@@ -368,6 +373,16 @@ export class FuseVerticalNavigationComponent
                     this.closeAside();
                 }
             });
+
+        const observer = new MutationObserver(() => {
+            this.position = this._translationService.isRtl ? 'right' : 'left';
+        });
+
+        // Observe changes to the `dir` attribute on the parent or document element
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['dir'],
+        });
     }
 
     /**

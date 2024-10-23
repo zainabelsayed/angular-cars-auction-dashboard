@@ -287,7 +287,6 @@ export class ContactsService {
                       `${this.baseUrl}/dashboard/${userType}/store`,
                       params
                   )
-                  .pipe(switchMap(() => this.getUserById(id, type)))
                   .pipe(switchMap(() => this.getUsers(userParams)));
     }
 }

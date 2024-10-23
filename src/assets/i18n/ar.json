@@ -1,5 +1,23 @@
 {
   "users": {
-    "title": "المستخدمين"
+    "title": "المستخدمين",
+    "tabs": {
+      "webUsers": "",
+      "dashboardUsers": ""
+    },
+    "filters": {
+      "status": "",
+      "role": ""
+    },
+    "search": {
+      "placeholder": ""
+    }
+  },
+  "common": {
+    "buttons": {
+      "add": "اضف",
+      "reset": "",
+      "export": ""
+    }
   }
 }
