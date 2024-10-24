@@ -16,7 +16,7 @@
                                 [mat-sort-header]="th.id"
                                 class="flex w-20 items-center justify-start"
                             >
-                                {{ th.name }}
+                                {{ th.name$ | async }}
                             </div>
                         }
                     </div>
@@ -92,9 +92,10 @@
                                                 class="rounded-md px-2 py-1 text-sm text-white"
                                             >
                                                 {{
-                                                    user.isActive
-                                                        ? 'Active'
-                                                        : 'Inactive'
+                                                    (user.isActive
+                                                        ? 'users.active'
+                                                        : 'users.inactive'
+                                                    ) | translate
                                                 }}
                                             </div>
                                         </div>
@@ -112,9 +113,10 @@
                                         class="rounded-md px-2 py-1 text-sm text-white"
                                     >
                                         {{
-                                            user.isBlocked
-                                                ? 'Blocked'
-                                                : 'Not Blocked'
+                                            (user.isBlocked
+                                                ? 'users.blocked'
+                                                : 'users.notBlocked'
+                                            ) | translate
                                         }}
                                     </div>
                                 </div>
@@ -134,7 +136,10 @@
                                             (click)="
                                                 toggleActive(user.id, $event)
                                             "
-                                            [matTooltip]="'Toggle Active'"
+                                            matTooltip="{{
+                                                'common.buttons.toggleActive'
+                                                    | translate
+                                            }}"
                                         >
                                             <mat-icon
                                                 class="icon-size-5"
@@ -147,7 +152,9 @@
                                     <button
                                         class="h-7 min-h-7 min-w-10 px-2"
                                         (click)="toggleBlock(user.id, $event)"
-                                        [matTooltip]="'Toggle Block'"
+                                        matTooltip="{{
+                                            'common.buttons.block' | translate
+                                        }}"
                                     >
                                         <mat-icon
                                             class="icon-size-5"
@@ -160,7 +167,9 @@
                                     <button
                                         class="h-7 min-h-7 min-w-10 px-2"
                                         (click)="openDeleteDialog(user, $event)"
-                                        [matTooltip]="'Delete'"
+                                        matTooltip="{{
+                                            'common.buttons.delete' | translate
+                                        }}"
                                     >
                                         <mat-icon
                                             class="text-red-500 icon-size-5"
@@ -199,7 +208,7 @@
                 <div
                     class="border-t p-8 text-center text-4xl font-semibold tracking-tight sm:p-16"
                 >
-                    There are no users!
+                    {{ 'users.messages.noUsers' | translate }}
                 </div>
             }
         }

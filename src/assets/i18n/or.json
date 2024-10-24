@@ -1,23 +1,95 @@
 {
-  "users": {
-    "title": "صارفین",
-    "tabs": {
-      "webUsers": "",
-      "dashboardUsers": ""
+    "users": {
+        "title": "صارفین",
+        "tabs": {
+            "webUsers": "ویب صارفین",
+            "dashboardUsers": "ڈیش بورڈ صارفین"
+        },
+        "filters": {
+            "status": "حالت",
+            "role": "کردار"
+        },
+        "search": {
+            "placeholder": "صارفین تلاش کریں"
+        },
+        "messages": {
+            "noUsers": "کوئی صارف نہیں ہیں"
+        },
+        "status": {
+            "active": "فعال",
+            "inactive": "غیر فعال",
+            "blocked": "بلاک شدہ",
+            "unblocked": "غیر بلاک شدہ"
+        },
+        "roles": {
+            "individual": "فرد",
+            "organization": "ادارہ"
+        },
+        "th": {
+            "image": "تصویر",
+            "name": "نام",
+            "verified": "تصدیق شدہ",
+            "status": "حالت",
+            "blocked": "بلاک شدہ",
+            "lastLogin": "آخری لاگ ان",
+            "role": "کردار"
+        },
+        "active": "فعال",
+        "inactive": "غیر فعال",
+        "blocked": "بلاک شدہ",
+        "notBlocked": "غیر بلاک شدہ",
+        "labels": {
+            "nationality": "قومیت",
+            "documents": "دستاویزات",
+            "name": "نام",
+            "email": "ای میل",
+            "password": "پاس ورڈ",
+            "phoneNumber": "فون نمبر",
+            "secondPhoneNumber": "دوسرا فون نمبر",
+            "role": "کردار",
+            "placeholder": {
+                "role": "کردار منتخب کریں",
+                "selectedRoleOption": "منتخب کردہ کردار کا آپشن",
+                "nationality": "قومیت"
+            },
+            "buttons": {
+                "addNationality": "قومیت شامل کریں",
+                "saveNationality": "قومیت محفوظ کریں"
+            }
+        },
+        "placeholder": {
+            "role": "کردار",
+            "nationality": "قومیت"
+        },
+        "addNationality": "قومیت شامل کریں",
+        "saveNationality": "قومیت محفوظ کریں"
     },
-    "filters": {
-      "status": "",
-      "role": ""
+    "common": {
+        "buttons": {
+            "add": "شامل کریں",
+            "reset": "ری سیٹ کریں",
+            "export": "ایکسپورٹ کریں",
+            "toggleActive": "فعال حالت تبدیل کریں",
+            "block": "بلاک کریں",
+            "delete": "حذف کریں",
+            "edit": "ترمیم کریں",
+            "blocked": "بلاک شدہ",
+            "cancel": "منسوخ کریں",
+            "save": "محفوظ کریں"
+        },
+        "text": {
+            "welcomeTo": "خوش آمدید",
+            "NajAdminDashboard": "ناج ایڈمن ڈیش بورڈ",
+            "yes": "جی ہاں",
+            "no": "نہیں",
+            "lastSeenAt": "آخری دیکھا گیا",
+            "createdAt": "تخلیق کیا گیا"
+        }
     },
-    "search": {
-      "placeholder": ""
+    "paginator": {
+        "itemsPerPageLabel": "فی صفحہ اشیاء"
+    },
+    "last": {
+        "dummy": "ڈمی ترجمہ"
     }
-  },
-  "common": {
-    "buttons": {
-      "add": "شامل کریں",
-      "reset": "",
-      "export": ""
-    }
-  }
 }

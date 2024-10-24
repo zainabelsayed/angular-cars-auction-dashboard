@@ -1,23 +1,95 @@
 {
-  "users": {
-    "title": "Users",
-    "tabs": {
-      "webUsers": "",
-      "dashboardUsers": ""
+    "users": {
+        "title": "Users",
+        "tabs": {
+            "webUsers": "Web Users",
+            "dashboardUsers": "Dashboard Users"
+        },
+        "filters": {
+            "status": "Status",
+            "role": "Role"
+        },
+        "search": {
+            "placeholder": "Search for users"
+        },
+        "messages": {
+            "noUsers": "No users found"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "blocked": "Blocked",
+            "unblocked": "Unblocked"
+        },
+        "roles": {
+            "individual": "Individual",
+            "organization": "Organization"
+        },
+        "th": {
+            "image": "Image",
+            "name": "Name",
+            "verified": "Verified",
+            "status": "Status",
+            "blocked": "Blocked",
+            "lastLogin": "Last Login",
+            "role": "Role"
+        },
+        "active": "Active",
+        "inactive": "Inactive",
+        "blocked": "Blocked",
+        "notBlocked": "Not Blocked",
+        "labels": {
+            "nationality": "Nationality",
+            "documents": "Documents",
+            "name": "Name",
+            "email": "Email",
+            "password": "Password",
+            "phoneNumber": "Phone Number",
+            "secondPhoneNumber": "Second Phone Number",
+            "role": "Role",
+            "placeholder": {
+                "role": "Select a role",
+                "selectedRoleOption": "Selected Role Option",
+                "nationality": "Nationality"
+            },
+            "buttons": {
+                "addNationality": "Add Nationality",
+                "saveNationality": "Save Nationality"
+            }
+        },
+        "placeholder": {
+            "role": "Role",
+            "nationality": "Nationality"
+        },
+        "addNationality": "Add Nationality",
+        "saveNationality": "Save Nationality"
     },
-    "filters": {
-      "status": "",
-      "role": ""
+    "common": {
+        "buttons": {
+            "add": "Add",
+            "reset": "Reset",
+            "export": "Export",
+            "toggleActive": "Toggle Active",
+            "block": "Block",
+            "delete": "Delete",
+            "edit": "Edit",
+            "blocked": "Blocked",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "text": {
+            "welcomeTo": "Welcome to",
+            "NajAdminDashboard": "Naj Admin Dashboard",
+            "yes": "Yes",
+            "no": "No",
+            "lastSeenAt": "Last seen at",
+            "createdAt": "Created at"
+        }
     },
-    "search": {
-      "placeholder": ""
+    "paginator": {
+        "itemsPerPageLabel": "Items per page"
+    },
+    "last": {
+        "dummy": "Dummy translation"
     }
-  },
-  "common": {
-    "buttons": {
-      "add": "Add",
-      "reset": "",
-      "export": ""
-    }
-  }
 }

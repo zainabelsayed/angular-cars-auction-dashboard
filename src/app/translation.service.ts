@@ -13,6 +13,7 @@ export class TranslationService {
         private translateService: TranslateService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
+        translateService.addLangs(['ar', 'en', 'or', 'ku']);
         if (isPlatformBrowser(this.platformId)) {
             const savedLang = localStorage.getItem('lng');
             if (savedLang) {
@@ -28,6 +29,7 @@ export class TranslationService {
 
     changeLang(lang: string) {
         this.translateService.use(lang);
+        this.translateService.setDefaultLang(lang);
         if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('lng', lang);
             this.isRtl = rtlLanguages.includes(lang) ? true : false;

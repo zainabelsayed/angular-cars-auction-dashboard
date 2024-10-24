@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { TranslateModule } from '@ngx-translate/core';
 import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
 import { FileUploadService } from 'app/components/file-upload.service';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
@@ -37,6 +38,7 @@ import { ContactsDetailsComponent } from '../details/details.component';
         ImageComponent,
         FileUploadComponent,
         DropdownComponent,
+        TranslateModule,
     ],
     templateUrl: './user-form.component.html',
 })
@@ -52,6 +54,8 @@ export class UserFormComponent implements OnInit {
         this._userDetailsComponent.selectedNationality;
     nationalities: InputOption[] = [];
     uploadedFiles: string[] = this._userDetailsComponent.uploadedFiles;
+    role: number = this._userDetailsComponent.role;
+    rolesList: InputOption[] = [];
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     constructor(
@@ -73,6 +77,12 @@ export class UserFormComponent implements OnInit {
                     icon: country.media?.content,
                 };
             });
+        });
+        this._contactsService.getRoles().subscribe((roles) => {
+            this.rolesList = roles.data.data.map((role) => ({
+                value: role.id,
+                label: role.title,
+            }));
         });
     }
     /**

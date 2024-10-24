@@ -1,23 +1,95 @@
 {
-  "users": {
-    "title": "المستخدمين",
-    "tabs": {
-      "webUsers": "",
-      "dashboardUsers": ""
+    "users": {
+        "title": "المستخدمين",
+        "tabs": {
+            "webUsers": "مستخدمي الويب",
+            "dashboardUsers": "مستخدمي لوحة التحكم"
+        },
+        "filters": {
+            "status": "الحالة",
+            "role": "الدور"
+        },
+        "search": {
+            "placeholder": "ابحث عن المستخدمين"
+        },
+        "messages": {
+            "noUsers": "لا يوجد مستخدمون"
+        },
+        "status": {
+            "active": "نشط",
+            "inactive": "غير نشط",
+            "blocked": "محظور",
+            "unblocked": "غير محظور"
+        },
+        "roles": {
+            "individual": "فرد",
+            "organization": "منظمة"
+        },
+        "th": {
+            "image": "الصورة",
+            "name": "الاسم",
+            "verified": "موثق",
+            "status": "الحالة",
+            "blocked": "محظور",
+            "lastLogin": "آخر تسجيل دخول",
+            "role": "الدور"
+        },
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "blocked": "محظور",
+        "notBlocked": "غير محظور",
+        "labels": {
+            "nationality": "الجنسية",
+            "documents": "المستندات",
+            "name": "الاسم",
+            "email": "البريد الإلكتروني",
+            "password": "كلمة المرور",
+            "phoneNumber": "رقم الهاتف",
+            "secondPhoneNumber": "رقم الهاتف الثاني",
+            "role": "الدور",
+            "placeholder": {
+                "role": "الدور",
+                "selectedRoleOption": "الخيار المحدد للدور",
+                "nationality": "الجنسية"
+            },
+            "buttons": {
+                "addNationality": "إضافة الجنسية",
+                "saveNationality": "حفظ الجنسية"
+            }
+        },
+        "placeholder": {
+            "role": "الدور",
+            "nationality": "الجنسية"
+        },
+        "addNationality": "إضافة الجنسية",
+        "saveNationality": "حفظ الجنسية"
     },
-    "filters": {
-      "status": "",
-      "role": ""
+    "common": {
+        "buttons": {
+            "add": "اضف",
+            "reset": "إعادة تعيين",
+            "export": "تصدير",
+            "toggleActive": "تبديل الحالة النشطة",
+            "block": "حظر",
+            "delete": "حذف",
+            "edit": "تعديل",
+            "blocked": "محظور",
+            "cancel": "إلغاء",
+            "save": "حفظ"
+        },
+        "text": {
+            "welcomeTo": "مرحبًا بك في",
+            "NajAdminDashboard": "لوحة تحكم ناي",
+            "yes": "نعم",
+            "no": "لا",
+            "lastSeenAt": "آخر ظهور في",
+            "createdAt": "تاريخ الإنشاء"
+        }
     },
-    "search": {
-      "placeholder": ""
+    "paginator": {
+        "itemsPerPageLabel": "العناصر في الصفحة"
+    },
+    "last": {
+        "dummy": "ترجمة تجريبية"
     }
-  },
-  "common": {
-    "buttons": {
-      "add": "اضف",
-      "reset": "",
-      "export": ""
-    }
-  }
 }

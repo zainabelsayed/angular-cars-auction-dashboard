@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
@@ -31,6 +32,7 @@ import { AuthService } from 'app/core/auth/auth.service';
         MatButtonModule,
         MatProgressSpinnerModule,
         RouterLink,
+        TranslateModule,
     ],
 })
 export class AuthForgotPasswordComponent implements OnInit {

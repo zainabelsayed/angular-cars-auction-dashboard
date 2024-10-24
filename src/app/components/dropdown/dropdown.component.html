@@ -23,7 +23,13 @@
                         [src]="option.icon"
                         class="h-6 w-6 rounded-full object-cover object-center"
                     />
-                    <div>{{ option.label }}</div>
+                    <div>
+                        {{
+                            isObservable(option.label$)
+                                ? (option.label$ | async)
+                                : option.label
+                        }}
+                    </div>
                 </div>
             </mat-option>
         </mat-select>

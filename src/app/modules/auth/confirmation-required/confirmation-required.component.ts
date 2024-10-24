@@ -2,6 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { TranslateModule } from '@ngx-translate/core';
 import { OtpInputComponent } from 'app/components/otp-input/otp-input.component';
 import { AuthService } from 'app/core/auth/auth.service';
 
@@ -11,7 +12,12 @@ import { AuthService } from 'app/core/auth/auth.service';
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     standalone: true,
-    imports: [RouterLink, OtpInputComponent, FuseAlertComponent],
+    imports: [
+        RouterLink,
+        OtpInputComponent,
+        FuseAlertComponent,
+        TranslateModule,
+    ],
 })
 export class AuthConfirmationRequiredComponent {
     alert: { type: FuseAlertType; message: string } = {

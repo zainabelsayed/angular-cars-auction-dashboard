@@ -64,7 +64,7 @@
             <!-- Name -->
             <div class="mt-8">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>Name</mat-label>
+                    <mat-label>{{ 'users.labels.name' | translate }}</mat-label>
                     <mat-icon
                         matPrefix
                         class="hidden icon-size-5 sm:flex"
@@ -73,7 +73,7 @@
                     <input
                         matInput
                         [formControlName]="'name'"
-                        [placeholder]="'Name'"
+                        placeholder="{{ 'users.labels.name' | translate }}"
                         [spellcheck]="false"
                     />
                 </mat-form-field>
@@ -81,7 +81,9 @@
 
             <div class="mt-8">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>Email</mat-label>
+                    <mat-label>{{
+                        'users.labels.email' | translate
+                    }}</mat-label>
                     <mat-icon
                         matPrefix
                         class="hidden icon-size-5 sm:flex"
@@ -90,7 +92,7 @@
                     <input
                         matInput
                         [formControlName]="'email'"
-                        [placeholder]="'Email'"
+                        placeholder="{{ 'users.labels.email' | translate }}"
                         [spellcheck]="false"
                     />
                 </mat-form-field>
@@ -98,7 +100,9 @@
 
             <div class="mt-8">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>Password</mat-label>
+                    <mat-label>{{
+                        'users.labels.password' | translate
+                    }}</mat-label>
                     <mat-icon
                         matPrefix
                         class="hidden icon-size-5 sm:flex"
@@ -107,7 +111,7 @@
                     <input
                         matInput
                         [formControlName]="'password'"
-                        [placeholder]="'Password'"
+                        placeholder="{{ 'users.labels.password' | translate }}"
                         [spellcheck]="false"
                         type="password"
                     />
@@ -116,7 +120,9 @@
 
             <div class="mt-8">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>Phone Number</mat-label>
+                    <mat-label>{{
+                        'users.labels.phoneNumber' | translate
+                    }}</mat-label>
                     <mat-icon
                         matPrefix
                         class="hidden icon-size-5 sm:flex"
@@ -125,7 +131,9 @@
                     <input
                         matInput
                         [formControlName]="'phone'"
-                        [placeholder]="'Phone Number'"
+                        placeholder="{{
+                            'users.labels.phoneNumber' | translate
+                        }}"
                         [spellcheck]="false"
                     />
                 </mat-form-field>
@@ -136,7 +144,9 @@
                         class="w-full"
                         [subscriptSizing]="'dynamic'"
                     >
-                        <mat-label>Secondary Phone Number</mat-label>
+                        <mat-label>{{
+                            'users.labels.secondPhoneNumber' | translate
+                        }}</mat-label>
                         <mat-icon
                             matPrefix
                             class="hidden icon-size-5 sm:flex"
@@ -145,7 +155,9 @@
                         <input
                             matInput
                             [formControlName]="'secondPhone'"
-                            [placeholder]="'Secondary Phone Number'"
+                            placeholder="{{
+                                'users.labels.secondPhoneNumber' | translate
+                            }}"
                             [spellcheck]="false"
                         />
                     </mat-form-field>
@@ -153,12 +165,14 @@
             }
             @if (type === 'admin') {
                 <div class="mt-8 flex flex-col gap-y-2">
-                    <mat-label class="font-medium">Role</mat-label>
+                    <mat-label class="font-medium">{{
+                        'users.labels.role' | translate
+                    }}</mat-label>
 
                     <app-dropdown
                         [options]="rolesList"
                         [(selectedValue)]="role"
-                        [placeholder]="'Select Role'"
+                        placeholder="{{ 'users.placeholder.role' | translate }}"
                         (selectionChange)="onRoleChange($event)"
                     ></app-dropdown>
                 </div>
@@ -175,18 +189,20 @@
                                 [svgIcon]="'heroicons_outline:plus'"
                                 class="text-white"
                             />
-                            Add nationality
+                            {{ 'users.addNationality' | translate }}
                         </button>
                     } @else {
                         <div class="flex flex-col gap-y-3">
                             <div class="flex flex-col gap-y-1">
-                                <mat-label class="font-medium"
-                                    >Nationality</mat-label
-                                >
+                                <mat-label class="font-medium">{{
+                                    'users.labels.nationality' | translate
+                                }}</mat-label>
                                 <app-dropdown
                                     [options]="nationalities"
                                     [(selectedValue)]="selectedNationality"
-                                    [placeholder]="'Select Nationality'"
+                                    placeholder="{{
+                                        'users.labels.nationality' | translate
+                                    }}"
                                     (selectionChange)="
                                         onNationalityChange($event)
                                     "
@@ -205,7 +221,7 @@
                                     (click)="saveNationality()"
                                     class="mt-3 w-fit rounded-full bg-blue-900 px-4 py-2 text-white hover:bg-blue-950"
                                 >
-                                    Save Nationality
+                                    {{ 'users.saveNationality' | translate }}
                                 </button>
                             </div>
                         </div>
@@ -224,7 +240,7 @@
                     [matTooltip]="'Delete'"
                     (click)="deleteContact()"
                 >
-                    Delete
+                    {{ 'common.buttons.delete' | translate }}
                 </button>
                 <!-- Cancel -->
                 <button
@@ -233,7 +249,7 @@
                     [matTooltip]="'Cancel'"
                     (click)="toggleEditMode(false)"
                 >
-                    Cancel
+                    {{ 'common.buttons.cancel' | translate }}
                 </button>
                 <!-- Save -->
                 <button
@@ -244,7 +260,7 @@
                     [matTooltip]="'Save'"
                     (click)="updateContact()"
                 >
-                    Save
+                    {{ 'common.buttons.save' | translate }}
                 </button>
             </div>
         </form>

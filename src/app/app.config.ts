@@ -5,6 +5,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
     PreloadAllModules,
@@ -13,13 +14,20 @@ import {
     withPreloading,
 } from '@angular/router';
 import { provideFuse } from '@fuse';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import {
+    TranslateLoader,
+    TranslateModule,
+    TranslateService,
+} from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { appRoutes } from 'app/app.routes';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
 import { environment } from 'environments/environment';
+import { CustomPaginatorIntl } from './custom-paginator-intl.service';
+import { TranslationLoaderGuard } from './translation-guard.service';
+import { TranslationService } from './translation.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -39,6 +47,9 @@ export const appConfig: ApplicationConfig = {
         ),
         provideFirestore(() => getFirestore()),
         { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
+
+        { provide: MatPaginatorIntl, useClass: CustomPaginatorIntl },
+        { provide: TranslateService, useClass: TranslationService },
 
         // Material Date Adapter
         {
@@ -115,5 +126,6 @@ export const appConfig: ApplicationConfig = {
                 },
             })
         ),
+        TranslationLoaderGuard,
     ],
 };

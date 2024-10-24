@@ -71,7 +71,7 @@ const extractTranslations = () => {
     // Extract translations from TypeScript files
     tsFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        const regex = /this\.translateService\.instant\('([^']+)'\)/g;
+        const regex = /this\.translate\.instant\('([^']+)'\)/g;
         let match;
         while ((match = regex.exec(content)) !== null) {
             const key = match[1];

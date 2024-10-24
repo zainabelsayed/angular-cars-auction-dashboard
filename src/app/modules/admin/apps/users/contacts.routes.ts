@@ -8,6 +8,7 @@ import { ContactsComponent } from 'app/modules/admin/apps/users/contacts.compone
 import { ContactsService } from 'app/modules/admin/apps/users/contacts.service';
 import { ContactsDetailsComponent } from 'app/modules/admin/apps/users/details/details.component';
 import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
+import { TranslationLoaderGuard } from 'app/translation-guard.service';
 
 /**
  * Can deactivate contacts details
@@ -67,6 +68,7 @@ export default [
             {
                 path: '',
                 component: ContactsListComponent,
+                canActivate: [TranslationLoaderGuard],
                 resolve: {
                     contacts: () =>
                         inject(ContactsService).getUsers(userParams),
@@ -80,7 +82,7 @@ export default [
                             countries: () =>
                                 inject(ContactsService).getCountries(),
                         },
-                        canDeactivate: [canDeactivateContactsDetails],
+                        canActivate: [TranslationLoaderGuard],
                     },
                 ],
             },

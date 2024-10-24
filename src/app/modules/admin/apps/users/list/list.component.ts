@@ -1,9 +1,4 @@
-import {
-    AsyncPipe,
-    CurrencyPipe,
-    NgClass,
-    NgTemplateOutlet,
-} from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -20,20 +15,15 @@ import {
     UntypedFormGroup,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
 import {
     InventoryPagination,
@@ -62,23 +52,14 @@ import { ExcelExportService } from '../utils';
     animations: fuseAnimations,
     standalone: true,
     imports: [
-        MatProgressBarModule,
         MatIconModule,
         MatInputModule,
         FormsModule,
         ReactiveFormsModule,
         MatButtonModule,
-        MatSortModule,
         NgTemplateOutlet,
-        MatPaginatorModule,
         NgClass,
         MatSlideToggleModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatCheckboxModule,
-        MatRippleModule,
-        AsyncPipe,
-        CurrencyPipe,
         MatTabsModule,
         UsersTableComponent,
         DropdownComponent,
@@ -99,8 +80,8 @@ export class ContactsListComponent implements OnInit, OnDestroy {
     searchInputControl: UntypedFormControl = new UntypedFormControl();
     selectedUser: InventoryProduct | null = null;
     selectedProductForm: UntypedFormGroup;
-    tableHead: Record<string, string>[];
-    adminTableHead: Record<string, string>[];
+    tableHead: { id: string; name$: Observable<any> }[];
+    adminTableHead: { id: string; name$: Observable<any> }[];
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     activeTabIndex: number = 0;
     selectedStatusOption: string | undefined;
@@ -109,18 +90,37 @@ export class ContactsListComponent implements OnInit, OnDestroy {
     toggleDrawer: () => void;
 
     statusOptions = [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-        { value: 'blocked', label: 'Blocked' },
-        { value: 'unblocked', label: 'Unblocked' },
+        {
+            value: 'active',
+            label$: this.translate.stream('users.status.active'),
+        },
+        {
+            value: 'inactive',
+            label$: this.translate.stream('users.status.inactive'),
+        },
+        {
+            value: 'blocked',
+            label$: this.translate.stream('users.status.blocked'),
+        },
+        {
+            value: 'unblocked',
+            label$: this.translate.stream('users.status.unblocked'),
+        },
     ];
 
     webRolesOptions = [
-        { value: 'user', label: 'Individual' },
-        { value: 'org', label: 'Organization' },
+        {
+            value: 'user',
+            label$: this.translate.stream('users.roles.individual'),
+        },
+        {
+            value: 'org',
+            label$: this.translate.stream('users.roles.organization'),
+        },
     ];
 
-    roleOptions: InputOption[] = this.webRolesOptions;
+    roleOptions: { value: string; label$: Observable<any> }[] =
+        this.webRolesOptions;
 
     /**
      * Constructor
@@ -129,7 +129,8 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private _contactsService: ContactsService,
         private _activatedRoute: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        private translate: TranslateService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -141,20 +142,35 @@ export class ContactsListComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         this.tableHead = [
-            { name: 'Image', id: 'id' },
-            { name: 'Name', id: 'name' },
-            { name: 'Verified', id: 'isVerified' },
-            { name: 'Status', id: 'isActive' },
-            { name: 'Blocked', id: 'isBlocked' },
-            { name: 'Last login', id: 'lastLoginAt' },
+            { name$: this.translate.stream('users.th.image'), id: 'id' },
+            { name$: this.translate.stream('users.th.name'), id: 'name' },
+            {
+                name$: this.translate.stream('users.th.verified'),
+                id: 'isVerified',
+            },
+            { name$: this.translate.stream('users.th.status'), id: 'isActive' },
+            {
+                name$: this.translate.stream('users.th.blocked'),
+                id: 'isBlocked',
+            },
+            {
+                name$: this.translate.stream('users.th.lastLogin'),
+                id: 'lastLoginAt',
+            },
         ];
 
         this.adminTableHead = [
-            { name: 'Image', id: 'id' },
-            { name: 'Name', id: 'name' },
-            { name: 'Role', id: 'role' },
-            { name: 'Blocked', id: 'isBlocked' },
-            { name: 'Last login', id: 'lastLoginAt' },
+            { name$: this.translate.stream('users.th.image'), id: 'id' },
+            { name$: this.translate.stream('users.th.name'), id: 'name' },
+            { name$: this.translate.stream('users.th.role'), id: 'role' },
+            {
+                name$: this.translate.stream('users.th.blocked'),
+                id: 'isBlocked',
+            },
+            {
+                name$: this.translate.stream('users.th.lastLogin'),
+                id: 'lastLoginAt',
+            },
         ];
 
         // Get the pagination
@@ -233,10 +249,14 @@ export class ContactsListComponent implements OnInit, OnDestroy {
                 Image: user.avatarUrl,
                 Name: user.name,
                 Verified: user.isVerified,
-                Status: user.isActive ? 'Active' : 'Inactive',
+                Status: user.isActive
+                    ? this.translate.instant('users.active')
+                    : this.translate.instant('users.inactive'),
                 LastLogin: user.lastLoginAt,
                 Role: user?.guard,
-                Blocked: user.isBlocked ? 'Yes' : 'No',
+                Blocked: user.isBlocked
+                    ? this.translate.instant('common.text.yes')
+                    : this.translate.instant('common.text.no'),
             }));
         });
         ExcelExportService.exportToExcel('users', tableData);
@@ -259,7 +279,7 @@ export class ContactsListComponent implements OnInit, OnDestroy {
         this.selectedRoleOption = null;
         this.selectedStatusOption = null;
         if (this.activeTabIndex === 1) {
-            (this.roleOptions as InputOption[]) = this.adminRoles;
+            (this.roleOptions as any) = this.adminRoles;
         } else {
             this.roleOptions = this.webRolesOptions;
         }

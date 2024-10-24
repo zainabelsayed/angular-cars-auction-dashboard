@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -13,6 +13,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { DialogService } from 'app/components/dialog/dialog.service';
 import { Observable, Subject, map, merge, switchMap, takeUntil } from 'rxjs';
 import { InventoryPagination } from '../../cars/inventory/inventory.types';
@@ -28,13 +29,15 @@ import { UserItem } from '../contacts.types';
         MatSortModule,
         MatIconModule,
         MatTooltipModule,
+        TranslateModule,
+        AsyncPipe,
     ],
     templateUrl: './users-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersTableComponent implements AfterViewInit, OnInit {
     @Input() users$: Observable<UserItem[]>;
-    @Input() tableHead: Record<string, string>[] = [];
+    @Input() tableHead: { id: string; name$: Observable<any> }[] = [];
     @Input() pagination: InventoryPagination;
     @Input() activeTabIndex: 'web' | 'admin' = 'web';
     @Input() toggleDetails: () => void;

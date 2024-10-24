@@ -27,10 +27,11 @@ import {
 } from '@angular/router';
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 
-import { filter, Subject, takeUntil } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { Subject, filter, takeUntil } from 'rxjs';
 import { ImageComponent } from '../../../../../components/image/image.component';
 import { ContactsService } from '../contacts.service';
-import { InputOption, Nationality, UserItem } from '../contacts.types';
+import { Nationality, UserItem } from '../contacts.types';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { isNotImage } from '../utils';
 
@@ -54,6 +55,7 @@ import { isNotImage } from '../utils';
         CommonModule,
         ImageComponent,
         UserFormComponent,
+        TranslateModule,
     ],
 })
 export class ContactsDetailsComponent implements OnInit, OnDestroy {
@@ -69,7 +71,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     uploadedFiles: string[] = [];
     selectedNationality: string | number | undefined;
     role: number;
-    rolesList: InputOption[] = [];
     isNewUser: boolean = false;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -139,13 +140,6 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
-        this._contactsService.getRoles().subscribe((roles) => {
-            this.rolesList = roles.data.data.map((role) => ({
-                value: role.id,
-                label: role.title,
-            }));
-        });
     }
 
     getNationality() {

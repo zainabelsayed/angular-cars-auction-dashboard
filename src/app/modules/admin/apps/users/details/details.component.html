@@ -62,7 +62,9 @@
                                     class="icon-size-5"
                                     [svgIcon]="'heroicons_solid:pencil-square'"
                                 ></mat-icon>
-                                <span class="ml-2">Edit</span>
+                                <span class="ml-2">{{
+                                    'common.buttons.edit' | translate
+                                }}</span>
                             </button>
                         </div>
                     </div>
@@ -85,17 +87,22 @@
                                     "
                                     class="rounded-full px-4 py-2"
                                 >
-                                    {{ user?.isActive ? 'Active' : 'Inactive' }}
+                                    {{
+                                        (user?.isActive
+                                            ? 'users.active'
+                                            : 'users.inactive'
+                                        ) | translate
+                                    }}
                                 </div>
                             }
                             @if (user?.isBlocked) {
                                 <div class="rounded-full bg-red-400 px-4 py-2">
-                                    Blocked
+                                    {{ 'common.buttons.blocked' | translate }}
                                 </div>
                             }
                         </div>
                         <div class="font-mono text-xs">
-                            Last seen at:
+                            {{ 'common.text.lastSeenAt' | translate }}:
                             {{ user?.lastLoginAt | date: 'short' }}
                         </div>
                     </div>
@@ -107,7 +114,7 @@
                                 <mat-icon
                                     [svgIcon]="'heroicons_outline:briefcase'"
                                 ></mat-icon>
-                                <div class="ml-6 leading-6">
+                                <div class="mx-2 ml-6 leading-6">
                                     {{ user?.guard | titlecase }}
                                 </div>
                             </div>
@@ -121,7 +128,7 @@
                             <div class="ml-6 min-w-0 space-y-1">
                                 <div class="flex items-center leading-6">
                                     <a
-                                        class="text-primary-500 hover:underline"
+                                        class="mx-2 text-primary-500 hover:underline"
                                         [href]="'mailto:' + user?.email"
                                         target="_blank"
                                     >
@@ -135,13 +142,14 @@
 
                         <div class="flex">
                             <mat-icon
+                                class="rtl:-rotate-90"
                                 [svgIcon]="'heroicons_outline:phone'"
                             ></mat-icon>
                             <div class="ml-6 min-w-0 space-y-1">
-                                <div class="font-mono">
+                                <div class="mx-2 font-mono" dir="ltr">
                                     {{ user?.phone }}
                                 </div>
-                                <div class="font-mono">
+                                <div class="mx-2 font-mono" dir="ltr">
                                     {{ user?.secondPhone }}
                                 </div>
                             </div>
@@ -151,7 +159,7 @@
                         @if (nationality?.id) {
                             <div class="flex gap-2">
                                 <div class="text-md font-medium">
-                                    Nationality
+                                    {{ 'users.labels.nationality' | translate }}
                                 </div>
 
                                 <div class="mt-6 flex items-center gap-2">
@@ -170,7 +178,11 @@
                         @if (nationality?.attachments) {
                             <div class="flex gap-2">
                                 <div class="text-md font-medium">
-                                    <div>Documents</div>
+                                    <div>
+                                        {{
+                                            'users.labels.documents' | translate
+                                        }}
+                                    </div>
                                 </div>
                                 <div class="mt-6 flex flex-wrap gap-4">
                                     <div
@@ -203,7 +215,9 @@
                         }
 
                         <div class="flex items-center gap-3">
-                            <div class="text-md font-medium">Created at</div>
+                            <div class="text-md font-medium">
+                                {{ 'common.text.createdAt' | translate }}
+                            </div>
                             <div class="font-mono text-sm">
                                 {{ user?.createdAt | date: 'short' }}
                             </div>
