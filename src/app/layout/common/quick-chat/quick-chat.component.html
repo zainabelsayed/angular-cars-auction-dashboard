@@ -4,7 +4,7 @@
     <div
         class="bg-card flex h-full w-full flex-col transition-transform duration-400 ease-drawer sm:w-96"
         [ngClass]="{
-            '-translate-x-full shadow sm:-translate-x-96 lg:-translate-x-80':
+            'shadow sm:-translate-x-96 ltr:-translate-x-full lg:ltr:-translate-x-80 rtl:translate-x-full lg:rtl:translate-x-80':
                 opened,
             'translate-x-0': !opened,
         }"
