@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+} from '@angular/core';
 
 @Component({
     selector: 'app-otp-input',
@@ -7,6 +13,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     imports: [CommonModule],
     templateUrl: './otp-input.component.html',
     styleUrl: './otp-input.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OtpInputComponent {
     @Input() otpLength: number = 4; // length of the OTP

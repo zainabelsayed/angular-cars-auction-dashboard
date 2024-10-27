@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnInit,
+} from '@angular/core';
 import {
     FormsModule,
     ReactiveFormsModule,
@@ -41,6 +47,7 @@ import { ContactsDetailsComponent } from '../details/details.component';
         TranslateModule,
     ],
     templateUrl: './user-form.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserFormComponent implements OnInit {
     @Input() contactForm: UntypedFormGroup;

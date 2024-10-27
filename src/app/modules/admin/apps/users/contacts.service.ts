@@ -262,7 +262,12 @@ export class ContactsService {
      */
 
     updateUser(id, params: UserParams, type): Observable<any> {
-        const userType = type === 'admin' ? 'admin' : 'user';
+        const userType =
+            type === 'admin'
+                ? 'admin'
+                : params.guard === 'org'
+                  ? 'organization'
+                  : 'user';
         const userParams: userListParams = {
             page: 1,
             size: 10,

@@ -1,5 +1,11 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    Output,
+} from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { InputOption } from 'app/modules/admin/apps/users/contacts.types';
@@ -11,6 +17,7 @@ import { isObservable } from 'rxjs';
     styleUrls: ['./dropdown.component.scss'],
     standalone: true,
     imports: [MatFormFieldModule, MatSelectModule, CommonModule, AsyncPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DropdownComponent {
     @Input() options: InputOption[] = [];

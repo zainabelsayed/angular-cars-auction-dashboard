@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialogModule,
@@ -15,6 +15,7 @@ import { ConfirmationData } from './types';
     imports: [MatDialogModule, CommonModule, TranslateModule],
     templateUrl: './dialog.component.html',
     styleUrl: './dialog.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogComponent {
     dir: string = rtlLanguages.includes(this.translate.currentLang)
