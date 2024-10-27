@@ -62,7 +62,11 @@
             "nationality": "الجنسية"
         },
         "addNationality": "إضافة الجنسية",
-        "saveNationality": "حفظ الجنسية"
+        "saveNationality": "حفظ الجنسية",
+        "delete": {
+            "title": "تأكيد الحذف",
+            "message": "هل أنت متأكد أنك تريد حذف {{name}}؟"
+        }
     },
     "common": {
         "buttons": {
@@ -75,7 +79,8 @@
             "edit": "تعديل",
             "blocked": "محظور",
             "cancel": "إلغاء",
-            "save": "حفظ"
+            "save": "حفظ",
+            "confirm": "تأكيد"
         },
         "text": {
             "welcomeTo": "مرحبًا بك في",
@@ -87,7 +92,10 @@
         }
     },
     "paginator": {
-        "itemsPerPageLabel": "العناصر في الصفحة"
+        "itemsPerPageLabel": "العناصر في الصفحة",
+        "nextPageLabel": "الصفحة التالية",
+        "previousPageLabel": "الصفحة السابقة",
+        "rangeLabel": "{{start}} - {{end}} من {{length}}"
     },
     "last": {
         "dummy": "ترجمة تجريبية"

@@ -62,7 +62,11 @@
             "nationality": "Nationality"
         },
         "addNationality": "Add Nationality",
-        "saveNationality": "Save Nationality"
+        "saveNationality": "Save Nationality",
+        "delete": {
+            "title": "Confirm Delete",
+            "message": "Are you sure you want to delete this {{name}}?"
+        }
     },
     "common": {
         "buttons": {
@@ -75,7 +79,8 @@
             "edit": "Edit",
             "blocked": "Blocked",
             "cancel": "Cancel",
-            "save": "Save"
+            "save": "Save",
+            "confirm": "Confirm"
         },
         "text": {
             "welcomeTo": "Welcome to",
@@ -87,7 +92,10 @@
         }
     },
     "paginator": {
-        "itemsPerPageLabel": "Items per page"
+        "itemsPerPageLabel": "Items per page",
+        "nextPageLabel": "Next Page",
+        "previousPageLabel": "Previous Page",
+        "rangeLabel": "{{start}} - {{end}} of {{length}}"
     },
     "last": {
         "dummy": "Dummy translation"

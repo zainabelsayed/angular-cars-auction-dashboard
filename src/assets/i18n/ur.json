@@ -62,7 +62,11 @@
             "nationality": "قومیت"
         },
         "addNationality": "قومیت شامل کریں",
-        "saveNationality": "قومیت محفوظ کریں"
+        "saveNationality": "قومیت محفوظ کریں",
+        "delete": {
+            "title": "حذف کی تصدیق",
+            "message": "کیا آپ واقعی اس {{name}} کو حذف کرنا چاہتے ہیں؟"
+        }
     },
     "common": {
         "buttons": {
@@ -75,7 +79,8 @@
             "edit": "ترمیم کریں",
             "blocked": "بلاک شدہ",
             "cancel": "منسوخ کریں",
-            "save": "محفوظ کریں"
+            "save": "محفوظ کریں",
+            "confirm": "تصدیق کریں"
         },
         "text": {
             "welcomeTo": "خوش آمدید",
@@ -87,7 +92,10 @@
         }
     },
     "paginator": {
-        "itemsPerPageLabel": "فی صفحہ اشیاء"
+        "itemsPerPageLabel": "فی صفحہ اشیاء",
+        "nextPageLabel": "اگلا صفحہ",
+        "previousPageLabel": "پچھلا صفحہ",
+        "rangeLabel": "{{start}} - {{end}} از {{length}}"
     },
     "last": {
         "dummy": "ڈمی ترجمہ"

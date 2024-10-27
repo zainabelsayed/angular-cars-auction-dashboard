@@ -11,8 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DialogService } from 'app/components/dialog/dialog.service';
 import { DropdownComponent } from 'app/components/dropdown/dropdown.component';
 import { FileUploadService } from 'app/components/file-upload.service';
 import { FileUploadComponent } from 'app/components/file-upload/file-upload.component';
@@ -61,12 +61,13 @@ export class UserFormComponent implements OnInit {
     constructor(
         private uploadFileService: FileUploadService,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseConfirmationService: FuseConfirmationService,
+        private _dialogService: DialogService,
         private _contactsService: ContactsService,
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private snackbarService: SnackbarService,
-        private _userDetailsComponent: ContactsDetailsComponent
+        private _userDetailsComponent: ContactsDetailsComponent,
+        private translate: TranslateService
     ) {}
     ngOnInit(): void {
         this._contactsService.countries$.subscribe((countries) => {
@@ -119,15 +120,11 @@ export class UserFormComponent implements OnInit {
      */
     deleteContact(): void {
         // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
-            title: 'Delete contact',
-            message:
-                'Are you sure you want to delete this contact? This action cannot be undone!',
-            actions: {
-                confirm: {
-                    label: 'Delete',
-                },
-            },
+        const confirmation = this._dialogService.openConfirmDialog({
+            title: this.translate.instant('users.delete.title'),
+            message: this.translate.instant('users.delete.message', {
+                name: this.contactForm.get('name')?.value,
+            }),
         });
 
         // Subscribe to the confirmation dialog closed action
@@ -138,19 +135,28 @@ export class UserFormComponent implements OnInit {
                 const id = this.userId;
 
                 // Delete the contact
-                this._contactsService
-                    .deleteUser(id, this.type)
-                    .subscribe((res) => {
-                        if ([200, 201].includes(res.statusCode)) {
-                            this._router.navigate(['./'], {
-                                relativeTo: this._activatedRoute,
-                            });
-                            this.toggleDrawer();
-                        }
-
+                this._contactsService.deleteUser(id, this.type).subscribe({
+                    next: (res) => {
+                        this._router.navigate(['./'], {
+                            relativeTo: this._activatedRoute,
+                        });
+                        this.toggleDrawer();
                         // Toggle the edit mode off
                         this.toggleEditMode(false);
-                    });
+                        this.snackbarService.show({
+                            message: 'Deleted successfully!',
+                            action: 'OK',
+                            panelClass: 'success-snackbar',
+                        });
+                    },
+                    error: (err) => {
+                        this.snackbarService.show({
+                            message: err.error.message,
+                            action: 'OK',
+                            panelClass: 'error-snackbar',
+                        });
+                    },
+                });
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -177,23 +183,26 @@ export class UserFormComponent implements OnInit {
         };
         this._contactsService
             .updateUser(this.userId, params, this.type)
-            .subscribe((res) => {
-                if ([200, 201].includes(res.statusCode)) {
+            .subscribe({
+                next: (res) => {
                     this.snackbarService.show({
                         message: 'Updated successfully!',
                         action: 'OK',
                         panelClass: 'success-snackbar',
                     });
-                } else {
+
+                    this.isNewUser
+                        ? this.toggleDrawer()
+                        : this.toggleEditMode(false);
+                },
+                error: (error) => {
                     this.snackbarService.show({
-                        message: res.message,
+                        message: error.error.message,
                         action: 'Close',
                         panelClass: 'error-snackbar',
+                        duration: 5000,
                     });
-                }
-                this.isNewUser
-                    ? this.toggleDrawer()
-                    : this.toggleEditMode(false);
+                },
             });
     }
 
@@ -223,20 +232,21 @@ export class UserFormComponent implements OnInit {
         };
         this._contactsService
             .addUserNationality(this.userId, params)
-            .subscribe((res) => {
-                if (res.statusCode === 201) {
+            .subscribe({
+                next: (res) => {
                     this.snackbarService.show({
                         message: 'Updated successfully!',
                         action: 'OK',
                         panelClass: 'success-snackbar',
                     });
-                } else {
+                },
+                error: (error) => {
                     this.snackbarService.show({
                         message: 'Something went wrong!',
                         action: 'Close',
                         panelClass: 'error-snackbar',
                     });
-                }
+                },
             });
         this._changeDetectorRef.markForCheck();
     }

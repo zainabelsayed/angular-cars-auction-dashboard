@@ -13,8 +13,9 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/components/dialog/dialog.service';
+import { SnackbarService } from 'app/components/snackbar.service';
 import { Observable, Subject, map, merge, switchMap, takeUntil } from 'rxjs';
 import { InventoryPagination } from '../../cars/inventory/inventory.types';
 import { ContactsService } from '../contacts.service';
@@ -47,6 +48,7 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     isLoading: boolean = false;
+    locale: string = this.translate.currentLang;
 
     isAdminUsers = false;
     gridClass = `grid-cols-7`;
@@ -56,13 +58,19 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
         private _contactsService: ContactsService,
         private _dialogService: DialogService,
         private _activatedRoute: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        private translate: TranslateService,
+        private snackbarService: SnackbarService
     ) {}
 
     ngOnInit(): void {
         this.isAdminUsers = this.activeTabIndex === 'admin';
         this._changeDetectorRef.markForCheck();
         this.gridClass = `grid-cols-${this.tableHead.length + 1}`;
+        this.translate.onLangChange.subscribe((event) => {
+            this.locale = event.lang;
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     ngAfterViewInit(): void {
@@ -115,33 +123,66 @@ export class UsersTableComponent implements AfterViewInit, OnInit {
         e.stopPropagation();
         this._contactsService
             .toggleBlockUser(id, this.activeTabIndex)
-            .subscribe(() => {
-                this.updateUsersList();
+            .subscribe({
+                next: () => {
+                    this.updateUsersList();
+                },
+                error: (err) => {
+                    this.snackbarService.show({
+                        message: err.error.message,
+                        action: 'OK',
+                        panelClass: 'error-snackbar',
+                    });
+                },
             });
     }
 
     toggleActive(id: string, e): void {
         e.stopPropagation();
-        this._contactsService.toggleActiveUser(id).subscribe(() => {
-            this.updateUsersList();
+        this._contactsService.toggleActiveUser(id).subscribe({
+            next: () => {
+                this.updateUsersList();
+            },
+            error: (err) => {
+                this.snackbarService.show({
+                    message: err.error.message,
+                    action: 'OK',
+                    panelClass: 'error-snackbar',
+                });
+            },
         });
     }
 
     openDeleteDialog(user: UserItem, e): void {
         e.stopPropagation();
-        const dialogRef = this._dialogService.openConfirmDialog(
-            'Confirm Delete',
-            `Are you sure you want to delete ${user.name} ?`
-        );
+        const dialogRef = this._dialogService.openConfirmDialog({
+            title: this.translate.instant('users.delete.title'),
+            message: this.translate.instant('users.delete.message', {
+                name: user.name,
+            }),
+        });
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this._contactsService
                     .deleteUser(user.id, this.activeTabIndex)
-                    .subscribe(() => {
-                        this.updateUsersList();
+                    .subscribe({
+                        next: () => {
+                            this.updateUsersList();
+                            this.snackbarService.show({
+                                message: 'Deleted successfully!',
+                                action: 'OK',
+                                panelClass: 'success-snackbar',
+                            });
+                        },
+                        error: (err) => {
+                            this.snackbarService.show({
+                                message: err.error.message,
+                                action: 'OK',
+                                panelClass: 'error-snackbar',
+                            });
+                        },
                     });
-                console.log('Confirmed', result);
             } else {
                 console.log('Cancelled');
             }

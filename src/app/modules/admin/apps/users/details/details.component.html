@@ -103,7 +103,9 @@
                         </div>
                         <div class="font-mono text-xs">
                             {{ 'common.text.lastSeenAt' | translate }}:
-                            {{ user?.lastLoginAt | date: 'short' }}
+                            {{
+                                user?.lastLoginAt | date: 'short' : '' : locale
+                            }}
                         </div>
                     </div>
 
@@ -145,12 +147,14 @@
                                 class="rtl:-rotate-90"
                                 [svgIcon]="'heroicons_outline:phone'"
                             ></mat-icon>
-                            <div class="ml-6 min-w-0 space-y-1">
+                            <div
+                                class="min-w-0 space-y-1 ltr:ml-2 ltr:text-start rtl:mr-2 rtl:text-end"
+                            >
                                 <div class="mx-2 font-mono" dir="ltr">
                                     {{ user?.phone }}
                                 </div>
                                 <div class="mx-2 font-mono" dir="ltr">
-                                    {{ user?.secondPhone }}
+                                    {{ user?.profile?.second_phone }}
                                 </div>
                             </div>
                         </div>
@@ -219,7 +223,10 @@
                                 {{ 'common.text.createdAt' | translate }}
                             </div>
                             <div class="font-mono text-sm">
-                                {{ user?.createdAt | date: 'short' }}
+                                {{
+                                    user?.createdAt
+                                        | date: 'short' : '' : locale
+                                }}
                             </div>
                         </div>
                     </div>

@@ -5,7 +5,7 @@ const glob = require('glob');
 const outputFiles = {
     en: './src/assets/i18n/en.json',
     ar: './src/assets/i18n/ar.json',
-    or: './src/assets/i18n/or.json',
+    ur: './src/assets/i18n/ur.json',
     ku: './src/assets/i18n/ku.json',
     // Add more languages as needed
 };
@@ -14,7 +14,7 @@ const outputFiles = {
 const translations = {
     en: {},
     ar: {},
-    or: {},
+    ur: {},
     ku: {},
 };
 

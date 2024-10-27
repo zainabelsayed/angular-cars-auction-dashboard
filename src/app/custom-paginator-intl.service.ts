@@ -16,10 +16,31 @@ export class CustomPaginatorIntl extends MatPaginatorIntl {
 
     getTranslations() {
         this.translate
-            .stream(['paginator.itemsPerPageLabel'])
+            .stream([
+                'paginator.itemsPerPageLabel',
+                'paginator.nextPageLabel',
+                'paginator.previousPageLabel',
+                'paginator.rangeLabel',
+            ])
             .subscribe((translations) => {
                 this.itemsPerPageLabel =
                     translations['paginator.itemsPerPageLabel'];
+                this.nextPageLabel = translations['paginator.nextPageLabel'];
+                this.previousPageLabel =
+                    translations['paginator.previousPageLabel'];
+                this.getRangeLabel = (
+                    page: number,
+                    pageSize: number,
+                    length: number
+                ) => {
+                    const startIndex = page * pageSize;
+                    const endIndex = Math.min(startIndex + pageSize, length);
+                    return this.translate.instant('paginator.rangeLabel', {
+                        start: startIndex + 1,
+                        end: endIndex,
+                        length: length,
+                    });
+                };
 
                 this.changes.next();
             });

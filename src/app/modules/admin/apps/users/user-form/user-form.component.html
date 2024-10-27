@@ -125,15 +125,17 @@
                     }}</mat-label>
                     <mat-icon
                         matPrefix
-                        class="hidden icon-size-5 sm:flex"
+                        class="hidden icon-size-5 sm:flex rtl:-rotate-90"
                         [svgIcon]="'heroicons_solid:phone'"
                     ></mat-icon>
                     <input
+                        dir="ltr"
                         matInput
                         [formControlName]="'phone'"
                         placeholder="{{
                             'users.labels.phoneNumber' | translate
                         }}"
+                        class="ltr:text-left rtl:text-right"
                         [spellcheck]="false"
                     />
                 </mat-form-field>
@@ -149,15 +151,17 @@
                         }}</mat-label>
                         <mat-icon
                             matPrefix
-                            class="hidden icon-size-5 sm:flex"
+                            class="hidden icon-size-5 sm:flex rtl:-rotate-90"
                             [svgIcon]="'heroicons_solid:phone'"
                         ></mat-icon>
                         <input
+                            dir="ltr"
                             matInput
                             [formControlName]="'secondPhone'"
                             placeholder="{{
                                 'users.labels.secondPhoneNumber' | translate
                             }}"
+                            class="ltr:text-left rtl:text-right"
                             [spellcheck]="false"
                         />
                     </mat-form-field>

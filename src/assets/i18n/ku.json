@@ -62,7 +62,11 @@
             "nationality": "Neteweyî"
         },
         "addNationality": "Neteweyî zêde bike",
-        "saveNationality": "Neteweyî biqede"
+        "saveNationality": "Neteweyî biqede",
+        "delete": {
+            "title": "Pêşniyara Jêbirinê",
+            "message": "Tu bi rastî bawerî dikî ku tu dixwazî ev {{name}} jê bibî?"
+        }
     },
     "common": {
         "buttons": {
@@ -75,7 +79,8 @@
             "edit": "Biguherîne",
             "blocked": "Veqetî",
             "cancel": "Bişkoja",
-            "save": "Paqij bike"
+            "save": "Paqij bike",
+            "confirm": "Pêşniyar"
         },
         "text": {
             "welcomeTo": "Bi xêr hatî",
@@ -87,7 +92,10 @@
         }
     },
     "paginator": {
-        "itemsPerPageLabel": "Tiştên her rûpel"
+        "itemsPerPageLabel": "Tiştên her rûpel",
+        "nextPageLabel": "Rûpela Piştî",
+        "previousPageLabel": "Rûpela Pêş",
+        "rangeLabel": "{{start}} - {{end}} of {{length}}"
     },
     "last": {
         "dummy": "Wergera dummy"

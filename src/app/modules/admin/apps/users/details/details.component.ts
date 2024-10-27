@@ -27,7 +27,7 @@ import {
 } from '@angular/router';
 import { FuseFindByKeyPipe } from '@fuse/pipes/find-by-key/find-by-key.pipe';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { ImageComponent } from '../../../../../components/image/image.component';
 import { ContactsService } from '../contacts.service';
@@ -72,7 +72,7 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
     selectedNationality: string | number | undefined;
     role: number;
     isNewUser: boolean = false;
-
+    locale: string = this.translate.currentLang;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -83,7 +83,8 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private _contactsService: ContactsService,
         private _router: Router,
-        private _formBuilder: UntypedFormBuilder
+        private _formBuilder: UntypedFormBuilder,
+        private translate: TranslateService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -140,6 +141,11 @@ export class ContactsDetailsComponent implements OnInit, OnDestroy {
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        this.translate.onLangChange.subscribe((event) => {
+            this.locale = event.lang;
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     getNationality() {

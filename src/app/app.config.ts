@@ -1,4 +1,9 @@
+import { registerLocaleData } from '@angular/common';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
+import localeAr from '@angular/common/locales/ar';
+import localEn from '@angular/common/locales/en';
+import localKu from '@angular/common/locales/ku';
+import localeUr from '@angular/common/locales/ur';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
@@ -28,10 +33,13 @@ import { environment } from 'environments/environment';
 import { CustomPaginatorIntl } from './custom-paginator-intl.service';
 import { TranslationLoaderGuard } from './translation-guard.service';
 import { TranslationService } from './translation.service';
-
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+registerLocaleData(localeAr);
+registerLocaleData(localEn);
+registerLocaleData(localeUr);
+registerLocaleData(localKu);
 
 export const appConfig: ApplicationConfig = {
     providers: [

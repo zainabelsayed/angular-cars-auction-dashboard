@@ -13,7 +13,7 @@ export class TranslationService {
         private translateService: TranslateService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
-        translateService.addLangs(['ar', 'en', 'or', 'ku']);
+        translateService.addLangs(['ar', 'en', 'ur', 'ku']);
         if (isPlatformBrowser(this.platformId)) {
             const savedLang = localStorage.getItem('lng');
             if (savedLang) {

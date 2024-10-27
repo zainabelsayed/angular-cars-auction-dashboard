@@ -54,7 +54,7 @@ export class LanguagesComponent implements OnInit, OnDestroy {
             en: 'us',
             ar: 'ar',
             ku: 'ku',
-            or: 'or',
+            ur: 'ur',
         };
         this.changeDirection(this.activeLang);
     }

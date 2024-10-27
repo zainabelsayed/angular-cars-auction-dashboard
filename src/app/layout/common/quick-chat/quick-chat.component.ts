@@ -3,6 +3,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { DOCUMENT, DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
     AfterViewInit,
+    ChangeDetectionStrategy,
     Component,
     ElementRef,
     HostBinding,
@@ -31,6 +32,7 @@ import { Subject, takeUntil } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     exportAs: 'quickChat',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgClass,
         MatIconModule,
