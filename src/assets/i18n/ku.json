@@ -1,103 +1,106 @@
 {
-    "users": {
-        "title": "Bikarhêner",
-        "tabs": {
-            "webUsers": "Bikarhênerên malpera",
-            "dashboardUsers": "Bikarhênerên panelê"
-        },
-        "filters": {
-            "status": "Rewşa",
-            "role": "Rêveberî"
-        },
-        "search": {
-            "placeholder": "Lêgerîn ji bo bikarhêner"
-        },
-        "messages": {
-            "noUsers": "Bikarhêner tune ne"
-        },
-        "status": {
-            "active": "Çalak",
-            "inactive": "Neçalak",
-            "blocked": "Veqetî",
-            "unblocked": "Veqetî ne"
-        },
-        "roles": {
-            "individual": "Kesî",
-            "organization": "Rêxistin"
-        },
-        "th": {
-            "image": "Wêne",
-            "name": "Nav",
-            "verified": "Piştrastkirî",
-            "status": "Rewşa",
-            "blocked": "Veqetî",
-            "lastLogin": "Daxuyaniya Dawîn",
-            "role": "Rêveberî"
-        },
-        "active": "Çalak",
-        "inactive": "Neçalak",
-        "blocked": "Veqetî",
-        "notBlocked": "Veqetî ne",
-        "labels": {
-            "nationality": "Neteweyî",
-            "documents": "Belgeyên",
-            "name": "Nav",
-            "email": "E-name",
-            "password": "Şîfre",
-            "phoneNumber": "Hejmara Telefonê",
-            "secondPhoneNumber": "Hejmara Telefonê Ya Duyem",
-            "role": "Role",
-            "placeholder": {
-                "role": "Rola hilbijêrin",
-                "selectedRoleOption": "Vebijarka Rola Hilbijartî",
-                "nationality": "Nesbîtî"
-            },
-            "buttons": {
-                "addNationality": "Nesbîtî Zêde Bikin",
-                "saveNationality": "Nesbîtî Biparêzin"
-            }
-        },
-        "placeholder": {
-            "role": "Rola",
-            "nationality": "Neteweyî"
-        },
-        "addNationality": "Neteweyî zêde bike",
-        "saveNationality": "Neteweyî biqede",
-        "delete": {
-            "title": "Pêşniyara Jêbirinê",
-            "message": "Tu bi rastî bawerî dikî ku tu dixwazî ev {{name}} jê bibî?"
-        }
+  "users": {
+    "title": "Bikarhêner",
+    "tabs": {
+      "webUsers": "Bikarhênerên malpera",
+      "dashboardUsers": "Bikarhênerên panelê"
     },
-    "common": {
-        "buttons": {
-            "add": "Zêde bike",
-            "reset": "Vegerandin",
-            "export": "Exportkirin",
-            "toggleActive": "Çalakiya vegerandinê",
-            "block": "Veqetîkirin",
-            "delete": "Jêbirin",
-            "edit": "Biguherîne",
-            "blocked": "Veqetî",
-            "cancel": "Bişkoja",
-            "save": "Paqij bike",
-            "confirm": "Pêşniyar"
-        },
-        "text": {
-            "welcomeTo": "Bi xêr hatî",
-            "NajAdminDashboard": "Panela Adminê Naj",
-            "yes": "Erê",
-            "no": "Na",
-            "lastSeenAt": "Dîsa tê dîtin li",
-            "createdAt": "Afirandina li"
-        }
+    "filters": {
+      "status": "Rewşa",
+      "role": "Rêveberî"
     },
-    "paginator": {
-        "itemsPerPageLabel": "Tiştên her rûpel",
-        "nextPageLabel": "Rûpela Piştî",
-        "previousPageLabel": "Rûpela Pêş",
-        "rangeLabel": "{{start}} - {{end}} of {{length}}"
+    "search": {
+      "placeholder": "Lêgerîn ji bo bikarhêner"
     },
-    "last": {
-        "dummy": "Wergera dummy"
+    "messages": {
+      "noUsers": "Bikarhêner tune ne"
+    },
+    "status": {
+      "active": "Çalak",
+      "inactive": "Neçalak",
+      "blocked": "Veqetî",
+      "unblocked": "Veqetî ne"
+    },
+    "roles": {
+      "individual": "Kesî",
+      "organization": "Rêxistin"
+    },
+    "th": {
+      "image": "Wêne",
+      "name": "Nav",
+      "verified": "Piştrastkirî",
+      "status": "Rewşa",
+      "blocked": "Veqetî",
+      "lastLogin": "Daxuyaniya Dawîn",
+      "role": "Rêveberî"
+    },
+    "active": "Çalak",
+    "inactive": "Neçalak",
+    "blocked": "Veqetî",
+    "notBlocked": "Veqetî ne",
+    "labels": {
+      "nationality": "Neteweyî",
+      "documents": "Belgeyên",
+      "name": "Nav",
+      "email": "E-name",
+      "password": "Şîfre",
+      "phoneNumber": "Hejmara Telefonê",
+      "secondPhoneNumber": "Hejmara Telefonê Ya Duyem",
+      "role": "Role",
+      "placeholder": {
+        "role": "Rola hilbijêrin",
+        "selectedRoleOption": "Vebijarka Rola Hilbijartî",
+        "nationality": "Nesbîtî"
+      },
+      "buttons": {
+        "addNationality": "Nesbîtî Zêde Bikin",
+        "saveNationality": "Nesbîtî Biparêzin"
+      }
+    },
+    "placeholder": {
+      "role": "Rola",
+      "nationality": "Neteweyî"
+    },
+    "addNationality": "Neteweyî zêde bike",
+    "saveNationality": "Neteweyî biqede",
+    "delete": {
+      "title": "Pêşniyara Jêbirinê",
+      "message": "Tu bi rastî bawerî dikî ku tu dixwazî ev {{name}} jê bibî?"
+    },
+    "buttons": {
+      "changePassword": ""
     }
+  },
+  "common": {
+    "buttons": {
+      "add": "Zêde bike",
+      "reset": "Vegerandin",
+      "export": "Exportkirin",
+      "toggleActive": "Çalakiya vegerandinê",
+      "block": "Veqetîkirin",
+      "delete": "Jêbirin",
+      "edit": "Biguherîne",
+      "blocked": "Veqetî",
+      "cancel": "Bişkoja",
+      "save": "Paqij bike",
+      "confirm": "Pêşniyar"
+    },
+    "text": {
+      "welcomeTo": "Bi xêr hatî",
+      "NajAdminDashboard": "Panela Adminê Naj",
+      "yes": "Erê",
+      "no": "Na",
+      "lastSeenAt": "Dîsa tê dîtin li",
+      "createdAt": "Afirandina li"
+    }
+  },
+  "paginator": {
+    "itemsPerPageLabel": "Tiştên her rûpel",
+    "nextPageLabel": "Rûpela Piştî",
+    "previousPageLabel": "Rûpela Pêş",
+    "rangeLabel": "{{start}} - {{end}} of {{length}}"
+  },
+  "last": {
+    "dummy": "Wergera dummy"
+  }
 }

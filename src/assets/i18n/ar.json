@@ -66,6 +66,9 @@
         "delete": {
             "title": "تأكيد الحذف",
             "message": "هل أنت متأكد أنك تريد حذف {{name}}؟"
+        },
+        "buttons": {
+            "changePassword": "تغيير كلمة المرور"
         }
     },
     "common": {

@@ -56,6 +56,7 @@ export class UserFormComponent implements OnInit {
     @Input() toggleDrawer: () => void;
     @Input() userId: number;
 
+    changePassword: boolean = false;
     addNationality: boolean = false;
     selectedNationality: string | number | undefined =
         this._userDetailsComponent.selectedNationality;
@@ -124,6 +125,11 @@ export class UserFormComponent implements OnInit {
         this._changeDetectorRef.detectChanges();
     }
 
+    toggleChangePassword() {
+        this.changePassword = !this.changePassword;
+        this._changeDetectorRef.markForCheck();
+    }
+
     /**
      * Delete the contact
      */
@@ -188,7 +194,7 @@ export class UserFormComponent implements OnInit {
             guard: contact.guard || this.type,
             nationalityId: contact?.nationality?.id,
             roleId: contact.role,
-            password: contact.password === null ? undefined : contact.password,
+            password: !contact.password ? undefined : contact.password,
         };
         this._contactsService
             .updateUser(this.userId, params, this.type)

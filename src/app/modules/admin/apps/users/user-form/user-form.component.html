@@ -98,25 +98,44 @@
                 </mat-form-field>
             </div>
 
-            <div class="mt-8">
-                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>{{
-                        'users.labels.password' | translate
-                    }}</mat-label>
+            @if (changePassword) {
+                <div class="mt-8">
+                    <mat-form-field
+                        class="w-full"
+                        [subscriptSizing]="'dynamic'"
+                    >
+                        <mat-label>{{
+                            'users.labels.password' | translate
+                        }}</mat-label>
+                        <mat-icon
+                            matPrefix
+                            class="hidden icon-size-5 sm:flex"
+                            [svgIcon]="'heroicons_solid:lock-closed'"
+                        ></mat-icon>
+                        <input
+                            matInput
+                            [formControlName]="'password'"
+                            placeholder="{{
+                                'users.labels.password' | translate
+                            }}"
+                            [spellcheck]="false"
+                            type="password"
+                        />
+                    </mat-form-field>
+                </div>
+            } @else {
+                <button
+                    mat-button
+                    class="mt-8 rounded-full px-4 py-2 hover:bg-gray-100"
+                    (click)="toggleChangePassword()"
+                >
                     <mat-icon
-                        matPrefix
-                        class="hidden icon-size-5 sm:flex"
+                        class="mx-2"
                         [svgIcon]="'heroicons_solid:lock-closed'"
-                    ></mat-icon>
-                    <input
-                        matInput
-                        [formControlName]="'password'"
-                        placeholder="{{ 'users.labels.password' | translate }}"
-                        [spellcheck]="false"
-                        type="password"
                     />
-                </mat-form-field>
-            </div>
+                    {{ 'users.buttons.changePassword' | translate }}
+                </button>
+            }
 
             <div class="mt-8">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">

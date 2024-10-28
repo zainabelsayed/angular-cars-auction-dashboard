@@ -66,6 +66,9 @@
         "delete": {
             "title": "Confirm Delete",
             "message": "Are you sure you want to delete this {{name}}?"
+        },
+        "buttons": {
+            "changePassword": "Change Password"
         }
     },
     "common": {
