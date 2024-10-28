@@ -26,10 +26,12 @@
         <div class="flex w-full flex-col items-center p-4">
             <div class="relative h-24 w-24">
                 @if (user?.avatar) {
-                    <img
-                        class="h-full w-full rounded-full"
+                    <app-image
+                        class="h-24 w-24 rounded-full object-cover"
                         [src]="user.avatar"
                         alt="User avatar"
+                        width="96"
+                        height="96"
                     />
                 }
                 @if (!user?.avatar) {

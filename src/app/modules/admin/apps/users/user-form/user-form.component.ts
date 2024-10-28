@@ -98,7 +98,7 @@ export class UserFormComponent implements OnInit {
      *
      * @param fileList
      */
-    uploadAvatar(fileList: FileList): void {
+    async uploadAvatar(fileList: FileList): Promise<void> {
         // Return if canceled
         if (!fileList.length) {
             return;
@@ -111,10 +111,12 @@ export class UserFormComponent implements OnInit {
         if (!allowedTypes.includes(file.type)) {
             return;
         }
-        this.uploadFileService.uploadFile(file, 'avatar').subscribe((url) => {
-            this.contactForm.get('avatarUrl')?.setValue(url);
-            this._changeDetectorRef.detectChanges();
-        });
+        (await this.uploadFileService.uploadFile(file, 'avatar')).subscribe(
+            (url) => {
+                this.contactForm.get('avatarUrl')?.setValue(url);
+                this._changeDetectorRef.detectChanges();
+            }
+        );
     }
 
     removeAvatar() {

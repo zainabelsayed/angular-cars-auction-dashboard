@@ -70,13 +70,15 @@
                                 }
                             ],
                             "outputHashing": "all",
-                            "serviceWorker": false
+                            "optimization": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true
                         },
                         "development": {
                             "optimization": false,
                             "extractLicenses": false,
-                            "sourceMap": true,
-                            "serviceWorker": false
+                            "sourceMap": true
                         }
                     },
                     "defaultConfiguration": "production"
@@ -118,7 +120,7 @@
     "cli": {
         "analytics": false,
         "cache": {
-            "enabled": false
+            "enabled": true
         }
     }
 }

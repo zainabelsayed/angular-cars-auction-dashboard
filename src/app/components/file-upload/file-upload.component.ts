@@ -86,12 +86,11 @@ export class FileUploadComponent implements OnInit {
         this.files.removeAt(index);
     }
 
-    onFileSelected(event: any, index: number) {
+    async onFileSelected(event: any, index: number) {
         const file = event.target.files[0];
         if (file) {
-            this.uploadFileService
-                .uploadFile(file, 'files')
-                .subscribe((percent) => {
+            (await this.uploadFileService.uploadFile(file, 'files')).subscribe(
+                (percent) => {
                     if (typeof percent === 'string') {
                         this.downloadURLs.push(percent);
                         this.emitUploadComplete();
@@ -103,7 +102,8 @@ export class FileUploadComponent implements OnInit {
                     if (typeof percent === 'number') {
                         this.uploadPercentages[index] = percent;
                     }
-                });
+                }
+            );
         }
     }
 

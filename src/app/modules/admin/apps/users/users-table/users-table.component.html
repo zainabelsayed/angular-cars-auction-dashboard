@@ -14,7 +14,7 @@
                         @for (th of tableHead; track trackByFn($index, th)) {
                             <div
                                 [mat-sort-header]="th.id"
-                                class="flex w-20 items-center justify-start"
+                                class="flex items-center justify-start"
                             >
                                 {{ th.name$ | async }}
                             </div>
@@ -32,13 +32,15 @@
                                 <!-- Image -->
                                 <div class="flex items-center justify-start">
                                     <div
-                                        class="relative mr-6 flex h-12 w-12 flex-0 items-center justify-center overflow-hidden rounded border"
+                                        class="relative flex h-12 w-12 flex-0 items-center justify-center overflow-hidden rounded border ltr:mr-3 rtl:ml-3"
                                     >
                                         @if (user.avatarUrl) {
                                             <img
-                                                class="h-full w-full object-cover object-left"
+                                                class="h-12 w-12 object-cover object-left"
                                                 [alt]="'user image'"
                                                 [src]="user.avatarUrl"
+                                                width="48"
+                                                height="48"
                                             />
                                         }
                                         @if (!user.avatarUrl) {
@@ -57,9 +59,7 @@
                                 </div>
 
                                 <!-- Active -->
-                                <div
-                                    class="mx-2 flex items-center justify-start"
-                                >
+                                <div class="flex items-center justify-start">
                                     @if (user.isVerified && !isAdminUsers) {
                                         <mat-icon
                                             class="text-green-400 icon-size-5"

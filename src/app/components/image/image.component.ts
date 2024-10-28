@@ -13,6 +13,8 @@ export class ImageComponent {
     @Input() src!: string; // Image source URL
     @Input() alt: string = 'Image'; // Alt text for the image
     @Input() class?: string = ''; // Additional CSS classes
+    @Input() width?: string = '100%'; // Width of the image
+    @Input() height?: string = '100%'; // Height of the image
 
     isLoading: boolean = true; // Loading state
 

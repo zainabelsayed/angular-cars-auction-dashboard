@@ -233,8 +233,11 @@ fuse-vertical-navigation {
                     opacity: 0.4;
                 }
 
-                .fuse-vertical-navigation-item-icon {
-                    margin: 0 16px 0 16px;
+                .fuse-vertical-navigation-item-icon[dir='rtl'] {
+                    margin-right: 16px;
+                }
+                .fuse-vertical-navigation-item-icon[dir='ltr'] {
+                    margin-left: 16px;
                 }
 
                 .fuse-vertical-navigation-item-title-wrapper {
@@ -461,6 +464,7 @@ fuse-vertical-navigation-group-item {
             .fuse-vertical-navigation-item-title-wrapper {
                 .fuse-vertical-navigation-item-title {
                     @apply text-current opacity-80;
+                    @apply mx-2;
                 }
 
                 .fuse-vertical-navigation-item-subtitle {
@@ -489,6 +493,7 @@ fuse-vertical-navigation-collapsable-item {
 
                     .fuse-vertical-navigation-item-title {
                         @apply opacity-100;
+                        @apply mx-2;
                     }
 
                     .fuse-vertical-navigation-item-subtitle {

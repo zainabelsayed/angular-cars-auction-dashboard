@@ -36,12 +36,14 @@
                             class="ring-bg-card flex h-32 w-32 items-center justify-center overflow-hidden rounded-full ring-4"
                         >
                             @if (user?.avatarUrl) {
-                                <app-image
+                                <img
                                     [class]="
                                         'h-32 w-32 object-cover object-left'
                                     "
                                     [src]="user?.avatarUrl"
                                     alt="user avatar"
+                                    width="32"
+                                    height="32"
                                 />
                             }
                             @if (!user?.avatarUrl) {

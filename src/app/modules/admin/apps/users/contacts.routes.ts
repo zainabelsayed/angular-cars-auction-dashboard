@@ -10,54 +10,37 @@ import { ContactsDetailsComponent } from 'app/modules/admin/apps/users/details/d
 import { ContactsListComponent } from 'app/modules/admin/apps/users/list/list.component';
 import { TranslationLoaderGuard } from 'app/translation-guard.service';
 
-/**
- * Can deactivate contacts details
- *
- * @param component
- * @param currentRoute
- * @param currentState
- * @param nextState
- */
-const canDeactivateContactsDetails = (
-    component: ContactsDetailsComponent,
-    currentRoute: ActivatedRouteSnapshot,
-    currentState: RouterStateSnapshot,
-    nextState: RouterStateSnapshot
-) => {
-    // Get the next route
-    let nextRoute: ActivatedRouteSnapshot = nextState.root;
-    while (nextRoute?.firstChild) {
-        nextRoute = nextRoute?.firstChild;
-    }
-
-    // If the next state doesn't contain '/contacts'
-    // it means we are navigating away from the
-    // contacts app
-    if (!nextState.url.includes('/contacts')) {
-        // Let it navigate
-        return true;
-    }
-
-    // If we are navigating to another contact...
-    if (nextRoute.paramMap.get('id')) {
-        // Just navigate
-        return true;
-    }
-
-    // Otherwise, close the drawer first, and then navigate
-    return component.toggleDrawer();
-};
-
 const userParams = {
     page: 1,
     size: 10,
     sort: 'id',
-    order: 'asc' as any,
+    order: 'asc' as const,
     search: '',
-    userType: 'web' as any,
+    userType: 'web' as const,
     status: '',
     guard: '',
 };
+
+// Can deactivate contacts details
+const canDeactivateContactsDetails = (
+    component: ContactsDetailsComponent,
+    _: ActivatedRouteSnapshot,
+    __: RouterStateSnapshot,
+    nextState: RouterStateSnapshot
+) => {
+    let nextRoute: ActivatedRouteSnapshot | null = nextState.root;
+    while (nextRoute?.firstChild) {
+        nextRoute = nextRoute.firstChild;
+    }
+
+    return nextState.url.includes('/contacts')
+        ? !nextRoute?.paramMap.get('id') && component.toggleDrawer()
+        : true;
+};
+
+// Resolver functions
+const resolveContacts = () => inject(ContactsService).getUsers(userParams);
+const resolveCountries = () => inject(ContactsService).getCountries();
 
 export default [
     {
@@ -70,19 +53,17 @@ export default [
                 component: ContactsListComponent,
                 canActivate: [TranslationLoaderGuard],
                 resolve: {
-                    contacts: () =>
-                        inject(ContactsService).getUsers(userParams),
-                    countries: () => inject(ContactsService).getCountries(),
+                    contacts: resolveContacts,
+                    countries: resolveCountries,
                 },
                 children: [
                     {
                         path: ':id',
                         component: ContactsDetailsComponent,
-                        resolve: {
-                            countries: () =>
-                                inject(ContactsService).getCountries(),
-                        },
                         canActivate: [TranslationLoaderGuard],
+                        resolve: {
+                            countries: resolveCountries,
+                        },
                     },
                 ],
             },

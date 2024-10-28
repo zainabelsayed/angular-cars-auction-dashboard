@@ -36,6 +36,7 @@ import { TranslationService } from './translation.service';
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+
 registerLocaleData(localeAr);
 registerLocaleData(localEn);
 registerLocaleData(localeUr);
@@ -88,7 +89,7 @@ export const appConfig: ApplicationConfig = {
                 services: mockApiServices,
             },
             fuse: {
-                layout: 'classy',
+                layout: 'classic',
                 scheme: 'light',
                 screens: {
                     sm: '600px',
@@ -96,7 +97,7 @@ export const appConfig: ApplicationConfig = {
                     lg: '1280px',
                     xl: '1440px',
                 },
-                theme: 'theme-default',
+                theme: 'theme-brand',
                 themes: [
                     {
                         id: 'theme-default',
