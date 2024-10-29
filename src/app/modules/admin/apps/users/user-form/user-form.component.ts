@@ -12,6 +12,7 @@ import {
     UntypedFormGroup,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -25,6 +26,7 @@ import { FileUploadComponent } from 'app/components/file-upload/file-upload.comp
 import { ImageComponent } from 'app/components/image/image.component';
 import { SnackbarService } from 'app/components/snackbar.service';
 import { Subject } from 'rxjs';
+import { ImageCropComponent } from '../../../../../components/image-crop/image-crop.component';
 import { ContactsService } from '../contacts.service';
 import { InputOption, NationalityParams, UserParams } from '../contacts.types';
 import { ContactsDetailsComponent } from '../details/details.component';
@@ -45,6 +47,7 @@ import { ContactsDetailsComponent } from '../details/details.component';
         FileUploadComponent,
         DropdownComponent,
         TranslateModule,
+        ImageCropComponent,
     ],
     templateUrl: './user-form.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,7 +78,8 @@ export class UserFormComponent implements OnInit {
         private _activatedRoute: ActivatedRoute,
         private snackbarService: SnackbarService,
         private _userDetailsComponent: ContactsDetailsComponent,
-        private translate: TranslateService
+        private translate: TranslateService,
+        public dialog: MatDialog
     ) {}
     ngOnInit(): void {
         this._contactsService.countries$.subscribe((countries) => {
@@ -99,25 +103,37 @@ export class UserFormComponent implements OnInit {
      *
      * @param fileList
      */
-    async uploadAvatar(fileList: FileList): Promise<void> {
+    async uploadAvatar(event): Promise<void> {
         // Return if canceled
-        if (!fileList.length) {
+        if (!event.target.files.length) {
             return;
         }
 
         const allowedTypes = ['image/jpeg', 'image/png'];
-        const file = fileList[0];
+        const file = event.target.files[0];
 
         // Return if the file is not allowed
         if (!allowedTypes.includes(file.type)) {
             return;
         }
-        (await this.uploadFileService.uploadFile(file, 'avatar')).subscribe(
-            (url) => {
-                this.contactForm.get('avatarUrl')?.setValue(url);
-                this._changeDetectorRef.detectChanges();
+        this.openCropDialog(event);
+    }
+
+    openCropDialog(event): void {
+        const dialogRef = this.dialog.open(ImageCropComponent, {
+            data: { event }, // Pass the file to the dialog
+        });
+
+        dialogRef.afterClosed().subscribe(async (result) => {
+            if (result) {
+                (
+                    await this.uploadFileService.uploadFile(result, 'avatar')
+                ).subscribe((url) => {
+                    this.contactForm.get('avatarUrl')?.setValue(url);
+                    this._changeDetectorRef.detectChanges();
+                });
             }
-        );
+        });
     }
 
     removeAvatar() {

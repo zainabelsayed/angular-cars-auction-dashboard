@@ -1,0 +1,36 @@
+<h1 mat-dialog-title class="mb-3 p-3 text-xl font-medium">
+    {{ 'common.image-crop.title' | translate }}
+</h1>
+<div mat-dialog-content class="w-100 p-3">
+    <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="1"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+        (imageLoaded)="imageLoaded($event)"
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()"
+    >
+    </image-cropper>
+</div>
+<div
+    mat-dialog-actions
+    align="end"
+    class="flex items-center justify-center space-x-3 bg-gray-50 px-6 py-4 dark:bg-black dark:bg-opacity-10 sm:ltr:justify-end sm:rtl:justify-start"
+>
+    <button
+        mat-button
+        class="rounded-full border border-gray-300 px-4 py-2 hover:bg-gray-100 dark:border-gray-500 dark:hover:bg-black dark:hover:bg-opacity-5"
+        (click)="onNoClick()"
+    >
+        {{ 'common.buttons.cancel' | translate }}
+    </button>
+    <button
+        mat-button
+        class="rounded-full bg-primary-500 px-4 py-2 text-white hover:bg-primary-600"
+        (click)="onSave()"
+    >
+        {{ 'common.buttons.save' | translate }}
+    </button>
+</div>

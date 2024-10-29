@@ -1,106 +1,109 @@
 {
-  "users": {
-    "title": "صارفین",
-    "tabs": {
-      "webUsers": "ویب صارفین",
-      "dashboardUsers": "ڈیش بورڈ صارفین"
-    },
-    "filters": {
-      "status": "حالت",
-      "role": "کردار"
-    },
-    "search": {
-      "placeholder": "صارفین تلاش کریں"
-    },
-    "messages": {
-      "noUsers": "کوئی صارف نہیں ہیں"
-    },
-    "status": {
-      "active": "فعال",
-      "inactive": "غیر فعال",
-      "blocked": "بلاک شدہ",
-      "unblocked": "غیر بلاک شدہ"
-    },
-    "roles": {
-      "individual": "فرد",
-      "organization": "ادارہ"
-    },
-    "th": {
-      "image": "تصویر",
-      "name": "نام",
-      "verified": "تصدیق شدہ",
-      "status": "حالت",
-      "blocked": "بلاک شدہ",
-      "lastLogin": "آخری لاگ ان",
-      "role": "کردار"
-    },
-    "active": "فعال",
-    "inactive": "غیر فعال",
-    "blocked": "بلاک شدہ",
-    "notBlocked": "غیر بلاک شدہ",
-    "labels": {
-      "nationality": "قومیت",
-      "documents": "دستاویزات",
-      "name": "نام",
-      "email": "ای میل",
-      "password": "پاس ورڈ",
-      "phoneNumber": "فون نمبر",
-      "secondPhoneNumber": "دوسرا فون نمبر",
-      "role": "کردار",
-      "placeholder": {
-        "role": "کردار منتخب کریں",
-        "selectedRoleOption": "منتخب کردہ کردار کا آپشن",
-        "nationality": "قومیت"
-      },
-      "buttons": {
+    "users": {
+        "title": "صارفین",
+        "tabs": {
+            "webUsers": "ویب صارفین",
+            "dashboardUsers": "ڈیش بورڈ صارفین"
+        },
+        "filters": {
+            "status": "حالت",
+            "role": "کردار"
+        },
+        "search": {
+            "placeholder": "صارفین تلاش کریں"
+        },
+        "messages": {
+            "noUsers": "کوئی صارف نہیں ہیں"
+        },
+        "status": {
+            "active": "فعال",
+            "inactive": "غیر فعال",
+            "blocked": "بلاک شدہ",
+            "unblocked": "غیر بلاک شدہ"
+        },
+        "roles": {
+            "individual": "فرد",
+            "organization": "ادارہ"
+        },
+        "th": {
+            "image": "تصویر",
+            "name": "نام",
+            "verified": "تصدیق شدہ",
+            "status": "حالت",
+            "blocked": "بلاک شدہ",
+            "lastLogin": "آخری لاگ ان",
+            "role": "کردار"
+        },
+        "active": "فعال",
+        "inactive": "غیر فعال",
+        "blocked": "بلاک شدہ",
+        "notBlocked": "غیر بلاک شدہ",
+        "labels": {
+            "nationality": "قومیت",
+            "documents": "دستاویزات",
+            "name": "نام",
+            "email": "ای میل",
+            "password": "پاس ورڈ",
+            "phoneNumber": "فون نمبر",
+            "secondPhoneNumber": "دوسرا فون نمبر",
+            "role": "کردار",
+            "placeholder": {
+                "role": "کردار منتخب کریں",
+                "selectedRoleOption": "منتخب کردہ کردار کا آپشن",
+                "nationality": "قومیت"
+            },
+            "buttons": {
+                "addNationality": "قومیت شامل کریں",
+                "saveNationality": "قومیت محفوظ کریں"
+            }
+        },
+        "placeholder": {
+            "role": "کردار",
+            "nationality": "قومیت"
+        },
         "addNationality": "قومیت شامل کریں",
-        "saveNationality": "قومیت محفوظ کریں"
-      }
+        "saveNationality": "قومیت محفوظ کریں",
+        "delete": {
+            "title": "حذف کی تصدیق",
+            "message": "کیا آپ واقعی اس {{name}} کو حذف کرنا چاہتے ہیں؟"
+        },
+        "buttons": {
+            "changePassword": "پاس ورڈ تبدیل کریں"
+        }
     },
-    "placeholder": {
-      "role": "کردار",
-      "nationality": "قومیت"
+    "common": {
+        "buttons": {
+            "add": "شامل کریں",
+            "reset": "ری سیٹ کریں",
+            "export": "ایکسپورٹ کریں",
+            "toggleActive": "فعال حالت تبدیل کریں",
+            "block": "بلاک کریں",
+            "delete": "حذف کریں",
+            "edit": "ترمیم کریں",
+            "blocked": "بلاک شدہ",
+            "cancel": "منسوخ کریں",
+            "save": "محفوظ کریں",
+            "confirm": "تصدیق کریں"
+        },
+        "text": {
+            "welcomeTo": "خوش آمدید",
+            "NajAdminDashboard": "ناج ایڈمن ڈیش بورڈ",
+            "yes": "جی ہاں",
+            "no": "نہیں",
+            "lastSeenAt": "آخری دیکھا گیا",
+            "createdAt": "تخلیق کیا گیا"
+        },
+        "image-crop": {
+            "title": "تصویر کاٹیں"
+        }
     },
-    "addNationality": "قومیت شامل کریں",
-    "saveNationality": "قومیت محفوظ کریں",
-    "delete": {
-      "title": "حذف کی تصدیق",
-      "message": "کیا آپ واقعی اس {{name}} کو حذف کرنا چاہتے ہیں؟"
+    "paginator": {
+        "itemsPerPageLabel": "فی صفحہ اشیاء",
+        "nextPageLabel": "اگلا صفحہ",
+        "previousPageLabel": "پچھلا صفحہ",
+        "rangeLabel": "{{start}} - {{end}} از {{length}}"
     },
-    "buttons": {
-      "changePassword": ""
+    "last": {
+        "dummy": "ڈمی ترجمہ"
     }
-  },
-  "common": {
-    "buttons": {
-      "add": "شامل کریں",
-      "reset": "ری سیٹ کریں",
-      "export": "ایکسپورٹ کریں",
-      "toggleActive": "فعال حالت تبدیل کریں",
-      "block": "بلاک کریں",
-      "delete": "حذف کریں",
-      "edit": "ترمیم کریں",
-      "blocked": "بلاک شدہ",
-      "cancel": "منسوخ کریں",
-      "save": "محفوظ کریں",
-      "confirm": "تصدیق کریں"
-    },
-    "text": {
-      "welcomeTo": "خوش آمدید",
-      "NajAdminDashboard": "ناج ایڈمن ڈیش بورڈ",
-      "yes": "جی ہاں",
-      "no": "نہیں",
-      "lastSeenAt": "آخری دیکھا گیا",
-      "createdAt": "تخلیق کیا گیا"
-    }
-  },
-  "paginator": {
-    "itemsPerPageLabel": "فی صفحہ اشیاء",
-    "nextPageLabel": "اگلا صفحہ",
-    "previousPageLabel": "پچھلا صفحہ",
-    "rangeLabel": "{{start}} - {{end}} از {{length}}"
-  },
-  "last": {
-    "dummy": "ڈمی ترجمہ"
-  }
 }

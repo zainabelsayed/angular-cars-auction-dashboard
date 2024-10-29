@@ -21,9 +21,10 @@
                                 type="file"
                                 [multiple]="false"
                                 [accept]="'image/jpeg, image/png'"
-                                (change)="uploadAvatar(avatarFileInput.files)"
+                                (change)="uploadAvatar($event)"
                                 #avatarFileInput
                             />
+
                             <label
                                 class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-hover"
                                 for="avatar-file-input"

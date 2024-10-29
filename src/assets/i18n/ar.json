@@ -92,6 +92,9 @@
             "no": "لا",
             "lastSeenAt": "آخر ظهور في",
             "createdAt": "تاريخ الإنشاء"
+        },
+        "image-crop": {
+            "title": "قص الصورة"
         }
     },
     "paginator": {

@@ -92,6 +92,9 @@
             "no": "No",
             "lastSeenAt": "Last seen at",
             "createdAt": "Created at"
+        },
+        "image-crop": {
+            "title": "Crop Image"
         }
     },
     "paginator": {
