@@ -127,7 +127,10 @@ export class UserFormComponent implements OnInit {
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {
                 (
-                    await this.uploadFileService.uploadFile(result, 'avatar')
+                    await this.uploadFileService.uploadFile(
+                        result,
+                        'user-avatar'
+                    )
                 ).subscribe((url) => {
                     this.contactForm.get('avatarUrl')?.setValue(url);
                     this._changeDetectorRef.detectChanges();

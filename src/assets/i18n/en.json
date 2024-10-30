@@ -105,5 +105,12 @@
     },
     "last": {
         "dummy": "Dummy translation"
+    },
+    "nav": {
+        "title": "Naj Dashboard",
+        "subtitle": "Car Auctions Dashboard",
+        "users": "Users",
+        "cars": "Cars",
+        "inventory": "Inventory"
     }
 }

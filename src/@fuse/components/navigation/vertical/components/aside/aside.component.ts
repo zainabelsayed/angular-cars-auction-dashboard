@@ -22,6 +22,7 @@ import { FuseVerticalNavigationDividerItemComponent } from '@fuse/components/nav
 import { FuseVerticalNavigationGroupItemComponent } from '@fuse/components/navigation/vertical/components/group/group.component';
 import { FuseVerticalNavigationSpacerItemComponent } from '@fuse/components/navigation/vertical/components/spacer/spacer.component';
 import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/vertical/vertical.component';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, filter, takeUntil } from 'rxjs';
 
 @Component({
@@ -38,6 +39,7 @@ import { Subject, filter, takeUntil } from 'rxjs';
         FuseVerticalNavigationDividerItemComponent,
         FuseVerticalNavigationGroupItemComponent,
         FuseVerticalNavigationSpacerItemComponent,
+        TranslateModule,
     ],
 })
 export class FuseVerticalNavigationAsideItemComponent

@@ -7,7 +7,7 @@ import { rtlLanguages } from './layout/common/languages/data';
     providedIn: 'root',
 })
 export class TranslationService {
-    defaultLang = 'ar';
+    defaultLang = 'en';
     isRtl: boolean = true;
     constructor(
         private translateService: TranslateService,

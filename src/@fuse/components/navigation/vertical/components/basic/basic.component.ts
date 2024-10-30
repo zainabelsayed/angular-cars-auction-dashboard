@@ -19,6 +19,7 @@ import { FuseNavigationService } from '@fuse/components/navigation/navigation.se
 import { FuseNavigationItem } from '@fuse/components/navigation/navigation.types';
 import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/vertical/vertical.component';
 import { FuseUtilsService } from '@fuse/services/utils/utils.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -33,6 +34,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatTooltipModule,
         NgTemplateOutlet,
         MatIconModule,
+        TranslateModule,
     ],
 })
 export class FuseVerticalNavigationBasicItemComponent

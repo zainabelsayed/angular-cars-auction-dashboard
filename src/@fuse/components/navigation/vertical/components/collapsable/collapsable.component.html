@@ -23,13 +23,13 @@
             <div class="fuse-vertical-navigation-item-title-wrapper">
                 <div class="fuse-vertical-navigation-item-title">
                     <span [ngClass]="item.classes?.title">
-                        {{ item.title }}
+                        {{ item.title | translate }}
                     </span>
                 </div>
                 @if (item.subtitle) {
                     <div class="fuse-vertical-navigation-item-subtitle">
                         <span [ngClass]="item.classes?.subtitle">
-                            {{ item.subtitle }}
+                            {{ item.subtitle | translate }}
                         </span>
                     </div>
                 }
@@ -43,7 +43,7 @@
                     class="fuse-vertical-navigation-item-badge-content"
                     [ngClass]="item.badge.classes"
                 >
-                    {{ item.badge.title }}
+                    {{ item.badge.title | translate }}
                 </div>
             </div>
         }

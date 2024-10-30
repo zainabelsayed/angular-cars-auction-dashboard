@@ -11,8 +11,7 @@ import { cloneDeep } from 'lodash-es';
 
 @Injectable({ providedIn: 'root' })
 export class SearchMockApi {
-    private readonly _defaultNavigation: FuseNavigationItem[] =
-        defaultNavigation;
+    private _defaultNavigation: FuseNavigationItem[] = defaultNavigation;
     private readonly _contacts: any[] = contacts;
     private readonly _tasks: any[] = tasks;
 

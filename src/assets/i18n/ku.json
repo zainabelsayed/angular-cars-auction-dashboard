@@ -105,5 +105,12 @@
     },
     "last": {
         "dummy": "Wergera dummy"
+    },
+    "nav": {
+        "title": "Pêşeka Kontrola Nay",
+        "subtitle": "Pêşeka Kontrola Mezatanên Otomobîlan",
+        "users": "Bikarhênerên",
+        "cars": "Ew Otomobîlan",
+        "inventory": "Stok"
     }
 }
